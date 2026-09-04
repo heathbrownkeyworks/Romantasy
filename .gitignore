@@ -1,0 +1,53 @@
+# Local automation and workspace state
+/.claude/
+/.playwright-mcp/
+/.preview/
+/.superpowers/
+/.xmake/
+/AGENTS.md
+/agents.md
+/CLAUDE.md
+/claude.md
+
+# Internal documentation, plans, tests, and release copy
+/docs/
+/screenshots/
+/tests/
+/mod-page.md
+/patreon-release.md
+
+# Private build, deployment, QA, and signing tools
+/build/
+/scripts/
+
+# Generated and distributable mod artifacts
+/Papyrus/
+/Sounds/
+/*.esp
+/*.esm
+/*.esl
+/*.png
+*.pex
+*.dll
+*.pdb
+*.lib
+*.exp
+*.obj
+*.ilk
+*.exe
+*.zip
+*.7z
+*.log
+*.dmp
+
+# Package and editor state
+/view/node_modules/
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+*.VC.db
+*.VC.opendb
+.DS_Store
+Thumbs.db
