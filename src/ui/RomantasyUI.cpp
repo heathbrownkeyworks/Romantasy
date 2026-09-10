@@ -5,12 +5,14 @@
 #include "RE/B/BSAudioManager.h"
 #include "RE/B/BSSoundHandle.h"
 #include "RE/I/ID.h"
+#include "MeridianUIAPI/InputAPI.h"
 
 #include "input/InputMode.h"
 #include "romance/RomanceManager.h"
 #include "settings/Settings.h"
 
 extern Meridian::UI::View::IViewAPI* g_MeridianView;
+extern Meridian::UI::Input::IInputAPI* g_MeridianInput;
 
 namespace
 {
@@ -78,8 +80,9 @@ void RomantasyUI::Initialize()
     viewInfo.viewName = "main";
     viewInfo.startUrl = "mod://romantasy/index.html";
     viewInfo.initiallyVisible = false;
-    viewInfo.onDOMReady = [](Meridian::UI::View::ViewHandle) {
+    viewInfo.onDOMReady = [](Meridian::UI::View::ViewHandle view) {
         logger::info("RomantasyUI: DOM ready");
+        g_MeridianView->ExecuteJavaScript(view, "romantasyControllerReady()");
     };
     _view = g_MeridianView->CreateView(&viewInfo);
 
@@ -89,6 +92,33 @@ void RomantasyUI::Initialize()
     }
 
     RegisterListeners();
+    if (g_MeridianInput) {
+        Meridian::UI::Input::ViewInputConfig config{};
+        config.enabled = 1;
+        config.allowCursor = 1;
+        const auto result = g_MeridianInput->ConfigureView(_view, &config);
+        if (result == Meridian::UI::Input::Result::Ok) {
+            Meridian::UI::Input::ShortcutInfo shortcut{};
+            shortcut.modifier = Meridian::UI::Input::Control::LeftShoulder;
+            shortcut.button = Meridian::UI::Input::Control::West;
+            shortcut.callback = [](Meridian::UI::Input::ShortcutHandle, void*) {
+                // Meridian invokes shortcut callbacks on the game thread.
+                RomantasyUI::GetSingleton().Toggle();
+            };
+            // Registration is owned by this view's lifetime, including cleanup.
+            Meridian::UI::Input::ShortcutHandle handle = 0;
+            const auto registered = g_MeridianInput->RegisterShortcut(_view, &shortcut, &handle);
+            if (registered == Meridian::UI::Input::Result::Conflict) {
+                logger::warn("Romantasy controller opener conflicts with another view; use Ctrl+R or the Favorites power");
+            } else if (registered != Meridian::UI::Input::Result::Ok) {
+                logger::warn("Romantasy controller opener unavailable ({})", static_cast<std::uint32_t>(registered));
+            } else {
+                logger::info("Romantasy controller enabled; opener LeftShoulder + West (LB + X)");
+            }
+        } else {
+            logger::warn("Romantasy controller configuration failed ({}); keyboard/mouse UI retained", static_cast<std::uint32_t>(result));
+        }
+    }
     logger::info("Romantasy UI initialized");
 }
 
@@ -382,6 +412,7 @@ void RomantasyUI::Toggle()
     }
 
     if (_isOpen) {
+        g_MeridianView->ExecuteJavaScript(_view, "romantasyHidePanel()");
         g_MeridianView->Unfocus(_view);
         g_MeridianView->Hide(_view);
         _isOpen = false;

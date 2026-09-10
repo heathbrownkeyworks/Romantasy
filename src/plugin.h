@@ -6,5 +6,5 @@
 namespace Plugin
 {
     inline constexpr std::string_view NAME = "Romantasy";
-    inline constexpr REL::Version VERSION{ 1, 0, 0, 0 };
+    inline constexpr REL::Version VERSION{ 2, 1, 0, 0 };
 }

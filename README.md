@@ -57,6 +57,28 @@ The in-game Meridian UI dashboard provides:
 - Graceful degradation: if Meridian UI is unavailable, tracking and the
   Papyrus API continue running while the dashboard remains disabled.
 
+### Controllers
+
+With Meridian UI 1.5.0's optional Input/1 extension enabled, hold **LB** and
+press **X** to open Romantasy. This is separate from Horde's LB + Y.
+If another menu has claimed the chord, Romantasy logs the conflict and retains
+the keyboard/Favorites opening routes. The controller opener also works when
+Favorites mode is enabled.
+
+- D-pad or left stick: move focus. A: select. B: go back one screen or close.
+- In the ledger: X opens New Bond; Y switches between Settings and Company.
+- While enrolling or editing: LB selects the companion area, RB selects deeds,
+  X saves the page, and Y clears its search. Up/down keeps the same preference
+  column. B cancels without saving.
+- Right stick scrolls the focused area. Press the right stick to toggle the
+  optional cursor.
+
+On-screen prompts follow Meridian's bindings and Xbox, PlayStation or generic
+label preference. Search and developer confirmation text require a physical
+keyboard. The dashboard remains paused; relationship popups capture input
+without pausing and may be dismissed with A or B. Keyboard/mouse operation
+remains available when Input/1 is missing or disabled.
+
 ## Requirements and supported runtimes
 
 - Skyrim Special Edition `1.5.97`, or a supported Anniversary Edition runtime
@@ -121,10 +143,14 @@ source repository.
 
 ## License
 
-Romantasy's original project source is available under the [MIT License](LICENSE).
+Romantasy's native implementation and DLL are licensed as GPL-3.0-or-later
+with the Modding Exception and GPL-3.0 Linking Exception in
+[EXCEPTIONS.md](EXCEPTIONS.md). Romantasy statically links CommonLibSSE-NG and
+is not distributed as MIT-only software.
 
-Third-party components retain their own licenses. In particular, the native
-DLL statically links CommonLibSSE-NG, which is GPL-3.0-or-later with its
-modding and linking exceptions. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)
-and the dependency's license files for the applicable binary-distribution
-terms.
+The public Papyrus declarations in `Source/Scripts/Romantasy.psc` remain
+available under the MIT License so follower authors can compile against the
+API. Copied Meridian UI integration headers are also MIT-licensed. See
+[LICENSING.md](LICENSING.md) and
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for the exact boundaries and
+corresponding-source information.

@@ -1,6 +1,7 @@
 #include "pch.h"
 
 #include "MeridianUIAPI/ViewDllLoader.h"
+#include "MeridianUIAPI/InputDllLoader.h"
 #include "conditions/PointsConditionHook.h"
 #include "events/SpellCastSink.h"
 #include "input/InputMode.h"
@@ -11,6 +12,7 @@
 #include "ui/RomantasyUI.h"
 
 Meridian::UI::View::IViewAPI* g_MeridianView = nullptr;
+Meridian::UI::Input::IInputAPI* g_MeridianInput = nullptr;
 
 namespace
 {
@@ -25,6 +27,9 @@ namespace
 
         if (g_MeridianView) {
             logger::info("Romantasy: Meridian.View/1 acquired during kInputLoaded");
+            g_MeridianInput = Meridian::UI::Input::Query(&meridianSettings, "Romantasy");
+            logger::info("Romantasy: Meridian.Input/1 {}", g_MeridianInput
+                ? "acquired" : "unavailable; keyboard/mouse UI retained");
         } else {
             logger::error("Romantasy: Meridian.View/1 unavailable — browser UI disabled; core systems continue.");
         }

@@ -1032,17 +1032,34 @@
       margin-left: auto; font-size: .53rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase;
       color: var(--fg-3); display: inline-flex; align-items: center; gap: .3rem;
     }
+    html[data-meridian-input="gamepad"][data-meridian-mode="navigation"] [data-controller-scope]:not([inert]) [data-meridian-focused] {
+      outline: .1875rem solid var(--amber);
+      outline-offset: -.1875rem;
+      box-shadow: inset 0 0 0 .3125rem rgba(245,158,11,.12);
+    }
+    body.controller-prompts .app { height: calc(100% - 2.75rem); }
+    .controller-prompts-bar {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 200;
+      min-height: 2.75rem; display: flex; align-items: center; justify-content: center;
+      gap: 1.35rem; padding: .35rem 1rem; background: rgba(16,11,7,.97);
+      border-top: 1px solid rgba(245,158,11,.25); color: var(--fg-2); font-size: .7rem;
+      pointer-events: none;
+    }
+    .controller-prompts-bar span { display: inline-flex; align-items: center; gap: .45rem; }
+    .controller-prompts-bar b { color: var(--amber); font-weight: 600; }
+    .controller-prompts-bar[hidden] { display: none; }
   </style>
 </head>
 <body>
   <div class="app-frame">
     <main class="app" id="panel">
       <button
+        id="closePanel"
         type="button"
         class="close-glyph"
         title="Close"
         aria-label="Close Romantasy"
-        onclick="romantasySend('romantasyClose','button')">
+        onclick="romantasyRequestClose('button')">
         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true">
           <path d="M6 6l12 12M18 6L6 18"/>
         </svg>
@@ -1064,7 +1081,7 @@
         </header>
         <div class="roster scroll-area" id="romanceList" data-scroll></div>
         <footer class="roster-foot">
-          <button type="button" class="foot-new" onclick="romantasyShowEnrollment()">
+          <button type="button" id="newBond" class="foot-new" onclick="romantasyShowEnrollment()">
             <span class="fn-plus" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
             </span>
@@ -1073,7 +1090,7 @@
           <button type="button" id="settingsBtn" class="foot-btn" title="Settings" aria-label="Settings" onclick="romantasyToggleSettingsPane()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>
           </button>
-          <button type="button" class="foot-btn" title="Refresh" aria-label="Refresh" onclick="romantasySend('romantasyPing','settings')">
+          <button type="button" id="refreshLedger" class="foot-btn" title="Refresh" aria-label="Refresh" onclick="romantasySend('romantasyPing','settings')">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.34-5.66"/><path d="M20 4v4h-4"/></svg>
           </button>
         </footer>
@@ -1083,7 +1100,7 @@
 
       <section class="col-dossier">
         <div class="pane" id="dossierPane">
-          <div class="detail-content" id="detailRoot" data-scroll></div>
+          <div class="detail-content" id="detailRoot" tabindex="0" aria-label="Companion dossier; scroll to read" data-scroll></div>
         </div>
         <div class="pane hidden" id="settingsPane">
           <div class="detail-content" id="settingsRoot" data-scroll></div>
@@ -1104,7 +1121,7 @@
         <h3 id="bondConfirmTitle">Remove this bond?</h3>
         <p id="bondConfirmCopy">This removes the player-created personality and its Romantasy progress. Author-defined followers can never reach this action.</p>
         <div class="mfoot">
-          <button type="button" class="btn btn--ghost" onclick="romantasyCloseBondConfirmation()">Cancel</button>
+          <button id="bondConfirmCancel" type="button" class="btn btn--ghost" onclick="romantasyCloseBondConfirmation()">Cancel</button>
           <button id="bondConfirmAction" type="button" class="btn btn--danger" onclick="romantasyConfirmBondAction()">Remove bond</button>
         </div>
       </section>
@@ -1114,6 +1131,7 @@
     <div id="levelUpModal" class="modal" aria-live="polite" aria-modal="true" role="dialog">
       <section class="modal-card gain">
         <button
+          id="levelUpClose"
           type="button"
           class="close-glyph"
           title="Close"
@@ -1180,14 +1198,15 @@
           <input id="developerPasswordInput" class="input" type="text" autocomplete="off" spellcheck="false" placeholder="Confirmation code" />
           <p id="developerPasswordError" class="dev-password-error" aria-live="polite"></p>
           <div class="mfoot">
-            <button type="button" class="btn btn--ghost" onclick="romantasyCloseDeveloperPasswordModal()">Cancel</button>
-            <button type="submit" class="btn btn--primary">Unlock</button>
+            <button id="developerCancel" type="button" class="btn btn--ghost" onclick="romantasyCloseDeveloperPasswordModal()">Cancel</button>
+            <button id="developerUnlock" type="submit" class="btn btn--primary">Unlock</button>
           </div>
         </form>
       </section>
     </div>
   </div>
 
+  <div id="controllerPrompts" class="controller-prompts-bar" hidden aria-label="Controller actions"></div>
   <script>
     /* ============================================================
        ROMANTASY — Boutique Ledger Theme
@@ -1434,6 +1453,7 @@
       pane.classList.add('pane-anim');
       const settingsBtn = document.getElementById('settingsBtn');
       if (settingsBtn) settingsBtn.classList.toggle('on', name === 'settings');
+      romantasySyncController();
     }
 
     function selectBond(index) {
@@ -1455,6 +1475,7 @@
       const nextText = level.max === null ? '' : ' <small>/ ' + (level.max + 1).toLocaleString() + '</small>';
       return ''
         + '<button type="button" class="row' + (selected ? ' selected' : '') + '" aria-current="' + selected + '" '
+        +   'data-meridian-id="bond-' + escapeHtml(romanceIdentity(r) || r.name) + '" data-meridian-right="detailRoot" '
         +   'aria-label="Open ' + safeName + ' dossier" onclick="selectBond(' + index + ')">'
         +   '<svg class="wm" viewBox="0 0 24 24" aria-hidden="true"><path d="' + HEART_PATH + '" fill="#f59e0b"/></svg>'
         +   '<span class="row-seal" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="' + HEART_PATH + '" fill="currentColor"/></svg></span>'
@@ -1612,9 +1633,9 @@
           : 'Supplied by another compatible mod at runtime. Romantasy treats it as read-only.');
       const profileActions = playerCreated
         ? '<div class="profile-actions">'
-          + '<button type="button" class="btn btn--secondary" onclick="romantasyEditPlayerPersonality(\'' + preferenceIdentity + '\')">Edit personality</button>'
-          + '<button type="button" class="btn btn--ghost" onclick="romantasyOpenBondConfirmation(\'reset\',\'' + preferenceIdentity + '\')">Reset bond</button>'
-          + '<button type="button" class="btn btn--danger" onclick="romantasyOpenBondConfirmation(\'remove\',\'' + preferenceIdentity + '\')">Remove bond</button>'
+          + '<button type="button" data-meridian-id="edit-' + preferenceIdentity + '" class="btn btn--secondary" onclick="romantasyEditPlayerPersonality(\'' + preferenceIdentity + '\')">Edit personality</button>'
+          + '<button type="button" data-meridian-id="reset-' + preferenceIdentity + '" class="btn btn--ghost" onclick="romantasyOpenBondConfirmation(\'reset\',\'' + preferenceIdentity + '\')">Reset bond</button>'
+          + '<button type="button" data-meridian-id="remove-' + preferenceIdentity + '" class="btn btn--danger" onclick="romantasyOpenBondConfirmation(\'remove\',\'' + preferenceIdentity + '\')">Remove bond</button>'
           + '</div>'
         : '';
 
@@ -1727,6 +1748,7 @@
         + PREF_DIRECTIONS.map((item) => {
           const on = item.value === direction;
           return '<button type="button" class="stamp-cell ' + item.key + (on ? ' on' : '') + '" role="radio" aria-checked="' + on + '" data-value="' + item.value + '" '
+            + 'data-meridian-id="pref-' + safeID + '-' + item.key + '" aria-label="' + escapeHtml(label) + ': ' + item.label + '" '
             + 'onclick="romantasyStampPreference(\'' + safeID + '\',' + item.value + ',this)">'
             + STAMP_ICONS[item.key] + '<span>' + item.label + '</span></button>';
         }).join('')
@@ -1743,6 +1765,7 @@
       const open = locked
         ? '<div class="candidate-card is-selected is-locked">'
         : '<button type="button" class="candidate-card' + (selected ? ' is-selected' : '') + '" role="radio" aria-checked="' + selected + '" '
+          + 'data-meridian-id="candidate-' + escapeHtml(identity) + '" '
           + 'onclick="romantasySelectEnrollmentCandidate(\'' + escapeHtml(identity) + '\')">';
       return open
         + '<span class="cc-mark" aria-hidden="true"></span>'
@@ -1852,7 +1875,7 @@
       const rows = renderPreferenceRows();
 
       const html = ''
-        + '<button type="button" class="back" onclick="romantasyCancelEnrollment()">&larr;&nbsp; ' + (editing ? 'Back to companion' : 'Back to company') + '</button>'
+        + '<button type="button" id="enrollBack" class="back" onclick="romantasyCancelEnrollment()">&larr;&nbsp; ' + (editing ? 'Back to companion' : 'Back to company') + '</button>'
         + '<div class="enroll-layout">'
         +   '<aside class="panel enroll-side">'
         +     '<div class="enroll-head">'
@@ -1881,7 +1904,7 @@
         +     '<div class="pref-editor-foot">'
         +       '<span class="enroll-hint">Nothing changes until the page is sealed.</span>'
         +       '<div class="enroll-footer-actions">'
-        +         '<button type="button" class="btn btn--ghost" onclick="romantasyCancelEnrollment()">Cancel</button>'
+        +         '<button type="button" id="enrollCancel" class="btn btn--ghost" onclick="romantasyCancelEnrollment()">Cancel</button>'
         +         '<button id="enrollCommit" type="button" class="btn btn--primary" onclick="romantasyCommitEnrollment()">' + (editing ? 'Seal personality' : 'Begin bond') + '</button>'
         +       '</div>'
         +     '</div>'
@@ -1914,18 +1937,23 @@
       enrollmentSearch = '';
       renderEnrollmentScreen();
       const root = document.getElementById('enrollmentRoot');
+      root.inert = false;
       root.classList.remove('takeover-close');
       root.classList.add('takeover-open');
+      romantasySyncController();
     }
 
     function closeEnrollment() {
       const root = document.getElementById('enrollmentRoot');
+      root.inert = true;
       root.classList.add('takeover-close');
+      romantasySyncController();
       setTimeout(() => {
         // A reopen in the meantime already stripped takeover-close (see
         // openEnrollment) — skip the cleanup so this stale timer can't
         // hide the freshly reopened takeover.
         if (root.classList.contains('takeover-close')) root.classList.remove('takeover-open', 'takeover-close');
+        romantasySyncController();
       }, 180); // timeout, not animationend
     }
 
@@ -1997,9 +2025,12 @@
     // modal — timeout, not animationend, matches closeEnrollment().
     function closeModalWithMotion(modal) {
       if (!modal || !modal.classList.contains('open')) return;
+      modal.inert = true;
       modal.classList.add('closing');
+      romantasySyncController();
       window.setTimeout(() => {
         if (modal.classList.contains('closing')) modal.classList.remove('open', 'closing');
+        romantasySyncController();
       }, 160);
     }
 
@@ -2038,8 +2069,10 @@
       button.textContent = resetting ? 'Reset bond' : 'Remove bond';
       button.className = resetting ? 'btn btn--secondary' : 'btn btn--danger';
       const modal = document.getElementById('bondConfirmModal');
+      modal.inert = false;
       modal.classList.remove('closing');
       modal.classList.add('open');
+      romantasySyncController();
     }
 
     function romantasyCloseBondConfirmation() {
@@ -2088,7 +2121,7 @@
         +   '<span class="tic">' + svgWrap(settingIcon('openWithFavorites'), 18, 1.6) + '</span>'
         +   '<span class="ttx"><span class="t">Open with Favorites Menu</span>'
         +     '<span class="d">Off: open with Left Ctrl + R. On: cast the Romantasy power from your Favorites menu; the hotkey is disabled.</span></span>'
-        +   '<button type="button" class="tgl ' + (openWithFavorites ? 'on' : '') + '" aria-pressed="' + openWithFavorites + '" onclick="romantasySetOpenMode(' + (!openWithFavorites) + ')"></button>'
+        +   '<button type="button" id="setting-openWithFavorites" aria-label="Open with Favorites Menu" class="tgl ' + (openWithFavorites ? 'on' : '') + '" aria-pressed="' + openWithFavorites + '" onclick="romantasySetOpenMode(' + (!openWithFavorites) + ')"></button>'
         + '</div>';
       const html = ''
         + '<header class="pane-head"><div class="pe">The scribe&#39;s quill</div><div class="ti">Sealed Page</div></header>'
@@ -2099,7 +2132,7 @@
           + '<div class="trow">'
           +   '<span class="tic">' + svgWrap(settingIcon(key), 18, 1.6) + '</span>'
           +   '<span class="ttx"><span class="t">' + escapeHtml(title) + '</span><span class="d">' + escapeHtml(detail) + '</span></span>'
-          +   '<button type="button" class="tgl ' + (on ? 'on' : '') + '" aria-pressed="' + on + '" onclick="romantasyToggleSetting(\'' + key + '\')"></button>'
+          +   '<button type="button" id="setting-' + key + '" aria-label="' + escapeHtml(title) + '" class="tgl ' + (on ? 'on' : '') + '" aria-pressed="' + on + '" onclick="romantasyToggleSetting(\'' + key + '\')"></button>'
           + '</div>';
       }).join('') + '</div></section>'
         + '<section id="debugToolsPanel" class="settings-section is-dev hidden"></section>';
@@ -2135,9 +2168,13 @@
       input.value = '';
       error.textContent = '';
       error.classList.remove('visible');
+      modal.inert = false;
       modal.classList.remove('closing');
       modal.classList.add('open');
-      window.setTimeout(() => input.focus(), 0);
+      romantasySyncController();
+      if (window.MeridianInput?.getState().device !== 'gamepad') {
+        window.setTimeout(() => { if (!modal.inert) input.focus(); }, 0);
+      }
     }
 
     function romantasyCloseDeveloperPasswordModal() {
@@ -2230,6 +2267,8 @@
     }
 
     function romantasyShowPanel() {
+      controllerPanelVisible = true;
+      document.getElementById('panel').inert = false;
       document.body.classList.remove('hidden');
       // Clear modal-only in case the dashboard is opened while a level-up popup
       // is showing over gameplay; modal-only hides .app, so without this the
@@ -2241,6 +2280,7 @@
       if (!hasRuntimeRomanceState) {
         renderRomances(sampleRomances);
       }
+      romantasyControllerReady();
     }
 
     function romantasySetState(data) {
@@ -2299,6 +2339,7 @@
 
     function romantasyShowLevelUpModal(data) {
       data = data || {};
+      document.body.classList.remove('hidden');
       const modal = document.getElementById('levelUpModal');
       const isLoss = data.changeDirection === 'loss';
 
@@ -2311,6 +2352,8 @@
       if (suppressed) {
         modal.classList.remove('open', 'closing', 'is-loss');
         document.body.classList.remove('modal-only');
+        if (data.modalOnly && !controllerPanelVisible) document.body.classList.add('hidden');
+        romantasySyncController();
         romantasySend('romantasyLevelUpDismissed', JSON.stringify({
           manualClose: false,
           modalOnly: Boolean(data.modalOnly),
@@ -2395,8 +2438,10 @@
       // open->dismiss->open) must drop the stale .closing — left in place
       // it would outrank .open for the animation property (later in source,
       // same specificity) and hold the card at opacity:0 forever.
+      modal.inert = false;
       modal.classList.remove('closing');
       modal.classList.add('open');
+      romantasyControllerReady();
       romantasySend('romantasyLevelUpModalOpened', JSON.stringify({
         changeDirection: isLoss ? 'loss' : 'gain',
       }));
@@ -2408,6 +2453,8 @@
 
     function romantasyDismissLevelUpModal(manualClose) {
       const modal = document.getElementById('levelUpModal');
+      if (!modal.classList.contains('open') || modal.inert) return;
+      modal.inert = true;
       window.clearTimeout(levelUpModalTimer);
       window.clearTimeout(levelUpModalFadeTimer);
 
@@ -2416,16 +2463,233 @@
       }));
       modal.classList.remove('open');
       modal.classList.add('closing');
+      romantasySyncController();
 
       levelUpModalFadeTimer = window.setTimeout(() => {
         modal.classList.remove('closing');
         const wasModalOnly = document.body.classList.contains('modal-only');
+        if (wasModalOnly && !controllerPanelVisible) document.body.classList.add('hidden');
         document.body.classList.remove('modal-only');
+        romantasySyncController();
         romantasySend('romantasyLevelUpDismissed', JSON.stringify({
           manualClose: Boolean(manualClose),
           modalOnly: wasModalOnly,
         }));
       }, manualClose ? 160 : 260);
+    }
+
+    // Meridian owns device input, capture, repeat, cursor and navigation. These
+    // scopes only describe Romantasy's screens and invoke their existing actions.
+    let controllerPanelVisible = false;
+    let controllerInput = null;
+    const controllerSubscriptions = [];
+    const controllerScopes = [];
+    const controllerFocus = new Map();
+
+    function romantasyControllerReady() {
+      if (!controllerInput && window.MeridianInput?.version === 1) {
+        controllerInput = window.MeridianInput;
+        controllerSubscriptions.push(controllerInput.onStateChange(romantasySyncController));
+        document.addEventListener('focusin', romantasyControllerPrompts);
+        document.addEventListener('pointerdown', romantasyControllerPointerGuard, true);
+        document.addEventListener('click', romantasyControllerPointerGuard, true);
+      }
+      romantasySyncController();
+    }
+
+    function romantasyControllerPointerGuard(event) {
+      const scope = controllerScopes[controllerScopes.length - 1];
+      // Cursor-mode accept is a real browser click. A modal must also contain
+      // pointer focus/actions, and a fading screen must not expose its parent.
+      if (scope && (scope.root.inert || (scope.id.endsWith('Modal') && !scope.root.contains(event.target)))) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+      }
+    }
+
+    function romantasyControllerFocus(element) {
+      if (!element || element.disabled || element.closest('[inert]')) return;
+      element.focus({ preventScroll: true });
+      element.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    }
+
+    function romantasyControllerAction(root, event) {
+      if (root.inert) return true; // Keep a closing overlay's scope until its fade ends.
+      if (event.phase !== 'press' && event.phase !== 'repeat') return false;
+      const selected = document.activeElement;
+      // Let the shared helper preserve physical-keyboard editing and its first Back.
+      if (selected?.matches('input,textarea,[contenteditable=true]')) return false;
+      if (root.id === 'enrollmentRoot') {
+        if (event.phase === 'press') {
+          if (event.action === 'secondary') {
+            document.getElementById('enrollCommit')?.click();
+            return true;
+          }
+          if (event.action === 'tertiary') {
+            const search = document.getElementById('prefSearch');
+            search.value = '';
+            romantasyFilterPreferences('');
+            return true;
+          }
+          if (event.action === 'previousTab' || event.action === 'nextTab') {
+            const target = event.action === 'previousTab'
+              ? root.querySelector('.candidate-card.is-selected:not(.is-locked)') || root.querySelector('#enrollBack')
+              : root.querySelector('.pref-row:not(.hidden) .stamp-cell.on') || root.querySelector('#prefSearch');
+            romantasyControllerFocus(target);
+            return true;
+          }
+        }
+        // Preserve the Like/Neutral/Dislike column while moving through deeds,
+        // including across category headings and filtered-out rows.
+        if (selected?.matches('.stamp-cell') && ['up', 'down'].includes(event.action)) {
+          const rows = Array.from(root.querySelectorAll('.pref-row:not(.hidden)'));
+          const index = rows.indexOf(selected.closest('.pref-row'));
+          const next = rows[index + (event.action === 'down' ? 1 : -1)];
+          romantasyControllerFocus(next
+            ? next.querySelector('[data-value="' + selected.dataset.value + '"]')
+            : document.getElementById(event.action === 'up' ? 'prefSearch' : 'enrollCommit'));
+          return true;
+        }
+      } else if (root.id === 'panel' || root.id === 'settingsPane') {
+        if (event.phase !== 'press') return false;
+        if (event.action === 'secondary') {
+          document.getElementById('newBond').click();
+          return true;
+        }
+        if (event.action === 'tertiary') {
+          document.getElementById('settingsBtn').click();
+          return true;
+        }
+        if (event.action === 'previousTab' || event.action === 'nextTab') {
+          romantasyShowScreen(event.action === 'previousTab' ? 'dashboard' : 'settings');
+          return true;
+        }
+        if (selected?.id === 'detailRoot' && event.action === 'left') {
+          romantasyControllerFocus(document.querySelector('#romanceList .row.selected') || document.getElementById('newBond'));
+          return true;
+        }
+      }
+      return false;
+    }
+
+    function romantasySyncController() {
+      if (!controllerInput) return;
+      const state = controllerInput.getState();
+      const desired = [];
+      const add = (id, initialFocus, onBack) => desired.push({ id, initialFocus, onBack });
+      if (state.enabled && state.active && state.connected) {
+        if (controllerPanelVisible) {
+          add('panel', () => document.querySelector('#romanceList .row.selected') || document.getElementById('newBond'),
+            () => romantasyRequestClose('controller'));
+          if (_activePane === 'settings') {
+            add('settingsPane', 'setting-openWithFavorites', () => romantasyShowScreen('dashboard'));
+          }
+          if (document.getElementById('enrollmentRoot').classList.contains('takeover-open')) {
+            add('enrollmentRoot', () => document.querySelector('#companionChooser button.is-selected')
+              || document.querySelector('.pref-row:not(.hidden) .stamp-cell.on') || document.getElementById('enrollBack'),
+              romantasyCancelEnrollment);
+          }
+          for (const [id, initial, back] of [
+            ['bondConfirmModal', 'bondConfirmCancel', romantasyCloseBondConfirmation],
+            ['developerPasswordModal', 'developerCancel', romantasyCloseDeveloperPasswordModal],
+          ]) {
+            if (document.getElementById(id).classList.contains('open')) add(id, initial, back);
+          }
+        }
+        const levelModal = document.getElementById('levelUpModal');
+        if (levelModal.classList.contains('open') || levelModal.classList.contains('closing')) {
+          add('levelUpModal', 'levelUpClose', () => romantasyDismissLevelUpModal(true));
+        }
+      }
+      let common = 0;
+      while (common < desired.length && controllerScopes[common]?.id === desired[common].id) common++;
+      while (controllerScopes.length > common) {
+        const scope = controllerScopes.pop();
+        scope.root.removeAttribute('data-controller-scope');
+        const selected = scope.root.querySelector('[data-meridian-focused]');
+        if (!scope.id.endsWith('Modal') && selected) {
+          controllerFocus.set(scope.id, selected.dataset.meridianId || selected.id);
+        }
+        scope.dispose();
+      }
+      for (const item of desired.slice(common)) {
+        const root = document.getElementById(item.id);
+        const initialFocus = () => {
+          const saved = controllerFocus.get(item.id);
+          const match = saved && Array.from(root.querySelectorAll('[id],[data-meridian-id]'))
+            .find(el => (el.dataset.meridianId || el.id) === saved);
+          return match || (typeof item.initialFocus === 'function' ? item.initialFocus() : document.getElementById(item.initialFocus));
+        };
+        const dispose = controllerInput.attachNavigation({ root, initialFocus,
+          getCandidates: () => Array.from(root.querySelectorAll('button,input,[tabindex="0"]'))
+            .filter(el => item.id !== 'panel' || !el.closest('#enrollmentRoot')),
+          onBack: item.onBack,
+          onAction: event => romantasyControllerAction(root, event),
+        });
+        controllerScopes.push({ id: item.id, root, dispose });
+      }
+      controllerScopes.forEach((scope, index) => {
+        scope.root.toggleAttribute('data-controller-scope', index === controllerScopes.length - 1);
+      });
+      romantasyControllerPrompts();
+    }
+
+    function romantasyControllerPrompts() {
+      const bar = document.getElementById('controllerPrompts');
+      const state = controllerInput?.getState();
+      const scope = controllerScopes[controllerScopes.length - 1];
+      const visible = Boolean(scope && state?.active && state.connected && state.device === 'gamepad');
+      bar.hidden = !visible;
+      document.body.classList.toggle('controller-prompts', visible);
+      if (!visible || scope.root.inert) return;
+      const text = document.activeElement?.matches('input,textarea,[contenteditable=true]');
+      const items = [['accept', text ? 'Edit (keyboard)' : 'Select'], ['cancel', text ? 'Leave field / Back' : (scope.id === 'panel' ? 'Close' : 'Back')]];
+      if (!text && scope.id === 'enrollmentRoot') {
+        items.push(['secondary', enrollmentMode === 'edit' ? 'Seal personality' : 'Begin bond'], ['tertiary', 'Clear search'],
+          ['previousTab', 'Companion'], ['nextTab', 'Deeds']);
+      } else if (!text && ['panel', 'settingsPane'].includes(scope.id)) {
+        items.push(['secondary', 'New bond'], ['tertiary', _activePane === 'settings' ? 'Company' : 'Settings']);
+      }
+      items.push(['toggleCursor', state.mode === 'cursor' ? 'Navigation' : 'Cursor']);
+      const nodes = items.flatMap(([action, label]) => {
+        const prompt = controllerInput.getPrompt(action);
+        if (!prompt.label) return [];
+        const span = document.createElement('span');
+        const key = document.createElement('b');
+        key.textContent = prompt.label;
+        span.append(key, document.createTextNode(label));
+        return [span];
+      });
+      if (['panel', 'settingsPane', 'enrollmentRoot'].includes(scope.id)) {
+        const scroll = document.createElement('span');
+        scroll.textContent = 'Right stick: scroll';
+        nodes.push(scroll);
+      }
+      bar.replaceChildren(...nodes);
+    }
+
+    function romantasyRequestClose(reason) {
+      if (document.getElementById('panel').inert) return;
+      romantasyHidePanel();
+      romantasySend('romantasyClose', reason);
+    }
+
+    function romantasyHidePanel() {
+      controllerPanelVisible = false;
+      document.getElementById('panel').inert = true;
+      document.body.classList.add('hidden');
+      window.clearTimeout(levelUpModalTimer);
+      window.clearTimeout(levelUpModalFadeTimer);
+      document.querySelectorAll('.modal').forEach(modal => {
+        modal.inert = true;
+        modal.classList.remove('open', 'closing');
+      });
+      romantasySyncController();
+      controllerSubscriptions.splice(0).forEach(dispose => dispose());
+      document.removeEventListener('focusin', romantasyControllerPrompts);
+      document.removeEventListener('pointerdown', romantasyControllerPointerGuard, true);
+      document.removeEventListener('click', romantasyControllerPointerGuard, true);
+      controllerInput = null;
     }
 
     /* ------------------------------------------------------------
@@ -2497,7 +2761,7 @@
       }
       event.preventDefault();
       event.stopPropagation();
-      romantasySend('romantasyClose', 'escape');
+      romantasyRequestClose('escape');
     }, { capture: true });
 
     window.addEventListener('resize', romantasyFitUI);

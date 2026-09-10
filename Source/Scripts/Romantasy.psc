@@ -1,3 +1,5 @@
+; SPDX-License-Identifier: MIT
+
 Scriptname Romantasy Hidden
 
 Int Function GetApiVersion() Native Global
