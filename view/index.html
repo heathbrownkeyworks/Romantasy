@@ -1042,11 +1042,20 @@
       position: fixed; bottom: 0; left: 0; right: 0; z-index: 200;
       min-height: 2.75rem; display: flex; align-items: center; justify-content: center;
       gap: 1.35rem; padding: .35rem 1rem; background: rgba(16,11,7,.97);
-      border-top: 1px solid rgba(245,158,11,.25); color: var(--fg-2); font-size: .7rem;
+      border-top: 1px solid rgba(245,158,11,.25); color: var(--fg-2); font-size: .75rem;
       pointer-events: none;
     }
-    .controller-prompts-bar span { display: inline-flex; align-items: center; gap: .45rem; }
-    .controller-prompts-bar b { color: var(--amber); font-weight: 600; }
+    .controller-prompts-bar span { display: inline-flex; align-items: center; gap: .45rem; white-space: nowrap; }
+    .controller-prompts-bar kbd {
+      display: inline-block;
+      min-width: 1.35rem;
+      padding: .1rem .3rem;
+      border: 1px solid rgba(245,158,11,.50);
+      border-radius: .25rem;
+      text-align: center;
+      color: var(--fg-1);
+      background: var(--surface);
+    }
     .controller-prompts-bar[hidden] { display: none; }
   </style>
 </head>
@@ -2655,7 +2664,7 @@
         const prompt = controllerInput.getPrompt(action);
         if (!prompt.label) return [];
         const span = document.createElement('span');
-        const key = document.createElement('b');
+        const key = document.createElement('kbd');
         key.textContent = prompt.label;
         span.append(key, document.createTextNode(label));
         return [span];
