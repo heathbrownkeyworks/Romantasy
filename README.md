@@ -1,156 +1,147 @@
-# Romantasy
+# Romantasy 3.0.0
 
-Romantasy is a save-safe relationship framework for Skyrim Special Edition and
-Anniversary Edition. It watches the adventures shared with active followers,
-applies each follower's individual likes and dislikes, and keeps an independent
-bond ledger without replacing the follower framework, dialogue system, or
-vanilla marriage system.
+Romantasy tracks the adventures shared with active followers in Skyrim SE/AE,
+applies each companion's likes and dislikes, and maintains an independent bond
+ledger. Follower mods supply their own dialogue, scenes, and reactions.
 
-## Features
+## What's new in 3.0
 
-- Tracks 58 vanilla gameplay statistics across exploration, quests, combat,
-  magic, crafting, crime, persuasion, vampirism, and lycanthropy.
-- Gives every tracked activity its own point weight and lets each follower
-  like, dislike, or ignore it.
-- Awards or removes automatic activity points only while that follower is
-  actively following the player.
-- Maintains six relationship tiers: Stranger (0), Acquaintance (500), Friend
-  (1,000), Confidant (1,500), Lover (2,000), and Spouse (2,500).
-- Stores points, player-created profiles, and preference ownership in the SKSE
-  cosave, including independent ledgers for spawned followers that share a base
-  NPC.
-- Mirrors the current tier to `ROM_RomanceLevel` for dialogue, scene, quest,
-  and marriage conditions.
-- Supplies exact live point totals through the `ROM_RomancePoints`
-  `GetFactionRank` condition proxy, avoiding Skyrim's normal faction-rank
-  limits.
-- Supports author-defined profiles, player-created profiles, and external
-  integrations while protecting author-defined personalities from player or
-  third-party overwrites.
-- Lets follower authors register profiles at runtime from an optional
-  compatibility plugin. The original follower can remain completely
-  standalone and does not need `CS_Romantasy.esp` as a master.
-- Provides optional relationship-rank and exact-point GlobalVariable mirrors
-  for follower plugins with existing dialogue conditions.
-- Broadcasts `Romantasy_OnLevelChanged` and `Romantasy_OnPreference` ModEvents
-  for voiced reactions and authored scenes.
-- Defers relationship-change notifications until combat ends.
-- Works alongside the vanilla follower system, Horde, NFF, AFT, EFF, and
-  custom follower frameworks.
+- A native Dear ImGui dashboard and relationship popups rendered through DX11.
+  **Meridian UI and PRISMA are not required.**
+- TOML follower profiles and actor-specific dialogue queries, with no romance
+  factions, enrollment scripts, or new globals needed for this integration.
+- **New bond** creates player-owned TOML profiles. Personality edits save to disk
+  and apply immediately; player-created bonds can be edited, reset, or removed.
+- Controller navigation and contextual button hints. Open through the Favorites
+  power; no gamepad opening chord is registered.
 
-## Meridian dashboard
+## Relationships
 
-The in-game Meridian UI dashboard provides:
+Romantasy responds to 58 vanilla statistic events across exploration, quests,
+combat, crafting, crime, persuasion, vampirism, and lycanthropy. A companion can
+like, dislike, or ignore each statistic. Automatic gains and losses apply only
+while the companion is actively following. Relationship-change popups wait until
+combat ends and can be disabled in Settings.
 
-- A company-wide list with bond totals, tiers, roles, progress, and active or
-  away status.
-- Per-follower dossiers showing likes, dislikes, milestones, and the five most
-  recent point changes.
-- An **Add Companion** workflow for enrolling an eligible active follower and
-  choosing that follower's personality.
-- Edit, reset, and remove controls for player-created profiles. Author-defined
-  profiles remain sealed and read-only.
-- Configurable gain and loss notifications, away-follower visibility, and two
-  opening modes: `Left Ctrl + R` or a power in the Favorites menu.
-- An optional confirmation-gated developer panel for testing stat and point
-  changes without accidentally exposing those controls during normal play.
-- Graceful degradation: if Meridian UI is unavailable, tracking and the
-  Papyrus API continue running while the dashboard remains disabled.
+| Tier | Minimum points | Dialogue level |
+|---|---:|---:|
+| Stranger | 0 | 1 |
+| Acquaintance | 500 | 2 |
+| Friend | 1,000 | 3 |
+| Confidant | 1,500 | 4 |
+| Lover | 2,000 | 5 |
+| Spouse | 2,500 | 6 |
 
-### Controllers
+Romantasy does not replace follower management or perform Skyrim's marriage
+quest. Adding a bond does not create voiced dialogue for an NPC that has none.
+The Spouse tier is a relationship milestone, not a wedding trigger.
 
-With Meridian UI 1.5.0's optional Input/1 extension enabled, hold **LB** and
-press **X** to open Romantasy. This is separate from Horde's LB + Y.
-If another menu has claimed the chord, Romantasy logs the conflict and retains
-the keyboard/Favorites opening routes. The controller opener also works when
-Favorites mode is enabled.
+## Installation and controls
 
-- D-pad or left stick: move focus. A: select. B: go back one screen or close.
-- In the ledger: X opens New Bond; Y switches between Settings and Company.
-- While enrolling or editing: LB selects the companion area, RB selects deeds,
-  X saves the page, and Y clears its search. Up/down keeps the same preference
-  column. B cancels without saving.
-- Right stick scrolls the focused area. Press the right stick to toggle the
-  optional cursor.
+Requires Skyrim SE/AE, [SKSE](https://skse.silverlock.org/) matching your runtime,
+and [Address Library for SKSE Plugins](https://www.nexusmods.com/skyrimspecialedition/mods/32444).
+Skyrim VR is not supported by the native dashboard.
 
-On-screen prompts follow Meridian's bindings and Xbox, PlayStation or generic
-label preference. Search and developer confirmation text require a physical
-keyboard. The dashboard remains paused; relationship popups capture input
-without pausing and may be dismissed with A or B. Keyboard/mouse operation
-remains available when Input/1 is missing or disabled.
+Install the complete mod through your mod manager and enable `CS_Romantasy.esp`.
+Keep the bundled fonts, scripts, sounds, and licenses. No external UI framework,
+SkyUI, or MCM is required.
 
-## Requirements and supported runtimes
+Open with **Left Ctrl + R**. For controller use, enable **Open with Favorites Menu**
+in Settings, then cast the Romantasy power from Favorites. Favorites mode replaces
+the keyboard opening hotkey until disabled.
 
-- Skyrim Special Edition `1.5.97`, or a supported Anniversary Edition runtime
-  including Steam `1.7.104`
-- [SKSE](https://skse.silverlock.org/)
-- [Address Library for SKSE Plugins](https://www.nexusmods.com/skyrimspecialedition/mods/32444)
-- Meridian UI for the dashboard
+- D-pad navigates; A selects; B goes back or closes.
+- Left stick scrolls, including selected preference lists.
+- A or B dismisses a relationship popup.
+- Keyboard and mouse remain available. Text entry requires a physical keyboard.
 
-Romantasy uses CommonLibSSE-NG and one Address Library-based DLL for SE and AE.
-Skyrim VR is not currently supported by the Romantasy dashboard.
+The dashboard pauses the game; relationship popups do not. Controller hints
+appear after gamepad activity and hide when keyboard or mouse input resumes.
 
-## Follower-author integration
+## New bond and persistence
 
-Romantasy supports both the original faction-tag integration and the preferred
-optional registration workflow. For a standalone follower release, place the
-Romantasy dependency in a separate compatibility plugin with a startup quest.
-That quest can register the follower, likes and dislikes, starting tier, and
-optional legacy mirrors only when the compatibility plugin is installed.
+Bring an eligible, unmanaged follower with you, choose **New bond**, select their
+likes and dislikes, and choose **Begin bond**. Romantasy writes their configuration
+to `SKSE/Plugins/Romantasy/PlayerProfiles/`. Personality edits update the file and
+live preferences immediately. Supplied follower profiles remain protected.
 
-The native Papyrus header is
-`Source/Scripts/Romantasy.psc`. Its public API is:
+Configuration is shared by saves using the same profile files. Earned points are
+stored separately in each save's SKSE cosave. Keep the `.skse` cosave with the save
+and preserve `PlayerProfiles` when updating the mod. Under MO2, new generated files
+normally appear in Overwrite or its configured output mod.
 
-```papyrus
-Int Function GetApiVersion() Native Global
+**Reset bond** resets the selected actor's points in the current save. **Remove
+bond** disables the profile across saves using that configuration. Its small
+disabled TOML file prevents an older save from reviving the bond; New bond can
+re-enable it. Old player-created faction enrollments migrate when their actors
+become available, retaining preferences and saved points after a successful write.
 
-Bool Function ModifyPoints(Actor akFollower, Int aiPoints, String asReason = "", Bool abShowLevelUp = True) Native Global
-Bool Function ApplyPreference(Actor akFollower, String asStatName, Int aiDelta = 1, Bool abShowLevelUp = True) Native Global
+For non-unique NPCs, instances share the base profile's preferences but retain
+separate point totals. Runtime-generated NPC bases without stable plugin identity
+cannot be added through New bond.
 
-Bool Function ClearPreferences(Actor akFollower) Native Global
-Bool Function SetPreference(Actor akFollower, String asStatName, Int aiDirection) Native Global
-Int Function GetPreference(Actor akFollower, String asStatName) Native Global
-Bool Function SetPreferencesManual(Actor akFollower, Bool abManual = True) Native Global
-Bool Function IsPreferencesManual(Actor akFollower) Native Global
+## Follower integration
 
-Bool Function RegisterAuthorFollower(Actor akFollower, String[] asStatNames, Int[] aiDirections, Int aiStartingLevel = 1, GlobalVariable akRelationshipRankMirror = None) Native Global
-Bool Function RegisterAuthorFollowerPointsMirror(Actor akFollower, GlobalVariable akRelationshipPointsMirror) Native Global
+Ship one TOML profile per NPC under `SKSE/Plugins/Romantasy/Profiles/`, keyed by its
+defining plugin and plugin-local NPC base ID. Profiles load at game-data startup;
+restart Skyrim after editing supplied files externally.
 
-Int Function GetPoints(Actor akFollower) Native Global
-Int Function GetLevel(Actor akFollower) Native Global
-String Function GetLevelName(Actor akFollower) Native Global
+Gate dialogue with `GetGraphVariableInt`, Run On **Subject**, using the reserved
+queries `Romantasy_Registered`, `Romantasy_Level`, and `Romantasy_Points`.
+For Friend or higher, use both conditions joined with AND:
+
+```text
+GetGraphVariableInt  Romantasy_Registered  == 1
+GetGraphVariableInt  Romantasy_Level       >= 3
 ```
 
-Preference directions are `-1` for dislike, `0` for neutral or removal, and
-`1` for like. `GetLevel` returns `0` for an actor Romantasy does not manage and
-`1` through `6` for Stranger through Spouse.
+No `CS_Romantasy.esp` master is needed solely for TOML or these conditions.
+Existing unrelated plugin dependencies must still be preserved. Legacy faction
+integrations and optional registration APIs remain available for unconverted mods.
+
+- [Profile schema, statistics, and persistence](docs/FileProfiles.md)
+- [Follower conversion guide](docs/FollowerConversion.md)
+- [Creation Kit dialogue conditions](docs/romance-points-dialogue-conditions.md)
+- [Papyrus API and voiced reaction events](docs/papyrus-bridge.md)
+- [Native UI development and verification](docs/NativeUI.md)
+- [3.0.0 changes and validation boundaries](CHANGELOG.md)
+
+The Papyrus API remains **capability version 6**, independent of the mod's 3.0.0
+release number. Its declarations are in `Source/Scripts/Romantasy.psc`.
 
 ## Building
 
-Clone with submodules and build from the repository root:
+Use Windows, Visual Studio C++ build tools, and xmake 3.0.1 or newer. Clone with
+submodules and build from the repository root:
 
 ```powershell
 git clone --recurse-submodules https://github.com/heathbrownkeyworks/Romantasy.git
 cd Romantasy
 xmake f -p windows -a x64 -m release -c
 xmake -y
+xmake build romantasy-profile-check
+xmake build romantasy-profile-tests
+xmake run romantasy-profile-tests
+xmake build romantasy-ui-tests
+xmake run romantasy-ui-tests
+node tests/RuntimeCompatibilityContractTests.mjs
 ```
 
-The release DLL is written to
-`build/windows/x64/release/Romantasy.dll`. Packaging the game plugin, compiled
-Papyrus script, sounds, and Meridian view is handled separately from this
-source repository.
+The DLL is `build/windows/x64/release/Romantasy.dll`. Deploy fonts from
+`assets/fonts` to `SKSE/Plugins/Romantasy/fonts`. The profile validator can be
+included as `tools/romantasy-profile-check.exe`. The complete mod download also
+contains `CS_Romantasy.esp`, the compiled Papyrus script, and sounds.
+
+When `XSE_TES5_MODS_PATH` is set, the CommonLib build rule auto-installs the DLL.
+Close the game and editors before building into an installed mod. Never invoke
+`xmake -P` from another working directory; build at the checkout root so generated
+SKSE metadata is included. Local signing credentials and workstation deployment
+scripts are not required to compile the public source.
 
 ## License
 
-Romantasy's native implementation and DLL are licensed as GPL-3.0-or-later
-with the Modding Exception and GPL-3.0 Linking Exception in
-[EXCEPTIONS.md](EXCEPTIONS.md). Romantasy statically links CommonLibSSE-NG and
-is not distributed as MIT-only software.
-
-The public Papyrus declarations in `Source/Scripts/Romantasy.psc` remain
-available under the MIT License so follower authors can compile against the
-API. Copied Meridian UI integration headers are also MIT-licensed. See
-[LICENSING.md](LICENSING.md) and
-[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for the exact boundaries and
+The native implementation and DLL are GPL-3.0-or-later with the permissions in
+[EXCEPTIONS.md](EXCEPTIONS.md). Public Papyrus declarations are separately available
+under MIT. See [LICENSING.md](LICENSING.md) and
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for dependency licenses and
 corresponding-source information.

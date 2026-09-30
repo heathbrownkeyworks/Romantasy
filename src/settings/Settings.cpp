@@ -29,7 +29,8 @@ void Settings::Load()
         _showGainModals    = j.value("showGainModals", _showGainModals);
         _showLossModals    = j.value("showLossModals", _showLossModals);
         _showAwayFollowers = j.value("showAwayFollowers", _showAwayFollowers);
-        logger::info("Romantasy settings loaded: openWithFavorites={}", _openWithFavorites);
+        logger::info("Romantasy settings loaded: openWithFavorites={}, showGainModals={}, showLossModals={}, showAwayFollowers={}",
+            _openWithFavorites, _showGainModals, _showLossModals, _showAwayFollowers);
     } catch (const std::exception& e) {
         logger::warn("Romantasy settings load failed ({}); using defaults", e.what());
     }

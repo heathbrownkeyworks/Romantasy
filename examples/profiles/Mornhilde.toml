@@ -1,0 +1,42 @@
+# Mornhilde: migrated from her authored romance factions.
+schema_version = 1
+
+[npc]
+plugin = "CSV_Mornhilde.esp"
+form_id = "0x00092A"
+
+[romance]
+starting_level = "Stranger"
+likes = [
+    "ROM_LocationsDiscovered",
+    "ROM_DungeonsCleared",
+    "ROM_StandingStonesFound",
+    "ROM_ChestsLooted",
+    "ROM_SkillIncreases",
+    "ROM_SkillBooksRead",
+    "ROM_Intimidations",
+    "ROM_QuestsCompleted",
+    "ROM_MiscObjectivesCompleted",
+    "ROM_MainQuestsCompleted",
+    "ROM_SideQuestsCompleted",
+    "ROM_DragonbornCompleted",
+    "ROM_QuestlinesCompleted",
+    "ROM_CreaturesKilled",
+    "ROM_UndeadKilled",
+    "ROM_DaedraKilled",
+    "ROM_AutomatonsKilled",
+    "ROM_CriticalStrikes",
+    "ROM_WeaponsDisarmed",
+    "ROM_DragonSoulsCollected",
+    "ROM_ShoutsLearned",
+    "ROM_WeaponsMade",
+    "ROM_ArmorMade",
+    "ROM_LocksPicked",
+]
+dislikes = [
+    "ROM_PoisonsMixed",
+    "ROM_Assaults",
+    "ROM_Murders",
+    "ROM_HorsesStolen",
+    "ROM_Trespasses",
+]

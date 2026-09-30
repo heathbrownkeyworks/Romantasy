@@ -1,55 +1,31 @@
 #include "pch.h"
 
-#include "MeridianUIAPI/ViewDllLoader.h"
-#include "MeridianUIAPI/InputDllLoader.h"
 #include "conditions/PointsConditionHook.h"
+#include "conditions/RomanceConditionHook.h"
 #include "events/SpellCastSink.h"
 #include "input/InputMode.h"
 #include "keyhandler/keyhandler.h"
 #include "papyrus/PapyrusBridge.h"
 #include "romance/RomanceManager.h"
 #include "settings/Settings.h"
+#include "ui/ImGuiHost.h"
 #include "ui/RomantasyUI.h"
-
-Meridian::UI::View::IViewAPI* g_MeridianView = nullptr;
-Meridian::UI::Input::IInputAPI* g_MeridianInput = nullptr;
 
 namespace
 {
-    void OnInputLoaded()
-    {
-        if (g_MeridianView) {
-            return;
-        }
-
-        Meridian::UI::Settings meridianSettings{};
-        g_MeridianView = Meridian::UI::View::Query(&meridianSettings, "Romantasy");
-
-        if (g_MeridianView) {
-            logger::info("Romantasy: Meridian.View/1 acquired during kInputLoaded");
-            g_MeridianInput = Meridian::UI::Input::Query(&meridianSettings, "Romantasy");
-            logger::info("Romantasy: Meridian.Input/1 {}", g_MeridianInput
-                ? "acquired" : "unavailable; keyboard/mouse UI retained");
-        } else {
-            logger::error("Romantasy: Meridian.View/1 unavailable — browser UI disabled; core systems continue.");
-        }
-    }
-
     void OnDataLoaded()
     {
         RomanceManager::GetSingleton().Initialize();
         PointsConditionHook::Install();
-        if (g_MeridianView) {
-            RomantasyUI::GetSingleton().Initialize();
-        } else {
-            logger::warn("Romantasy: skipping browser UI initialization (no Meridian)");
-        }
+        RomanceConditionHook::Install();
+        RomantasyUI::GetSingleton().Initialize();
 
         KeyHandler::RegisterSink();
+        ImGuiHost::GetSingleton().RegisterInputSink();
 
         Settings::GetSingleton().Load();
         SpellCastSink::RegisterSink();
-        InputMode::RefreshHotkey();  // registers Ctrl+R unless favorites mode is on
+        InputMode::RefreshHotkey();  // Ctrl+R unless favorites mode is on
 
         logger::info("{} systems initialized", Plugin::NAME);
     }
@@ -57,9 +33,6 @@ namespace
     void SKSEMessageHandler(SKSE::MessagingInterface::Message* message)
     {
         switch (message->type) {
-        case SKSE::MessagingInterface::kInputLoaded:
-            OnInputLoaded();
-            break;
         case SKSE::MessagingInterface::kDataLoaded:
             OnDataLoaded();
             break;

@@ -1,0 +1,120 @@
+[center][color=#f59e0b][size=6][b]R O M A N T A S Y  3.0[/b][/size][/color]
+[color=#b8a285][size=3]Your adventures, remembered. Your bond, earned.[/size][/color]
+[color=#b8a285]A relationship framework for Skyrim SE/AE[/color]
+[color=#382c1f]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/color][/center]
+
+[size=5][b][color=#f59e0b]New in 3.0[/color][/b][/size]
+
+Romantasy now has a native dashboard and relationship popups built directly into the mod. [b]Meridian UI and PRISMA are no longer required.[/b]
+
+Follower personalities use TOML profiles. Authors can supply a profile with their follower, or you can choose [color=#fbbf24]New bond[/color] to add an eligible companion yourself. Your edits save immediately and affect subsequent actions without reloading.
+
+[size=5][b][color=#f59e0b]Your adventures build the bond[/color][/b][/size]
+
+Romantasy responds to [color=#fbbf24]58 gameplay statistics[/color] across exploration, combat, quests, crafting, crime, persuasion, vampire and werewolf life, and more. Each companion can like, dislike, or ignore each statistic. Automatic point changes apply only while that companion is actively following.
+
+[list]
+[*]A native dashboard with companions, points, milestones, likes/dislikes, and recent changes.
+[*]Relationship gain and loss popups, with separate settings and combat deferral.
+[*]New bond, personality editing, reset, and removal for player-created profiles.
+[*]Keyboard, mouse, and controller navigation with contextual button hints.
+[*]Save-specific earned points and persistent TOML personalities.
+[/list]
+
+[size=5][b][color=#f59e0b]The six tiers[/color][/b][/size]
+
+[list]
+[*][color=#fbbf24]Stranger[/color] - 0 points
+[*][color=#fbbf24]Acquaintance[/color] - 500 points
+[*][color=#fbbf24]Friend[/color] - 1,000 points
+[*][color=#fbbf24]Confidant[/color] - 1,500 points
+[*][color=#fbbf24]Lover[/color] - 2,000 points
+[*][color=#fbbf24]Spouse[/color] - 2,500 points
+[/list]
+
+The Spouse tier is a relationship milestone. Romantasy does not perform Skyrim's marriage quest, replace follower management, or create voiced dialogue for NPCs that have none. Follower mods supply their own scenes and reactions.
+
+[size=5][b][color=#f59e0b]Requirements and installation[/color][/b][/size]
+
+[list]
+[*]Skyrim Special Edition or Anniversary Edition.
+[*][url=https://skse.silverlock.org/]SKSE[/url] matching your game runtime.
+[*][url=https://www.nexusmods.com/skyrimspecialedition/mods/32444]Address Library for SKSE Plugins[/url].
+[/list]
+
+Install the complete Romantasy package through your mod manager and enable [b]CS_Romantasy.esp[/b]. Keep the bundled fonts, scripts, sounds, and licenses. No external UI framework, SkyUI, or MCM is required. The native dashboard does not support Skyrim VR.
+
+[size=5][b][color=#f59e0b]Opening and controls[/color][/b][/size]
+
+Open with [color=#fbbf24]Left Ctrl + R[/color] by default. For controller use, enable [color=#fbbf24]Open with Favorites Menu[/color] in Settings, then cast the Romantasy power from Favorites. Favorites mode replaces the keyboard opening shortcut until disabled.
+
+[b]There is no dedicated gamepad button combination to open Romantasy.[/b]
+
+[list]
+[*]D-pad: navigate.
+[*]A: select. B: go back or close.
+[*]Left stick: scroll, including selected preference lists.
+[*]A or B: dismiss a relationship popup.
+[/list]
+
+Keyboard and mouse remain available. Text entry requires a physical keyboard. The dashboard pauses the game; relationship popups do not.
+
+[size=5][b][color=#f59e0b]New bond, personalities, and saves[/color][/b][/size]
+
+Bring an eligible unmanaged follower, choose [b]New bond[/b], select their likes and dislikes, and choose [b]Begin bond[/b]. Edit personality updates both the saved TOML and live preferences immediately. Personalities supplied by follower mods stay protected.
+
+Player profiles live in [font=Courier New]SKSE/Plugins/Romantasy/PlayerProfiles[/font]. Configuration is shared across saves using those files. [b]Earned points remain separate in each save's SKSE cosave.[/b] Keep the .skse file with its save.
+
+[b]Reset bond[/b] resets the selected actor's points in the current save. [b]Remove bond[/b] disables that player profile across saves using the configuration. Its small disabled TOML prevents an older save from reviving it; New bond can re-enable it.
+
+Keep PlayerProfiles when updating Romantasy. Under MO2, new generated files normally appear in Overwrite or the configured output mod.
+
+Old player-created faction bonds migrate when their actors become available, preserving preferences and points after a successful write. Saved balances, including zero, take precedence over a supplied profile's starting tier. Separate instances of a non-unique NPC share preferences but keep independent points.
+
+[size=5][b][color=#f59e0b]For follower authors[/color][/b][/size]
+
+Ship one TOML profile per NPC in [font=Courier New]SKSE/Plugins/Romantasy/Profiles[/font]. Use the defining plugin and its plugin-local NPC base ID. Restart Skyrim after editing supplied files externally.
+
+[code]schema_version = 1
+
+[npc]
+plugin = "ExampleFollower.esp"
+form_id = "0x000800"
+
+[romance]
+starting_level = "Stranger"
+likes = ["Quests Completed", "Dungeons Cleared"]
+dislikes = ["Murders"][/code]
+
+Use [b]GetGraphVariableInt[/b] conditions on [b]Subject[/b] with the reserved queries [font=Courier New]Romantasy_Registered[/font], [font=Courier New]Romantasy_Level[/font], and [font=Courier New]Romantasy_Points[/font]. Always include the Registered guard.
+
+Friend or higher, joined with AND:
+[code]GetGraphVariableInt  Romantasy_Registered  == 1
+GetGraphVariableInt  Romantasy_Level       >= 3[/code]
+
+Levels are 1-6; Lover is 5. Old faction ranks were 0-5, so convert tier values carefully. Exact point thresholds do not change.
+
+This integration needs no romance factions, new globals, or enrollment quest. Existing Papyrus point APIs and ModEvents remain available for authored scenes and reactions. The bridge capability version remains 6; the mod release is 3.0.0. Legacy faction integrations remain available for unconverted followers.
+
+For voiced reactions, filter events to the intended follower, re-register on load, and check the topic subtype and every condition when a line does not play. Horde should not gate trade, favor, romance dialogue, or romance reactions.
+
+[size=5][b][color=#f59e0b]Troubleshooting[/color][/b][/size]
+
+[color=#fbbf24][b]A follower does not appear[/b][/color]
+Check the profile's plugin/local NPC identity and Romantasy.log. For an unmanaged companion, recruit them and use New bond. Runtime-generated NPC bases cannot be added because they have no stable plugin identity.
+
+[color=#fbbf24][b]Points did not change[/b][/color]
+Confirm the companion is actively following and has an opinion about that statistic.
+
+[color=#fbbf24][b]Dialogue is missing[/b][/color]
+The follower must supply that dialogue. Inspect all topic and INFO conditions, including the Registered guard and correct relationship level.
+
+[color=#fbbf24][b]An external profile edit did not apply[/b][/color]
+Restart Skyrim after editing supplied files. In-game player personality edits apply immediately.
+
+[color=#fbbf24][b]Where are the technical guides?[/b][/color]
+The package includes profile, conversion, dialogue-condition, and Papyrus guides. Current source and documentation are available on [url=https://github.com/heathbrownkeyworks/Romantasy]GitHub[/url].
+
+[center][color=#382c1f]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/color]
+[color=#b8a285]Created by[/color] [color=#f59e0b]ColdSun[/color]
+[color=#b8a285]Built with SKSE | CommonLibSSE-NG | Dear ImGui | toml++[/color][/center]

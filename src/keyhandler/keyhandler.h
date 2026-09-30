@@ -55,6 +55,7 @@ private:
 
     std::map<std::uint32_t, KeyCallbacks> _registeredCallbacks;
     std::map<KeyHandlerEvent, CallbackInfo> _handleMap;
+
     std::atomic<KeyHandlerEvent> _nextHandle = INVALID_REGISTRATION_HANDLE + 1;
     std::shared_mutex _mutex;
 };

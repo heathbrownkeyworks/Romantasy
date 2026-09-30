@@ -10,7 +10,7 @@ Romantasy statically links CommonLibSSE-NG. A compiled native plugin containing 
 
 The public Papyrus declaration file `Source/Scripts/Romantasy.psc` is separately available under the MIT License in `licenses/Romantasy-API-MIT.txt`. This allows follower authors to compile against the declarations without receiving an additional license requirement from that interface file. It does not relicense Romantasy's native implementation or any dependency linked by a consumer.
 
-The copied Meridian UI integration headers in `src/MeridianUIAPI/` remain under Meridian UI's MIT API license. That permission applies only to those headers.
+Dear ImGui retains its MIT License in `licenses/Dear-ImGui-MIT.txt`.
 
 Fonts and other third-party material retain their own licenses. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 

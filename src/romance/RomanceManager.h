@@ -1,6 +1,10 @@
 #pragma once
 
+#include "romance/RomanceStats.h"
+#include "romance/RomanceProfiles.h"
+
 #include <mutex>
+#include <optional>
 #include <unordered_set>
 
 enum class RomanceProfileOrigin : std::uint8_t
@@ -75,13 +79,7 @@ class RomanceManager :
     public RE::BSTEventSink<RE::TESCombatEvent>
 {
 public:
-    struct StatFactionRule
-    {
-        std::string_view editorID;
-        std::string_view label;
-        std::int32_t points;
-        RE::FormID fallbackLocalID;
-    };
+    using StatFactionRule = romantasy::StatRule;
 
     static RomanceManager& GetSingleton();
 
@@ -110,6 +108,8 @@ public:
     bool ResetPlayerFollowerPoints(RE::Actor* followerActor);
     bool RemovePlayerFollower(RE::Actor* followerActor);
     [[nodiscard]] bool TryGetPoints(RE::Actor* followerActor, std::int32_t& points);
+    // Condition evaluation must never discover actors or mutate romance state.
+    [[nodiscard]] std::optional<std::int32_t> QueryPoints(RE::Actor* followerActor) const;
     [[nodiscard]] std::int32_t GetPoints(RE::Actor* followerActor);
     [[nodiscard]] std::int32_t GetLevel(RE::Actor* followerActor);
     [[nodiscard]] std::string GetLevelName(RE::Actor* followerActor);
@@ -148,7 +148,10 @@ private:
     [[nodiscard]] bool IsPreferencesManual(const RomanceFollower& follower) const;
     [[nodiscard]] bool ValidatePreferenceProfile(
         const std::unordered_map<std::string, std::int32_t>& preferences,
-        std::vector<std::pair<RE::TESFaction*, std::int32_t>>& resolved) const;
+        std::unordered_map<std::string, std::int32_t>& resolved) const;
+    bool StorePlayerProfile(RE::Actor* actor, const std::unordered_map<std::string, std::int32_t>& preferences, bool enabled = true);
+    void MigratePlayerProfile(RE::Actor* actor);
+    void ClearLegacyPlayerFactions(RE::Actor* actor);
     [[nodiscard]] RomanceFollower* FindFollower(RE::Actor* followerActor);
     [[nodiscard]] RomanceFollower* FindCachedFollower(RE::Actor* followerActor);
     [[nodiscard]] const StatFactionRule* FindStatRule(std::string_view statName) const;
@@ -165,6 +168,9 @@ private:
     void ApplySavedPoints();
     void ApplyStatDelta(const StatFactionRule& rule, std::int32_t delta, bool showLevelUp = true, bool requireFollowing = true);
     void CaptureAuthorDefinedBases();
+    void LoadFileProfiles();
+    void ApplyFilePreferences(RomanceFollower& follower, const romantasy::NpcProfile& profile) const;
+    [[nodiscard]] std::int32_t SavedOrInitialPoints(RE::FormID reference, RE::FormID base, std::int32_t initial) const;
     void EnsureFollowersDiscovered();
     void FlushPendingLevelChanges();
     void Load(SKSE::SerializationInterface* serialization);
@@ -194,6 +200,8 @@ private:
         const RE::TESCombatEvent* event,
         RE::BSTEventSource<RE::TESCombatEvent>* eventSource) override;
 
+    // Session configuration survives save/revert; earned points remain in the cosave.
+    std::unordered_map<RE::FormID, romantasy::NpcProfile> _fileProfiles;
     RE::TESFaction* _romanceLevelFaction = nullptr;
     RE::TESFaction* _currentFollowerFaction = nullptr;
     std::unordered_map<std::string_view, RE::TESFaction*> _statFactions;

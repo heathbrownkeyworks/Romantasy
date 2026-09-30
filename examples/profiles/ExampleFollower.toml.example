@@ -1,0 +1,12 @@
+# Inert template: rename to YourFollower.toml after replacing the example identity.
+# form_id is the NPC_ base record's plugin-local ID, not its ACHR reference.
+schema_version = 1
+
+[npc]
+plugin = "ExampleFollower.esp"
+form_id = "0x000800"
+
+[romance]
+starting_level = "Stranger"
+likes = ["Quests Completed", "Dungeons Cleared"]
+dislikes = ["Murders"]

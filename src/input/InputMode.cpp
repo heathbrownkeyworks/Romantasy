@@ -2,6 +2,7 @@
 
 #include "keyhandler/keyhandler.h"
 #include "settings/Settings.h"
+#include "ui/ImGuiHost.h"
 #include "ui/RomantasyUI.h"
 
 #ifndef WIN32_LEAN_AND_MEAN
@@ -33,9 +34,13 @@ namespace
         }
         g_hotkeyHandle = KeyHandler::GetSingleton()->Register(
             kActivateScanCode, KeyEventType::KEY_DOWN, []() {
-                if (IsModifierPressed()) {
-                    RomantasyUI::GetSingleton().Toggle();
+                if (!IsModifierPressed()) {
+                    return;
                 }
+                if (RomantasyUI::GetSingleton().IsOpen() && ImGuiHost::GetSingleton().WantsTextInput()) {
+                    return;  // a field has focus: Ctrl+R is a keystroke there, not the toggle
+                }
+                RomantasyUI::GetSingleton().Toggle();
             });
     }
 

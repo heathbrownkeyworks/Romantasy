@@ -9,11 +9,13 @@ Romantasy's native implementation is licensed as described in
   links CommonLibSSE-NG, so the combined native plugin is distributed under
   GPL-3.0-or-later with the applicable exceptions. The exact dependency
   revision and its complete license texts are available through the submodule.
-- [Meridian UI](https://github.com/heathbrownkeyworks/MeridianUI) API headers are
-  licensed under the MIT License and retain the original NirnLabUIPlatform
-  attribution.
+- [Dear ImGui](https://github.com/ocornut/imgui) is licensed under the MIT
+  License. Its complete license text is in `licenses/Dear-ImGui-MIT.txt`.
 - [nlohmann/json](https://github.com/nlohmann/json) is licensed under the MIT
   License.
+- [toml++](https://github.com/marzer/tomlplusplus), version 3.4.0, is licensed
+  under the MIT License. Its complete license text is in
+  `licenses/tomlplusplus-MIT.txt`.
 - The public `Source/Scripts/Romantasy.psc` declaration file is separately
   available under the MIT License in `licenses/Romantasy-API-MIT.txt`.
 - Poppins, Montserrat, and MonteCarlo are distributed under the SIL Open Font
