@@ -1,5 +1,14 @@
 # Changelog
 
+## 3.0.1 - 2026-10-07
+
+- Names and text in Russian, Greek, Chinese, Japanese, Korean and accented Latin
+  (Polish, Czech, Turkish and others) now display with their own letters instead
+  of question marks. Letters the bundled fonts lack are drawn with Windows' fonts:
+  Segoe UI at a matching weight, then Microsoft YaHei, Yu Gothic and Malgun Gothic,
+  ordered by the Windows display language. English text renders as before.
+- Names in any alphabet are capitalised in titles and labels, as English names are.
+
 ## 3.0.0 - 2026-09-30
 
 - Replace the external web dashboard with native Dear ImGui/DX11 screens.

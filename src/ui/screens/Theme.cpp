@@ -1,5 +1,7 @@
 #include "ui/screens/Theme.h"
 
+#include "ui/screens/SystemFonts.h"
+
 #include <imgui_internal.h>  // ImDrawListSharedData (drawList->_Data->TexUvWhitePixel) is only forward-declared in imgui.h
 
 #include <algorithm>
@@ -31,19 +33,21 @@ namespace romantasy::ui::theme
 
     bool LoadFonts(ImGuiIO& io, const std::string& fontDir, Fonts& out)
     {
+        // `fallback` is the Segoe UI file closest to the bundled font's weight.
         struct Spec
         {
             const char* file;
             ImFont** slot;
+            const wchar_t* fallback;
         };
         const Spec specs[] = {
-            { "montserrat-latin-900-normal.ttf", &out.ceremonial },
-            { "poppins-latin-300-normal.ttf", &out.bodyLight },
-            { "poppins-latin-400-normal.ttf", &out.body },
-            { "poppins-latin-500-normal.ttf", &out.bodyMedium },
-            { "poppins-latin-600-normal.ttf", &out.bodySemi },
-            { "poppins-latin-700-normal.ttf", &out.bodyBold },
-            { "montecarlo-latin-400-normal.ttf", &out.script },
+            { "montserrat-latin-900-normal.ttf", &out.ceremonial, L"seguibl.ttf" },
+            { "poppins-latin-300-normal.ttf", &out.bodyLight, L"segoeuil.ttf" },
+            { "poppins-latin-400-normal.ttf", &out.body, L"segoeui.ttf" },
+            { "poppins-latin-500-normal.ttf", &out.bodyMedium, L"seguisb.ttf" },
+            { "poppins-latin-600-normal.ttf", &out.bodySemi, L"seguisb.ttf" },
+            { "poppins-latin-700-normal.ttf", &out.bodyBold, L"segoeuib.ttf" },
+            { "montecarlo-latin-400-normal.ttf", &out.script, L"segoeui.ttf" },
         };
 
         bool all = true;
@@ -57,6 +61,15 @@ namespace romantasy::ui::theme
             *spec.slot = io.Fonts->AddFontFromFileTTF(path.c_str(), 0.0f);
             if (!*spec.slot) {
                 all = false;
+                continue;
+            }
+            // The bundled font draws everything it has; a letter it lacks comes
+            // from Windows' fonts merged behind it (see SystemFonts.h).
+            for (const auto* data : FallbackFonts(spec.fallback)) {
+                ImFontConfig config;
+                config.MergeMode = true;
+                config.FontDataOwnedByAtlas = false;  // shared, process-lifetime data
+                io.Fonts->AddFontFromMemoryTTF(const_cast<unsigned char*>(data->data()), static_cast<int>(data->size()), 0.0f, &config);
             }
         }
         if (io.Fonts->Fonts.Size == 0) {

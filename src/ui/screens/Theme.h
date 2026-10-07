@@ -68,10 +68,11 @@ namespace romantasy::ui::theme
         bool loaded = false;
     };
 
-    // Registers the seven TTF files from fontDir with the atlas. Returns false
-    // (and leaves the missing slots null) when any file cannot be opened; the
-    // atlas always ends up with at least ImGui's default font so drawing
-    // never dereferences a null font.
+    // Registers the seven TTF files from fontDir with the atlas, each backed by
+    // Windows' fonts for the letters it lacks (Cyrillic, Greek, Latin Extended,
+    // Chinese, Japanese, Korean). Returns false (and leaves the missing slots
+    // null) when any file cannot be opened; the atlas always ends up with at
+    // least ImGui's default font so drawing never dereferences a null font.
     bool LoadFonts(ImGuiIO& io, const std::string& fontDir, Fonts& out);
 
     // 1600 x 900 virtual canvas, uniformly scaled and centered in the display.

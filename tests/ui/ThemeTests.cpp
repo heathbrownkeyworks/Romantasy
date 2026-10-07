@@ -87,6 +87,27 @@ TEST(load_fonts_reads_all_seven_families)
     ImGui::DestroyContext(context);
 }
 
+// Names in Russian, Greek, Polish, Chinese, Japanese or Korean draw with their
+// own letters, not '?': the bundled fonts are Latin subsets, so every family
+// must pick those letters up from Windows' fonts while still drawing Latin itself.
+TEST(load_fonts_cover_non_latin_scripts_through_windows_fonts)
+{
+    ImGuiContext* context = ImGui::CreateContext();
+    Fonts fonts;
+    CHECK(LoadFonts(ImGui::GetIO(), "assets/fonts", fonts));
+    for (ImFont* font : { fonts.ceremonial, fonts.bodyLight, fonts.body, fonts.bodyMedium, fonts.bodySemi, fonts.bodyBold, fonts.script }) {
+        CHECK(font != nullptr);
+        if (!font) continue;
+        CHECK(font->IsGlyphInFont(0x0416) && font->IsGlyphInFont(0x044F));  // Cyrillic Zhe, ya
+        CHECK(font->IsGlyphInFont(0x03A9));                                 // Greek Omega
+        CHECK(font->IsGlyphInFont(0x0142) && font->IsGlyphInFont(0x0159));  // Polish l-stroke, Czech r-caron
+        CHECK(font->IsGlyphInFont(0x6F22) && font->IsGlyphInFont(0x3042));  // Han, Hiragana
+        CHECK(font->IsGlyphInFont(0xD55C));                                 // Hangul
+        CHECK(font->IsGlyphInFont('A') && font->IsGlyphInFont(0x00E9));     // Latin still draws
+    }
+    ImGui::DestroyContext(context);
+}
+
 TEST(load_fonts_falls_back_when_files_are_missing)
 {
     ImGuiContext* context = ImGui::CreateContext();

@@ -1,6 +1,7 @@
 #include "ui/screens/Widgets.h"
 
 #include "ui/screens/Anim.h"
+#include "ui/screens/TextCase.h"
 #include "ui/screens/Tiers.h"
 
 #include <imgui.h>
@@ -64,11 +65,10 @@ namespace romantasy::ui::widgets
 
     std::string Uppercase(std::string_view text)
     {
+        const bool ascii = std::all_of(text.begin(), text.end(), [](char ch) { return static_cast<unsigned char>(ch) < 0x80; });
+        if (!ascii) return UppercaseUtf8(text);  // names in Cyrillic, Greek, accented Latin...
         std::string out(text);
-        for (auto& ch : out) {
-            const auto byte = static_cast<unsigned char>(ch);
-            if (byte < 0x80) ch = static_cast<char>(std::toupper(byte));
-        }
+        for (auto& ch : out) ch = static_cast<char>(std::toupper(static_cast<unsigned char>(ch)));
         return out;
     }
 

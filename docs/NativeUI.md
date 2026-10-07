@@ -10,7 +10,14 @@ relationship popups in Skyrim SE/AE. It has no external web renderer dependency.
 - `src/ui/screens/` provides layout, state, widgets, and screens.
 - `src/ui/RomantasyUI.*` connects screens to game-thread requests and state.
 - `assets/fonts/` supplies the seven fonts installed under
-  `Data/SKSE/Plugins/Romantasy/fonts`.
+  `Data/SKSE/Plugins/Romantasy/fonts`. They are Latin subsets. Each one has
+  Windows' fonts merged behind it for the letters it lacks (Cyrillic, Greek,
+  Latin Extended, Chinese, Japanese, Korean): Segoe UI at a close weight, then
+  Microsoft YaHei, Yu Gothic and Malgun Gothic ordered by the Windows display
+  language (`src/ui/screens/SystemFonts.*`). The font data is read once and kept
+  for the process, because the atlas reads glyphs from it on first use.
+- `widgets::Uppercase` capitalises any alphabet through Windows' invariant case
+  mapping (`src/ui/screens/TextCase.*`); ASCII text takes the plain path.
 
 Keep romance mutations and Papyrus events on the SKSE game thread. Preserve the
 task wrapper in SendBarkEvent and ownership checks on profile mutations.

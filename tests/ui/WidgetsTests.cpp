@@ -13,6 +13,22 @@ TEST(widgets_uppercase_keeps_non_ascii_bytes)
     CHECK(widgets::Uppercase("") == "");
 }
 
+// Names in other alphabets capitalise like English ones in titles and eyebrows.
+TEST(widgets_uppercase_capitalises_any_alphabet)
+{
+    // Cyrillic: "Lidiya Volkova"
+    CHECK(widgets::Uppercase("\xD0\x9B\xD0\xB8\xD0\xB4\xD0\xB8\xD1\x8F \xD0\x92\xD0\xBE\xD0\xBB\xD0\xBA\xD0\xBE\xD0\xB2\xD0\xB0") ==
+          "\xD0\x9B\xD0\x98\xD0\x94\xD0\x98\xD0\xAF \xD0\x92\xD0\x9E\xD0\x9B\xD0\x9A\xD0\x9E\xD0\x92\xD0\x90");
+    // Czech accents: "Reznicek" with R-caron, i-acute, c-caron
+    CHECK(widgets::Uppercase("\xC5\x98" "ezn\xC3\xAD\xC4\x8D" "ek") == "\xC5\x98" "EZN\xC3\x8D\xC4\x8C" "EK");
+    // Greek: zeta omega eta
+    CHECK(widgets::Uppercase("\xCE\xB6\xCF\x89\xCE\xB7") == "\xCE\x96\xCE\xA9\xCE\x97");
+    // Japanese has no case and passes through unchanged
+    CHECK(widgets::Uppercase("\xE4\xBD\x90\xE8\x97\xA4\xE8\x8A\xB1\xE5\xAD\x90") == "\xE4\xBD\x90\xE8\x97\xA4\xE8\x8A\xB1\xE5\xAD\x90");
+    // Bytes that are not valid UTF-8 are left alone
+    CHECK(widgets::Uppercase("ab\xFF") == "ab\xFF");
+}
+
 TEST(widgets_pip_fractions_span_the_meter)
 {
     CHECK_NEAR(widgets::PipFraction(0), 0.0f, 1e-6);

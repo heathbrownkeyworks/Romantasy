@@ -1,4 +1,4 @@
-# Romantasy 3.0.0
+# Romantasy 3.0.1
 
 Romantasy tracks the adventures shared with active followers in Skyrim SE/AE,
 applies each companion's likes and dislikes, and maintains an independent bond
@@ -104,9 +104,9 @@ integrations and optional registration APIs remain available for unconverted mod
 - [Creation Kit dialogue conditions](docs/romance-points-dialogue-conditions.md)
 - [Papyrus API and voiced reaction events](docs/papyrus-bridge.md)
 - [Native UI development and verification](docs/NativeUI.md)
-- [3.0.0 changes and validation boundaries](CHANGELOG.md)
+- [Release notes and validation boundaries](CHANGELOG.md)
 
-The Papyrus API remains **capability version 6**, independent of the mod's 3.0.0
+The Papyrus API remains **capability version 6**, independent of the mod's 3.0.1
 release number. Its declarations are in `Source/Scripts/Romantasy.psc`.
 
 ## Building

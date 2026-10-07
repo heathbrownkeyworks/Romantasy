@@ -2,7 +2,7 @@
 
 The native Papyrus API supports follower scripts, scenes, and dialogue fragments.
 The complete declarations are in [Romantasy.psc](../Source/Scripts/Romantasy.psc).
-The API capability version remains **6**; it is independent of release version 3.0.0.
+The API capability version remains **6**; it is independent of release version 3.0.1.
 
 ## Points and preferences
 

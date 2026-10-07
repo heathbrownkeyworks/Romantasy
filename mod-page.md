@@ -1,4 +1,4 @@
-# Romantasy 3.0.0
+# Romantasy 3.0.1
 
 *A Ledger of Hearts.*
 
