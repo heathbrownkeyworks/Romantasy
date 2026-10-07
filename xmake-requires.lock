@@ -43,14 +43,6 @@
             },
             version = "v1.92.6"
         },
-        ["meson#31fecfc4"] = {
-            repo = {
-                branch = "master",
-                commit = "2db201aa988136da0170052ec55c4908dc4cf260",
-                url = "https://gitlab.com/tboox/xmake-repo.git"
-            },
-            version = "1.12.0"
-        },
         ["ninja#31fecfc4"] = {
             repo = {
                 branch = "master",
@@ -66,22 +58,6 @@
                 url = "https://gitlab.com/tboox/xmake-repo.git"
             },
             version = "v3.12.0"
-        },
-        ["pkgconf#31fecfc4"] = {
-            repo = {
-                branch = "master",
-                commit = "2db201aa988136da0170052ec55c4908dc4cf260",
-                url = "https://gitlab.com/tboox/xmake-repo.git"
-            },
-            version = "2.5.1"
-        },
-        ["python 3.x#31fecfc4"] = {
-            repo = {
-                branch = "master",
-                commit = "2db201aa988136da0170052ec55c4908dc4cf260",
-                url = "https://gitlab.com/tboox/xmake-repo.git"
-            },
-            version = "3.14.3"
         },
         ["rapidcsv v8.92#31fecfc4"] = {
             repo = {
