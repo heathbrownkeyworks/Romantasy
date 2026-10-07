@@ -16,6 +16,30 @@ set_toolset('msvc', 'ninja')
 
 add_rules('mode.debug', 'mode.releasedbg', 'mode.release')
 
+-- Name of the mod folder under XSE_TES5_MODS_PATH that the DLL auto-installs
+-- into. Empty keeps CommonLib's default (the target name).
+option('modfolder')
+    set_default('')
+    set_showmenu(true)
+    set_description('Mod folder name under XSE_TES5_MODS_PATH to install the DLL into')
+option_end()
+
+-- The CommonLib rule auto-installs into "<XSE_TES5_MODS_PATH>/<target name>".
+-- When the installed mod folder has a different name, persist it once with
+--   xmake f --modfolder="<folder name>"
+-- and the DLL lands there instead; scripts/deploy.ps1 then signs and verifies
+-- the full payload in the same folder. Applied as a rule added after the
+-- CommonLib rule so its config step runs last.
+rule('romantasy.modfolder')
+    on_config(function(target)
+        local mods = os.getenv('XSE_TES5_MODS_PATH')
+        local folder = get_config('modfolder')
+        if mods and folder and folder ~= '' then
+            target:set('installdir', path.join(mods, folder))
+        end
+    end)
+rule_end()
+
 -- CommonLib defaults skyrim_se, skyrim_ae, and skyrim_vr to true, so one DLL
 -- contains all three layouts. The ImGui dashboard is SE + AE only (DX11 menus).
 
@@ -43,6 +67,7 @@ target('Romantasy')
     )
 
     set_pcxxheader('src/pch.h')
+    add_rules('romantasy.modfolder')  -- after the CommonLib rule so its install folder wins
 
 -- Skyrim-free unit tests for src/ui/screens. Build + run:
 --   xmake build romantasy-ui-tests && xmake run romantasy-ui-tests
