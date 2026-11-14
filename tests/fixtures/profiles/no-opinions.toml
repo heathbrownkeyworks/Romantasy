@@ -1,0 +1,8 @@
+schema_version = 2
+
+[npc]
+plugin = "Fixture.esp"
+form_id = "0x000802"
+
+[romance]
+starting_level = "Stranger"

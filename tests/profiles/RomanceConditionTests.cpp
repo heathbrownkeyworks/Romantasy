@@ -46,3 +46,32 @@ TEST(condition_level_boundaries_match_public_api)
     }
     CHECK(Evaluate(Query::Level, 100000) == 6.0);
 }
+
+TEST(condition_mood_query_is_reserved)
+{
+    CHECK(ParseQuery("Romantasy_Mood") == Query::Mood);
+    CHECK(ParseQuery("Romantasy_MoodExtra") == Query::None);
+    CHECK(ParseQuery("romantasy_mood") == Query::None);
+}
+
+TEST(condition_mood_answers_state_numbers)
+{
+    using romantasy::mood::State;
+    CHECK(EvaluateMood(std::nullopt, std::nullopt) == 0.0);
+    CHECK(EvaluateMood(std::nullopt, State::Warm) == 0.0);
+    CHECK(EvaluateMood(750, std::nullopt) == 2.0);
+    CHECK(EvaluateMood(0, std::nullopt) == 2.0);
+    CHECK(EvaluateMood(750, State::Strained) == 1.0);
+    CHECK(EvaluateMood(750, State::Settled) == 2.0);
+    CHECK(EvaluateMood(750, State::Warm) == 3.0);
+}
+
+TEST(condition_old_queries_unchanged_beside_mood)
+{
+    CHECK(Evaluate(Query::Registered, 750) == 1.0);
+    CHECK(Evaluate(Query::Level, 750) == 2.0);
+    CHECK(Evaluate(Query::Points, 750) == 750.0);
+    CHECK(Evaluate(Query::Registered, std::nullopt) == 0.0);
+    CHECK(Evaluate(Query::Level, std::nullopt) == 0.0);
+    CHECK(Evaluate(Query::Points, std::nullopt) == -1.0);
+}

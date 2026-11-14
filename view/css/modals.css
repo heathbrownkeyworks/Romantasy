@@ -1,0 +1,160 @@
+/* The modal sheets: confirm reset, confirm remove, the developer password.
+   #modal is the scrim; each sheet sits on the solid wine base (.sheet in base.css).
+   The scrim fades in on .open and out on .closing (modals.js clears it after 220 ms). */
+
+#modal {
+    background: radial-gradient(circle at 50% 45%, rgba(70, 8, 44, .86), rgba(8, 1, 5, .95) 70%);
+    transition: opacity .2s;
+}
+#modal.open { animation: fade .3s backwards; }
+/* closing: the scrim still catches clicks (a double click's second one must not land beneath) and does
+   nothing with them; the sheet's controls are off. Only the closed scrim (display: none) lets clicks through. */
+#modal.closing { opacity: 0; }
+#modal.closing .sheet { pointer-events: none; }
+
+#modal .sheet { width: 600px; padding: 38px 50px 36px; text-align: center; animation: pop .6s cubic-bezier(.2, 1.3, .3, 1) backwards; }
+#modal .sheet > * { position: relative; }
+#modal .sheet.shake { animation: nudge .5s ease-in-out; }
+#modal .jewel { width: 120px; height: 120px; margin: 0 auto 6px; display: flex; align-items: center; justify-content: center; }
+#modal .jewel .art { width: 110px; height: 110px; animation: pop .6s cubic-bezier(.2, 1.5, .3, 1) .1s backwards; }
+#modal .eyebrow { color: var(--blush); }
+#modal h2 { font: italic 600 44px/1.1 var(--display); margin: 10px 0 2px; padding: 0 8px; }
+#modal .password h2 { font-size: 38px; letter-spacing: .06em; }
+#modal .who { font: 400 40px/1.25 var(--script); color: var(--rosegold); padding: 0 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#modal .note { font: 400 16px/1.5 var(--body); color: var(--mute); margin: 10px 0 26px; }
+#modal .pair { display: flex; gap: 12px; justify-content: center; }
+#modal .pair .btn { min-width: 190px; }
+
+/* the password field: a recessed pill, lit rose-gold while it has focus */
+#modal .field {
+    display: block; width: 100%; height: 54px; padding: 0 24px; border-radius: 999px; outline: none;
+    border: var(--hairline) solid var(--control-edge); color: var(--ink); caret-color: var(--rosegold);
+    background: linear-gradient(180deg, rgba(0, 0, 0, .45) 0, rgba(0, 0, 0, 0) 7px), rgba(22, 2, 13, .55);
+    font: 500 20px/1 var(--body); letter-spacing: .3em; text-align: center; transition: border-color .2s;
+}
+#modal .field:focus { border-color: rgba(244, 198, 173, .9); }
+#modal .error { margin: 12px 0 0; font: italic 400 15px/1.4 var(--display); color: #ffc2cf; animation: fade .3s backwards; }
+#modal .password .pair { margin-top: 24px; }
+
+@keyframes nudge {
+    20% { transform: translateX(-12px); }
+    40% { transform: translateX(10px); }
+    60% { transform: translateX(-6px); }
+    80% { transform: translateX(3px); }
+}
+
+/* ---------- the level-change popup (popup.js) ----------
+   #popup holds a click-catching scrim and one sheet. Over the ledger the scrim is the modal's
+   wine; in popup mode #app's light scrim already dims the game, so this one stays clear.
+   The closing motion is a 220 ms fade (popup.js clears it by timeout). */
+#popup { transition: opacity .2s; }
+/* closing: as #modal, #popup itself catches clicks (it has no action) until it is cleared */
+#popup.closing { opacity: 0; }
+#popup.closing .scrim, #popup.closing .sheet { pointer-events: none; }
+#popup .scrim {
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0; animation: fade .3s backwards;
+    background: radial-gradient(circle at 50% 45%, rgba(70, 8, 44, .86), rgba(8, 1, 5, .95) 70%);
+}
+#popup.loss .scrim { background: radial-gradient(circle at 50% 45%, rgba(40, 24, 64, .88), rgba(6, 2, 10, .96) 70%); }
+html[data-mode="popup"] #popup .scrim { background: none; }
+
+/* A column that grows with its content up to the stage less 80; past that only the Unlocked list gives way and scrolls. */
+#popup .levelup {
+    display: flex; flex-direction: column; width: 640px; max-height: calc(100% - 80px); padding: 30px 56px 40px; text-align: center;
+    animation: pop .65s cubic-bezier(.2, 1.3, .3, 1) backwards;
+}
+#popup .levelup > * { position: relative; flex: none; }
+#popup .levelup > .rays { position: absolute; left: 50%; top: 150px; width: 1000px; height: 1000px; margin: -500px 0 0 -500px; }
+#popup .levelup > .fuse { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: rgba(255, 255, 255, .1); }
+
+/* the trophy: a heart thrown open by a burst of small hearts */
+#popup .trophy { width: 210px; height: 210px; margin: 0 auto 4px; display: flex; align-items: center; justify-content: center; }
+#popup .trophy > .art {
+    position: relative; z-index: 2; width: 190px; height: 190px;
+    animation: pop .9s cubic-bezier(.2, 1.5, .3, 1) .15s backwards, bob 3.4s ease-in-out 1.1s infinite;
+}
+#popup .burst { position: absolute; left: 50%; top: 50%; width: 0; height: 0; z-index: 1; }
+#popup .bit { position: absolute; left: -14px; top: -14px; width: 28px; height: 28px; opacity: 0; animation: burst 1.5s cubic-bezier(.1, .7, .2, 1) .25s; }
+#popup .bit .art { width: 100%; height: 100%; transform: rotate(var(--r)) scale(var(--s)); }
+/* At Largest the stage is shortest: a smaller trophy leaves the Unlocked list room for two lines. */
+html[data-size="largest"] #popup .trophy { width: 160px; height: 160px; }
+html[data-size="largest"] #popup .trophy > .art { width: 144px; height: 144px; }
+
+#popup .eyebrow { color: var(--blush); }
+#popup h2 {
+    font: italic 600 52px/1.1 var(--display); margin: 10px 0 4px; padding: 0 8px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+/* "Lover -> Spouse", each with its tier icon; the new tier in script type */
+#popup .shift { display: flex; align-items: center; justify-content: center; gap: 14px; color: var(--mute); }
+#popup .shift .from, #popup .shift .to { display: inline-flex; align-items: center; gap: 8px; min-width: 0; }
+#popup .shift .from { font: 400 32px/1.25 var(--script); }
+#popup .shift .from .art { width: 40px; height: 40px; opacity: .8; }
+#popup .shift .to { font: 400 54px/1.25 var(--script); padding: 0 8px; color: var(--blush); }
+#popup .shift .to .art { width: 58px; height: 58px; }
+#popup .shift .arrow { font: 400 22px/1 var(--body); font-style: normal; color: var(--rosegold); }
+/* the foil text clips its gradient to the letters only, so the icon inside .to keeps its own paint */
+#popup .shift .to.foil { color: var(--blush); background: none; }
+#popup .shift .to.foil span {
+    background: linear-gradient(100deg, #ffe3d3 0%, var(--rosegold) 30%, #fff 48%, var(--rosegold-deep) 70%, #ffd9c6 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+/* the column does not collapse margins: the 6px under the figures is the Next line's own top margin */
+#popup .figures { display: flex; align-items: center; justify-content: center; gap: 14px; margin: 14px 0 0; }
+#popup .delta {
+    display: inline-flex; height: 36px; padding: 0 20px; align-items: center; border-radius: 99px;
+    border: 1px solid rgba(255, 255, 255, .35); background: rgba(255, 255, 255, .1); font: 600 15px/1 var(--body); letter-spacing: .14em;
+}
+#popup .total { font: 500 14px/1 var(--body); letter-spacing: .14em; text-transform: uppercase; color: var(--mute); }
+/* what the new tier unlocks: a short list under the tier name, scrolling if a jump gains many */
+#popup .levelup > .unlocks { flex: 0 1 auto; min-height: 0; display: flex; flex-direction: column; width: 100%; max-width: 480px; margin: 10px auto 0; }
+#popup .unlocks > .eyebrow { flex: none; }
+#popup .unlocks .eyebrow { color: var(--rosegold); }
+#popup .unlocks .eyebrow::before, #popup .unlocks .eyebrow::after {
+    content: ''; display: inline-block; width: 26px; height: 1px; margin: 0 12px; vertical-align: middle;
+    background: linear-gradient(90deg, rgba(244, 198, 173, 0), var(--rosegold));
+}
+#popup .unlocks .eyebrow::after { background: linear-gradient(90deg, var(--rosegold), rgba(244, 198, 173, 0)); }
+/* 2px under the last line for the italic glyphs that reach past it, so a list that fits never scrolls */
+#popup .unlocks ul { list-style: none; margin-top: 8px; padding-bottom: 2px; flex: 0 1 auto; min-height: 0; overflow-y: auto; }
+#popup .unlocks li { font: italic 400 19px/1.4 var(--display); color: var(--ink); }
+#popup .next { font: italic 400 17px/1.4 var(--display); color: var(--mute); margin-top: 6px; }
+#popup .levelup > .btn { align-self: center; min-width: 220px; margin-top: 24px; }
+
+/* the fuse: twenty seconds burning down to the left */
+#popup .fuse i {
+    display: block; height: 100%; transform-origin: left center;
+    background: linear-gradient(90deg, var(--rose), #fff); animation: fuse 20s linear both;
+}
+
+/* a wounded bond: the glass cools and the cracked heart drops */
+#popup .levelup.loss {
+    background: var(--sheet-face-cool), var(--sheet-base-cool);
+    box-shadow: 0 60px 120px -30px rgba(0, 0, 0, .9), 0 0 90px -20px rgba(140, 110, 220, .5);
+}
+#popup .loss .trophy > .art { animation: pop .5s ease-out backwards, shake .7s ease-in-out .5s, sag 3s ease-in-out 1.3s infinite alternate; }
+#popup .loss .eyebrow, #popup .loss .shift .to { color: #d7cbf2; }
+#popup .loss .delta { color: #e6ddff; }
+#popup .loss .fuse i { background: linear-gradient(90deg, #7c6fa8, #d7cbf2); }
+
+/* popup mode: only the scrim, #popup and its legend (Enter: Continue); nothing of the ledger shows or takes focus */
+html[data-mode="popup"] #modal,
+html[data-mode="popup"] #notice { display: none; }
+
+@keyframes bob { 50% { transform: translateY(-10px); } }
+@keyframes burst { 0% { transform: translate(0, 0) scale(.2); opacity: 1; } 70% { opacity: 1; } 100% { transform: translate(var(--tx), var(--ty)) scale(1); opacity: 0; } }
+@keyframes shake { 0%, 100% { transform: rotate(0); } 20% { transform: rotate(-9deg); } 40% { transform: rotate(8deg); } 60% { transform: rotate(-5deg); } 80% { transform: rotate(3deg); } }
+@keyframes sag { to { transform: translateY(8px) rotate(-2deg); } }
+@keyframes fuse { from { transform: scaleX(1); } to { transform: scaleX(0); } }
+
+/* ---------- reduced motion (the setting; see base.css): the sheets only fade in, nothing bobs, bursts, shakes or burns ----------
+   The fuse's burn is a 20 s animation, so it goes; with it the track, which would stand full and say nothing. */
+html[data-motion="reduced"] #modal .sheet { animation: fade .2s ease-out; }
+html[data-motion="reduced"] #modal .sheet.shake { animation: none; }
+html[data-motion="reduced"] #modal .jewel .art { animation: none; }
+html[data-motion="reduced"] #popup .levelup { animation: fade .2s ease-out; }
+html[data-motion="reduced"] #popup .trophy > .art { animation: none; }
+html[data-motion="reduced"] #popup .loss .trophy > .art { animation: none; }
+html[data-motion="reduced"] #popup .bit { animation: none; }
+html[data-motion="reduced"] #popup .fuse i { animation: none; }
+html[data-motion="reduced"] #popup .levelup > .fuse { display: none; }

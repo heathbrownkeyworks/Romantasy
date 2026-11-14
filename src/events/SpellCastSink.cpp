@@ -1,5 +1,6 @@
 #include "events/SpellCastSink.h"
 
+#include "input/InputMode.h"
 #include "settings/Settings.h"
 #include "ui/RomantasyUI.h"
 
@@ -33,7 +34,7 @@ RE::BSEventNotifyControl SpellCastSink::ProcessEvent(
         return RE::BSEventNotifyControl::kContinue;
     }
 
-    auto* power = RE::TESForm::LookupByEditorID<RE::SpellItem>("ROM_PowerUI");
+    auto* power = InputMode::LookupPower();
     if (power && a_event->spell == power->GetFormID()) {
         SKSE::GetTaskInterface()->AddTask([]() {
             RomantasyUI::GetSingleton().Toggle();

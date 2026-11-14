@@ -2,7 +2,6 @@
 
 #include "keyhandler/keyhandler.h"
 #include "settings/Settings.h"
-#include "ui/ImGuiHost.h"
 #include "ui/RomantasyUI.h"
 
 #ifndef WIN32_LEAN_AND_MEAN
@@ -13,11 +12,15 @@
 #endif
 #include <Windows.h>
 
+#include <atomic>
+
 namespace
 {
     constexpr std::uint32_t kModifierScanCode = 0x1D;  // Left Control
     constexpr std::uint32_t kActivateScanCode = 0x13;  // R
     constexpr const char*   kPowerEditorID    = "ROM_PowerUI";
+    constexpr RE::FormID    kPowerLocalID     = 0x83C;
+    constexpr std::string_view kRomantasyPlugin = "CS_Romantasy.esp";
 
     KeyHandlerEvent g_hotkeyHandle = INVALID_REGISTRATION_HANDLE;
 
@@ -36,9 +39,6 @@ namespace
             kActivateScanCode, KeyEventType::KEY_DOWN, []() {
                 if (!IsModifierPressed()) {
                     return;
-                }
-                if (RomantasyUI::GetSingleton().IsOpen() && ImGuiHost::GetSingleton().WantsTextInput()) {
-                    return;  // a field has focus: Ctrl+R is a keystroke there, not the toggle
                 }
                 RomantasyUI::GetSingleton().Toggle();
             });
@@ -72,7 +72,7 @@ void InputMode::ApplyForLoadedGame()
         return;
     }
 
-    auto* power = RE::TESForm::LookupByEditorID<RE::SpellItem>(kPowerEditorID);
+    auto* power = LookupPower();
     if (!power) {
         logger::warn("Romantasy: spell '{}' not found; cannot apply favorites mode", kPowerEditorID);
         return;
@@ -107,4 +107,36 @@ void InputMode::ApplyForLoadedGame()
             magicFav->RemoveFavorite(power);
         }
     }
+}
+
+RE::SpellItem* InputMode::LookupPower()
+{
+    // Forms do not move within a process: after the first find, look the power up by its form ID.
+    // A failed find is not kept, so a later call searches again.
+    static std::atomic<RE::FormID> cached{ 0 };
+    if (const auto formID = cached.load(std::memory_order_relaxed); formID != 0) {
+        return RE::TESForm::LookupByID<RE::SpellItem>(formID);
+    }
+
+    // Spells keep no editor ID unless another mod restores them, so the plugin's own form comes first.
+    RE::SpellItem* power = nullptr;
+    if (auto* dataHandler = RE::TESDataHandler::GetSingleton()) {
+        power = dataHandler->LookupForm<RE::SpellItem>(kPowerLocalID, kRomantasyPlugin);
+    }
+    if (!power) {
+        power = RE::TESForm::LookupByEditorID<RE::SpellItem>(kPowerEditorID);
+    }
+    if (power) {
+        cached.store(power->GetFormID(), std::memory_order_relaxed);
+    }
+    return power;
+}
+
+bool InputMode::PowerFound()
+{
+    static bool found = false;
+    if (!found) {
+        found = LookupPower() != nullptr;
+    }
+    return found;
 }

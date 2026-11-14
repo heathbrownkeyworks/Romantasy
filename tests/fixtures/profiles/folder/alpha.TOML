@@ -1,0 +1,18 @@
+schema_version = 2
+
+[npc]
+plugin = "Fixture.esp"
+form_id = "0x000813"
+
+[romance]
+likes = ["Quests Completed"]
+favorites = ["Dungeons Cleared"]
+dislikes = ["Items Stolen"]
+pet_peeves = ["Murders"]
+
+[unlocks]
+Acquaintance = ["She nods when you pass"]
+Friend = ["She tells you where she grew up"]
+Confidant = ["She shares a secret"]
+Lover = ["A key to her house"]
+Spouse = ["Her mother's ring"]

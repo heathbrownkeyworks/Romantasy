@@ -32,6 +32,10 @@ namespace
         }
 
         auto* actor = subject ? subject->As<RE::Actor>() : nullptr;
+        if (query == romantasy::conditions::Query::Mood) {
+            result = static_cast<double>(RomanceManager::GetSingleton().QueryMood(actor));
+            return true;
+        }
         result = *romantasy::conditions::Evaluate(query, RomanceManager::GetSingleton().QueryPoints(actor));
         return true;
     }
@@ -79,4 +83,9 @@ bool RomanceConditionHook::Install()
     g_enabled.store(true);
     logger::info("Romantasy dialogue bridge installed; CTDA BSFixedString parameter probe passed");
     return true;
+}
+
+bool RomanceConditionHook::Installed()
+{
+    return g_enabled.load();
 }

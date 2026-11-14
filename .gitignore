@@ -37,3 +37,11 @@ imgui.ini
 *.7z
 *.log
 *.dmp
+
+# Icon masters, their generator and the tests of local tooling stay outside this repository
+/assets/
+/tools/view-icons/
+/tests/view/Icons.mjs
+/tests/CheckScript.mjs
+/tests/OStimDocs.mjs
+/tests/SkyrimNetLayer.mjs

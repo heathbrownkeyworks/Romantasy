@@ -10,7 +10,9 @@ Romantasy statically links CommonLibSSE-NG. A compiled native plugin containing 
 
 The public Papyrus declaration file `Source/Scripts/Romantasy.psc` is separately available under the MIT License in `licenses/Romantasy-API-MIT.txt`. This allows follower authors to compile against the declarations without receiving an additional license requirement from that interface file. It does not relicense Romantasy's native implementation or any dependency linked by a consumer.
 
-Dear ImGui retains its MIT License in `licenses/Dear-ImGui-MIT.txt`.
+## OStim interface headers
+
+The files under `src/ostim/api/` are OStim Standalone's own plugin interface headers, copied unchanged. They are under GPL-3.0 alone, with no additional permissions. The permissions in [EXCEPTIONS.md](EXCEPTIONS.md) are Romantasy's own and do not extend to those files. Their licence text is `src/ostim/api/LICENSE`, shipped as `licenses/OStim-GPL-3.0.txt`.
 
 Fonts and other third-party material retain their own licenses. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 

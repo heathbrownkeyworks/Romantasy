@@ -1,6 +1,7 @@
 # Inert template: rename to YourFollower.toml after replacing the example identity.
 # form_id is the NPC_ base record's plugin-local ID, not its ACHR reference.
-schema_version = 1
+# schema_version 2 adds favorites, pet_peeves and [unlocks]; version 1 files still load.
+schema_version = 2
 
 [npc]
 plugin = "ExampleFollower.esp"
@@ -8,5 +9,14 @@ form_id = "0x000800"
 
 [romance]
 starting_level = "Stranger"
-likes = ["Quests Completed", "Dungeons Cleared"]
-dislikes = ["Murders"]
+likes = ["Quests Completed"]
+# Up to three favorites count double when earned.
+favorites = ["Dungeons Cleared"]
+dislikes = ["Items Stolen"]
+# Up to three pet peeves cost double.
+pet_peeves = ["Murders"]
+
+# Optional lines shown when a tier is reached: 1 to 4 per tier, 60 characters each. Stranger cannot be named.
+[unlocks]
+Friend = ["She tells you where she grew up"]
+Lover = ["A key to her house", "Her mother's ring"]

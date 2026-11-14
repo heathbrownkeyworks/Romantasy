@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en" class="asleep">
+<head>
+<meta charset="utf-8">
+<title>Romantasy</title>
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/ledger.css">
+<link rel="stylesheet" href="css/enrollment.css">
+<link rel="stylesheet" href="css/modals.css">
+</head>
+<body>
+<div id="app">
+    <div id="sky"><i class="orb o1"></i><i class="orb o2"></i><i class="orb o3"></i><i class="orb o4"></i></div>
+    <div id="petals"></div>
+    <aside id="roster" class="glass"></aside>
+    <main id="pane"></main>
+    <div id="takeover"></div>
+    <div id="modal"></div>
+    <div id="popup"></div>
+    <div id="legend"></div>
+    <div id="notice"></div>
+</div>
+<script src="js/bridge.js"></script>
+<script src="js/strings.js"></script>
+<script src="js/format.js"></script>
+<script src="js/fit.js"></script>
+<script src="js/tiers.js"></script>
+<script src="js/state.js"></script>
+<script src="js/notice.js"></script>
+<script src="js/enrollment.js"></script>
+<script src="js/roster.js"></script>
+<script src="js/ledger.js"></script>
+<script src="js/settings.js"></script>
+<script src="js/journal.js"></script>
+<script src="js/modals.js"></script>
+<script src="js/popup.js"></script>
+<script src="js/pad.js"></script>
+<script src="js/app.js"></script>
+<script>
+// Browser preview: dev/mock.js stands in for the plugin. Never shipped.
+(function () {
+    if (!/[?&]mock\b/.test(location.search)) return;
+    // &pad adds the dev copy of Magelight's gamepad helper, which mock.js feeds as the host would.
+    ['dev/fixture.js', 'dev/fixture-empty.js', 'dev/mock.js'].concat(/[?&]pad\b/.test(location.search) ? ['dev/magelight-gamepad.js'] : []).forEach(function (src) {
+        var s = document.createElement('script'); s.src = src; s.async = false; document.body.appendChild(s);
+    });
+})();
+</script>
+</body>
+</html>

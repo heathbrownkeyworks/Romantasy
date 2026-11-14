@@ -1,0 +1,8 @@
+schema_version = 1
+
+[npc]
+plugin = "Fixture"
+form_id = "0x000804"
+
+[romance]
+likes = ["Quests Completed"]

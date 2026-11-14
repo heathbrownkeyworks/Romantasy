@@ -1,5 +1,7 @@
 #pragma once
 
+#include "romance/Mood.h"
+
 #include <algorithm>
 #include <cstdint>
 #include <optional>
@@ -7,13 +9,14 @@
 
 namespace romantasy::conditions
 {
-    enum class Query { None, Registered, Level, Points };
+    enum class Query { None, Registered, Level, Points, Mood };
 
     [[nodiscard]] constexpr Query ParseQuery(std::string_view name) noexcept
     {
         if (name == "Romantasy_Registered") return Query::Registered;
         if (name == "Romantasy_Level") return Query::Level;
         if (name == "Romantasy_Points") return Query::Points;
+        if (name == "Romantasy_Mood") return Query::Mood;
         return Query::None;
     }
 
@@ -28,5 +31,16 @@ namespace romantasy::conditions
         case Query::Points: return points ? static_cast<double>(*points) : -1.0;
         default: return std::nullopt;
         }
+    }
+
+    // Mood: 0 for an actor Romantasy does not manage, else 1 Strained, 2 Settled, 3 Warm
+    // (Settled when the bond has no mood yet).
+    [[nodiscard]] constexpr double EvaluateMood(
+        std::optional<std::int32_t> points, std::optional<mood::State> state) noexcept
+    {
+        if (!points) {
+            return 0.0;
+        }
+        return static_cast<double>(state.value_or(mood::State::Settled));
     }
 }

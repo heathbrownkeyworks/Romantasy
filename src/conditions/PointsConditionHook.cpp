@@ -10,6 +10,7 @@ namespace
     RE::TESFaction* g_romancePointsFaction = nullptr;
     RE::SCRIPT_FUNCTION::Condition_t* g_originalGetFactionRank = nullptr;
     bool g_installed = false;
+    bool g_factionFound = false;
 
     bool EvaluateGetFactionRank(
         RE::TESObjectREFR* a_subject,
@@ -51,6 +52,7 @@ bool PointsConditionHook::Install()
     }
 
     g_romancePointsFaction = LookupRomancePointsFaction();
+    g_factionFound = g_romancePointsFaction != nullptr;
     if (!g_romancePointsFaction) {
         logger::critical("Romantasy could not find ROM_RomancePoints; raw-points dialogue conditions are disabled");
         return false;
@@ -83,4 +85,14 @@ bool PointsConditionHook::Install()
         "Romantasy raw-points dialogue condition installed with proxy faction {:08X}",
         g_romancePointsFaction->GetFormID());
     return true;
+}
+
+bool PointsConditionHook::Installed()
+{
+    return g_installed;
+}
+
+bool PointsConditionHook::FactionFound()
+{
+    return g_factionFound;
 }

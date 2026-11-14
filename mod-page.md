@@ -1,4 +1,4 @@
-# Romantasy 3.0.1
+# Romantasy 4.0.0
 
 *A Ledger of Hearts.*
 
@@ -19,7 +19,7 @@ personality edits save immediately and affect subsequent actions without a reloa
 
 - 58 tracked gameplay statistics, with a separate opinion for each companion.
 - Six relationship tiers, from Stranger to Spouse.
-- A native dashboard showing companions, points, milestones, likes/dislikes, and
+- A ledger showing companions, points, milestones, likes/dislikes, and
   recent changes.
 - Relationship gain/loss popups, with independent settings and combat deferral.
 - New bond, personality editing, bond reset, and removal for player-created profiles.
@@ -37,12 +37,12 @@ personality edits save immediately and affect subsequent actions without a reloa
 
 ## Requirements and installation
 
-Install SKSE matching your Skyrim SE/AE runtime and Address Library for SKSE
-Plugins. Install the complete Romantasy package with your mod manager, keep its
-fonts/scripts/sounds, and enable CS_Romantasy.esp.
+Install SKSE matching your Skyrim SE/AE runtime, Address Library for SKSE
+Plugins, and Magelight UI 1.6 or newer. Install the complete Romantasy package
+with your mod manager, keep its page files/scripts/sounds, and enable
+CS_Romantasy.esp.
 
-No external UI framework, SkyUI, or MCM is required. The native dashboard does
-not support Skyrim VR.
+SkyUI and MCM are not required. The ledger does not support Skyrim VR.
 
 ## Opening and controls
 
@@ -113,7 +113,7 @@ Supplied profile edits require a game restart; in-game player edits apply immedi
 
 ## Permissions and credits
 
-Created by ColdSun. Built with SKSE, CommonLibSSE-NG, Dear ImGui, and toml++.
+Created by ColdSun. Built with SKSE, CommonLibSSE-NG, Magelight UI, and toml++.
 Native source is GPL-3.0-or-later with the documented modding/linking exceptions.
 Public Papyrus declarations remain MIT. See the bundled license files.
 

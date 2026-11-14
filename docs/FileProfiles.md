@@ -15,7 +15,7 @@ MO2 mods use `SKSE/Plugins/Romantasy/Profiles/` within the mod folder. The shipp
 `ExampleFollower.toml.example` is inert until renamed and configured.
 
 ```toml
-schema_version = 1
+schema_version = 2
 
 [npc]
 plugin = "ExampleFollower.esp"
@@ -23,8 +23,14 @@ form_id = "0x000800"
 
 [romance]
 starting_level = "Stranger"
-likes = ["Quests Completed", "Dungeons Cleared"]
-dislikes = ["Murders"]
+likes = ["Quests Completed"]
+favorites = ["Dungeons Cleared"]
+dislikes = ["Items Stolen"]
+pet_peeves = ["Murders"]
+
+[unlocks]
+Friend = ["She tells you where she grew up"]
+Lover = ["A key to her house", "Her mother's ring"]
 ```
 
 Use the NPC_ base record's **plugin-local** hexadecimal ID, not an ACHR reference
@@ -50,11 +56,58 @@ registration API cannot replace it. Do not call `RegisterAuthorFollower` for a
 file-defined NPC. Existing point adjustments and preference events can still use
 Romantasy's Papyrus API; native file profiles need no enrollment script or globals.
 
+## Favorites, pet peeves and unlock lines
+
+Version 2 files add three things. Version 1 files still load and behave as before.
+Set `schema_version` to 1 or 2 (3 adds `[moments]`, below).
+
+- `favorites` in `[romance]` lists statistics like `likes` does, but each one
+  counts double when earned.
+- `pet_peeves` lists statistics like `dislikes` does, but each one costs double.
+- A personality may have at most 3 favorites and at most 3 pet peeves. A statistic
+  may appear in one list only. A file that breaks either rule is rejected.
+- `[unlocks]` is a table keyed by tier name: Acquaintance, Friend, Confidant, Lover
+  or Spouse. Stranger cannot be named. Each tier takes a list of 1 to 4 lines, and
+  each line is 1 to 60 characters.
+
+Unlock lines are text for the player, not conditions. They do not unlock anything
+by themselves. The ledger names the next tier's lines on the follower's page, and
+the tier popup lists them under "Unlocked" when the tier is reached. Only files in
+`Profiles/` may have `[unlocks]`. A player profile may not.
+
+## Moments (schema version 3)
+
+Version 3 adds one optional table, `[moments]`, for followers who share time with the
+player in an OStim scene. See [OStim.md](OStim.md) for what a moment is. Version 1
+and 2 files load as before. Set `schema_version` to 3 to use the table.
+
+```toml
+schema_version = 3
+
+[moments]
+affection = "Friend"      # a tier name, or "never"
+closeness = "Confidant"
+intimacy  = "Lover"
+feeling   = "warm"        # "warm" (default), "treasured" (double points), "reserved" (counts, no points)
+```
+
+- Each key is optional. A welcome tier is one of Stranger, Acquaintance, Friend,
+  Confidant, Lover or Spouse, or `"never"`. The defaults are Friend, Confidant and Lover.
+- An unknown key, an unknown tier or a bad `feeling` is an error and the file is rejected.
+  `[moments]` in a version 1 or 2 file is an unknown field.
+- The checker warns when a deeper kind is welcome at a lower tier than a lighter one.
+- Only files in `Profiles/` may have `[moments]`. A player profile may not, so player-made
+  bonds use the defaults.
+
+Romantasy writes a player-made bond file as version 2 only when the bond has a
+favorite or a pet peeve. Otherwise it stays version 1. Old saves and version 1
+files work unchanged.
+
 ## New bond and player-owned profiles
 
-In 3.0, **New bond** writes a TOML profile to
-`Data/SKSE/Plugins/Romantasy/PlayerProfiles/`. Edit personality updates that file;
-neither action adds romance or preference factions. Player profiles use the same
+**New bond** saves the bond's personality in your save game. It also writes a TOML
+copy to `Data/SKSE/Plugins/Romantasy/PlayerProfiles/`. Edit personality updates
+both; neither action adds romance or preference factions. Player profiles use the same
 plugin/local NPC-base identity, statistic names, and dialogue queries as supplied
 profiles. No Creation Kit or follower-plugin changes are needed to add a bond.
 This does not create voiced dialogue for an NPC that has none.
@@ -65,10 +118,12 @@ takes priority over a player profile for the same NPC. A player profile continue
 to show **Player-created personality**, with edit, reset, and remove controls.
 NPC bases generated at runtime have no stable plugin identity and are not offered.
 
-Configuration is shared by all saves that use these files. Editing preferences or
-removing a bond affects those saves; **earned points stay in each save's SKSE
-cosave**. For non-unique NPCs, references share the base profile's preferences but
-keep independent balances. Reset bond resets only the selected actor in the current
+The save is the truth for player-created bonds. The files in `PlayerProfiles` are
+copies. Romantasy reads them for new characters and for saves made before this
+version. A save that already holds its bonds ignores the files for other NPCs, so
+editing or deleting a file does not change that save. Earned points and bonds both
+live in each save's SKSE cosave. For non-unique NPCs, references share the base
+profile's preferences but keep independent balances. Reset bond resets only the selected actor in the current
 save and does not change profile defaults. Profiles load at startup; in-game edits
 also apply immediately.
 
@@ -79,18 +134,18 @@ their providing mod. Keep PlayerProfiles when updating Romantasy; deployment doe
 not replace them. An MO2 profile isolates configuration only when it enables a
 different set of profile files.
 
-Remove bond writes `enabled = false` under `[romance]` and removes it from the
-ledger. This small disabled file is intentional: it prevents old save enrollment
-markers or lower-priority MO2 files from reviving the bond. New bond can re-enable
-it with fresh preferences and zero points for the selected actor. Do not delete
-the disabled file if you want that removal to survive loading an older save.
-`enabled` is accepted only in PlayerProfiles, not in mod-supplied Profiles.
+Remove bond removes the bond from the current save and from the ledger. It never
+touches the file in `PlayerProfiles`, so other saves keep their bond. New bond can
+add it again with fresh preferences and zero points for the selected actor.
+Romantasy no longer writes `enabled = false`. An `enabled` key in a file is still
+read, and only in PlayerProfiles, not in mod-supplied Profiles.
 
 Old player-enrolled bonds migrate when their actors become available. Romantasy
 reads their existing preferences, writes the player file, preserves saved points,
 and then clears their legacy romance/preference factions. Other factions are
-untouched. A write failure leaves the previous state intact and logs the reason;
-no success is reported for a failed player edit. Migration can retry when the
+untouched. If the copy in `PlayerProfiles` cannot be written, the bond is still
+stored in the save and the failure is logged; the write is not retried automatically.
+A migration that does not complete keeps the old enrollment and runs again when the
 actor is refreshed. If several old instances share one NPC base, the first
 successfully migrated instance supplies that base's preferences.
 
@@ -110,6 +165,7 @@ Subject**, with the following text in its variable-name parameter:
 | `Romantasy_Registered` | 1 when Romantasy has a profile/state for this actor | 0 |
 | `Romantasy_Level` | Current level, 1 through 6 | 0 |
 | `Romantasy_Points` | Current earned points | -1 |
+| `Romantasy_Mood` | 1 Strained, 2 Settled, 3 Warm. A bond that has never followed reads 2 | 0 |
 
 Example for a line requiring Friend or higher: add these two **AND** conditions
 to its INFO, both running on Subject:
@@ -123,6 +179,13 @@ For a point threshold, replace the second condition with:
 
 ```text
 GetGraphVariableInt  Romantasy_Points      >= 1250
+```
+
+For a line that plays only while the follower is feeling warm toward the player:
+
+```text
+GetGraphVariableInt  Romantasy_Registered  == 1
+GetGraphVariableInt  Romantasy_Mood        == 3
 ```
 
 Always include the Registered guard, especially for `<`, `<=`, and `!=` tests.
@@ -160,11 +223,26 @@ verified with the actual follower. No missing-DLL compatibility claim is made ye
 
 ## Persistence and migration boundaries
 
-TOML contains supplied or player-created configuration. Earned points remain in each save's SKSE cosave and
-use the existing serialized actor-reference identity. Legacy base-keyed balances
+TOML contains supplied configuration and copies of player-created configuration.
+Earned points and player-created bonds are stored in each save's SKSE cosave.
+Each is keyed by the NPC's plugin file name and local ID, so a load order change
+does not move or lose them. If a follower's plugin is not loaded, Romantasy keeps
+that bond's points and writes them back on every save. They return when the plugin
+returns. A HUD line says how many bonds are being kept, once per game session, and
+again if the number changes. This protection starts with the first save made with
+this version; a bond that an older version already dropped cannot be recovered. A damaged
+record in the cosave costs only the entries after the damage. Legacy base-keyed balances
 may be inherited by unique file-defined NPCs, while spawned instances must not
 inherit another instance's balance. Loading/reverting saves retains configuration
 and rebuilds runtime state from the appropriate save.
+
+Each bond's journal (its recent changes, daily totals, biggest moments and
+milestones) is also stored in the save, in its own record. It is kept and written
+back for a follower whose plugin is not loaded, the same as points, and it returns
+with the plugin. A journal read from a save is repaired before use, and a journal
+that cannot be written never costs the points record. A bond from before the journal
+existed starts its journal at its next change. Removing a bond erases its journal. A save loaded and saved with an older Romantasy
+loses its journals.
 
 Romantasy does not strip factions or masters from follower ESPs, rewrite
 their scripts/dialogue, or delete the legacy Romantasy records. A follower's own
@@ -181,6 +259,22 @@ that the declared plugin or NPC exists in the load order.
 ```powershell
 .\tools\romantasy-profile-check.exe 'D:\path\to\SKSE\Plugins\Romantasy\Profiles'
 ```
+
+You can also give it one or more files, or a folder (every `.toml` directly in it,
+not its subfolders). Each finding is one line, `file(line): error: message` or
+`file(line): warning: message`; the line is left out when it is not known. Options:
+
+- `--strict` makes warnings change the exit code.
+- `--json` prints the findings as one JSON array (file, line, level, message) and
+  nothing else.
+- `--player` checks the files as player profiles.
+
+Warnings are likely mistakes in a file that still loads: no likes, dislikes,
+favorites or pet peeves at all, a key the format does not know (with the nearest
+known name suggested), an unlock line over 48 characters (it will wrap on the popup; 48 fit on one line),
+and a `plugin` name without an `.esp`, `.esm` or `.esl` ending. Exit codes: 0 clean
+(warnings alone give 0), 1 at least one error, 2 warnings only with `--strict`,
+3 the command line was wrong. See [AuthorTesting.md](AuthorTesting.md).
 
 Build from the repository root. Close Skyrim and editors before building. For an
 isolated candidate, set `XSE_TES5_MODS_PATH` to a staging folder in that shell:
@@ -225,6 +319,14 @@ incomplete; untested cases remain **NOT RUN**.
 
 The following table is the shared parser/runtime vocabulary. Likes add the listed
 points per event/delta; dislikes subtract them, subject to normal Romantasy rules.
+
+The player's **Relationship pace** setting changes what a gain from these events is
+worth: Fast doubles it, Slow burn halves it (the odd half is carried to the next
+gain) and holds a bond at the top of the tier below until enough days together have
+passed (Friend 3, Confidant 7, Lover 14, Spouse 21). Losses are never changed, and
+the amounts a follower's script sends through `ModifyPoints` or `ApplyPreference`
+are never doubled or halved, though under Slow burn a gate can still hold a script's
+gain until enough days together have passed. The values in the table are the Standard pace.
 
 | Label | Stable identifier | Points |
 |---|---|---|

@@ -1,0 +1,12 @@
+{
+  "id": "coldsun.romantasy",
+  "type": "bundle",
+  "title": "Romantasy",
+  "tagline": "Tells SkyrimNet how close a companion is to the player.",
+  "description": "Adds one short line to a companion's prompt: their Romantasy bond tier, mood and days together. It needs the Romantasy mod and prints nothing for anyone without a bond.",
+  "author": "coldsun",
+  "tags": ["romance"],
+  "nsfw": false,
+  "version": "1.0.0",
+  "min_skyrimnet_version": "0.30.0"
+}

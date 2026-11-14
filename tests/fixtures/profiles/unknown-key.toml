@@ -1,0 +1,9 @@
+schema_version = 2
+
+[npc]
+plugin = "Fixture.esp"
+form_id = "0x000803"
+
+[romance]
+likess = ["Quests Completed"]
+dislikes = ["Items Stolen"]

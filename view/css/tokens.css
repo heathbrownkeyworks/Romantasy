@@ -1,0 +1,109 @@
+/* Rosewater: rose-quartz glass over a slow wine-and-magenta sky.
+   Design tokens and the bundled fonts (OFL 1.1, Latin subsets, WOFF: Ultralight reads no WOFF2).
+   Names in other alphabets fall through to the Windows fonts at the end of each stack. */
+
+@font-face { font-family: 'Bodoni Moda'; font-style: normal; font-weight: 400; src: url('../fonts/bodoni-moda-latin-400-normal.woff') format('woff'); }
+@font-face { font-family: 'Bodoni Moda'; font-style: italic; font-weight: 400; src: url('../fonts/bodoni-moda-latin-400-italic.woff') format('woff'); }
+@font-face { font-family: 'Bodoni Moda'; font-style: normal; font-weight: 500; src: url('../fonts/bodoni-moda-latin-500-normal.woff') format('woff'); }
+@font-face { font-family: 'Bodoni Moda'; font-style: normal; font-weight: 600; src: url('../fonts/bodoni-moda-latin-600-normal.woff') format('woff'); }
+@font-face { font-family: 'Bodoni Moda'; font-style: italic; font-weight: 600; src: url('../fonts/bodoni-moda-latin-600-italic.woff') format('woff'); }
+@font-face { font-family: 'Jost'; font-style: normal; font-weight: 300; src: url('../fonts/jost-latin-300-normal.woff') format('woff'); }
+@font-face { font-family: 'Jost'; font-style: normal; font-weight: 400; src: url('../fonts/jost-latin-400-normal.woff') format('woff'); }
+@font-face { font-family: 'Jost'; font-style: normal; font-weight: 500; src: url('../fonts/jost-latin-500-normal.woff') format('woff'); }
+@font-face { font-family: 'Jost'; font-style: normal; font-weight: 600; src: url('../fonts/jost-latin-600-normal.woff') format('woff'); }
+@font-face { font-family: 'Pinyon Script'; font-style: normal; font-weight: 400; src: url('../fonts/pinyon-script-latin-400-normal.woff') format('woff'); }
+
+:root {
+    --wine-900: #10030a;
+    --wine-700: #2b0920;
+    --plum: #6a1648;
+    --rose: #ff5c93;
+    --rose-hot: #ff2f7a;
+    --magenta: #c2185b;
+    --blush: #ffc7d9;
+    --petal: #ffe9f0;
+    --rosegold: #f4c6ad;
+    --rosegold-deep: #d9937a;
+    --ink: #fff4f7;
+    --mute: rgba(255, 226, 236, .64);
+    --faint: rgba(255, 226, 236, .36);
+    --glass-edge: rgba(255, 255, 255, .24);
+    /* A panel's translucent face, the edge of a control (a field, a switch, a choice, a button) and of a row in a list. */
+    --glass-face: linear-gradient(140deg, rgba(255, 255, 255, .17) 0%, rgba(255, 255, 255, .055) 40%, rgba(255, 150, 190, .085) 100%);
+    --control-edge: rgba(255, 255, 255, .3);
+    --row-edge: rgba(255, 255, 255, .10);
+    /* The edge of the selected row and of a button that removes or resets something. */
+    --row-edge-selected: rgba(255, 196, 214, .75);
+    --danger-edge: rgba(255, 120, 140, .7);
+    /* The edge of a small tool button (the bond tools, Journal) and of the one that removes a bond. */
+    --tool-edge: rgba(255, 255, 255, .2);
+    --tool-danger-edge: rgba(255, 120, 140, .5);
+    /* Every hairline's width, and the focus ring's width and colour. */
+    --hairline: 1px;
+    --focus-width: 2px;
+    --focus-ring: var(--rosegold);
+    --wound: #8f8aa6;
+    /* The scrollbar thumb inside a card: the rose gold at low alpha, brighter under the pointer. */
+    --scroll-thumb: rgba(244, 198, 173, .34);
+    --scroll-thumb-hover: rgba(244, 198, 173, .62);
+
+    /* Health levels: the mark beside an item (and on the Settings control). A word always goes with warn and error. */
+    --health-error: var(--rose-hot);
+    --health-warn: var(--rosegold);
+    --health-note: var(--faint);
+
+    /* The bond's mood chip: warm reads in the rose gold, strained cool and dim, settled the quiet default. */
+    --mood-warm: var(--rosegold);
+    --mood-warm-edge: rgba(244, 198, 173, .55);
+    --mood-settled: var(--mute);
+    --mood-settled-dot: var(--faint);
+    --mood-settled-edge: var(--glass-edge);
+    --mood-strained: var(--wound);
+    --mood-strained-text: #bdb8d6;
+    --mood-strained-edge: rgba(143, 138, 166, .45);
+
+    /* The solid base under every sheet that sits over text (modals, takeover, popup card), and the glass over it. */
+    --sheet-base: linear-gradient(160deg, #6b1c4c, #34092a);
+    --sheet-face: linear-gradient(150deg, rgba(255, 255, 255, .26), rgba(255, 120, 170, .14) 45%, rgba(120, 20, 80, .42));
+    --sheet-edge: rgba(255, 255, 255, .3);
+    /* The same base cooled to violet, for a wounded bond and a warning (the mock-up's loss sheet). */
+    --sheet-base-cool: linear-gradient(160deg, #3c2c5c, #1c1030);
+    --sheet-face-cool: linear-gradient(150deg, rgba(210, 200, 255, .2), rgba(110, 90, 150, .14) 45%, rgba(30, 12, 44, .6));
+    /* The whisper card's plate on the HUD: the darkest wine at 82%, so it reads over snow and over night. */
+    --whisper-plate: rgba(16, 3, 10, .82);
+
+    --display: 'Bodoni Moda', serif, 'Segoe UI', 'Microsoft YaHei', 'Yu Gothic', 'Malgun Gothic', sans-serif;
+    --body: 'Jost', 'Segoe UI', 'Microsoft YaHei', 'Yu Gothic', 'Malgun Gothic', sans-serif;
+    --script: 'Pinyon Script', 'Segoe UI', 'Microsoft YaHei', 'Yu Gothic', 'Malgun Gothic', sans-serif;
+
+    --ease-out: cubic-bezier(.2, .8, .2, 1);
+    --ease-spring: cubic-bezier(.3, 1.6, .5, 1);
+}
+
+/* Stronger contrast (the setting puts data-contrast="high" on the root): text at full strength, panels and sheets
+   solid, hairlines doubled and brighter, a thicker and lighter focus ring. base.css also drops the glass sheen and the
+   petal and drift backdrops. Measured by tests/view/Comfort.mjs: text 7:1 and muted text 4.5:1 at least on every plate. */
+html[data-contrast="high"] {
+    --ink: #ffffff;
+    --mute: rgba(255, 232, 240, .88);
+    --faint: rgba(255, 226, 236, .72);
+    --glass-face: #22061a;
+    --glass-edge: rgba(255, 255, 255, .72);
+    --control-edge: rgba(255, 255, 255, .72);
+    --row-edge: rgba(255, 255, 255, .42);
+    --row-edge-selected: #ffc4d6;
+    --danger-edge: #ff8c9e;
+    --tool-edge: rgba(255, 255, 255, .72);
+    --tool-danger-edge: #ff8c9e;
+    --hairline: 2px;
+    --sheet-face: linear-gradient(transparent, transparent);
+    --sheet-face-cool: linear-gradient(transparent, transparent);
+    --sheet-base: #2b0920;
+    --sheet-base-cool: #1c1030;
+    --sheet-edge: rgba(255, 255, 255, .72);
+    --focus-width: 4px;
+    --focus-ring: #ffe3d3;
+    --scroll-thumb: rgba(244, 198, 173, .7);
+    --scroll-thumb-hover: rgba(244, 198, 173, .95);
+    --whisper-plate: rgb(16, 3, 10);
+}

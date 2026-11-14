@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Romantasy whisper</title>
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/whisper.css">
+</head>
+<body>
+<div id="whisper"></div>
+<script src="js/strings.js"></script>
+<script src="js/format.js"></script>
+<script src="js/whisper.js"></script>
+<script>
+// Browser preview: dev/whisper-mock.js stands in for the plugin. Never shipped.
+(function () {
+    if (!/[?&]mock\b/.test(location.search)) return;
+    var s = document.createElement('script'); s.src = 'dev/whisper-mock.js'; s.async = false; document.body.appendChild(s);
+})();
+</script>
+</body>
+</html>

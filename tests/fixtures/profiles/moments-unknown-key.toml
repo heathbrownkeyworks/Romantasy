@@ -1,0 +1,13 @@
+schema_version = 3
+
+[npc]
+plugin = "Fixture.esp"
+form_id = "0x000811"
+
+[romance]
+likes = ["Quests Completed"]
+dislikes = ["Items Stolen"]
+
+[moments]
+affection = "Friend"
+closenes = "Confidant"

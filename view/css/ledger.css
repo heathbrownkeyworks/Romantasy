@@ -1,0 +1,519 @@
+/* The ledger: roster on the left, the selected bond's dossier on the right.
+   Ported from the Rosewater mock-up. Inner shadows are gradient layers; anything that
+   grows (vial, thread) grows by transform. */
+
+/* ---------- roster ---------- */
+#roster { display: flex; flex-direction: column; padding: 26px 18px 18px; }
+#roster .brand { display: flex; align-items: center; gap: 10px; padding: 0 10px; }
+#roster .brand .art { width: 40px; height: 40px; animation: beat 2.6s ease-in-out infinite; }
+#roster .brand h1 { font: italic 600 34px/1 var(--display); letter-spacing: .01em; }
+#roster .company { display: flex; align-items: flex-end; justify-content: space-between; padding: 14px 10px 16px; }
+/* The heading keeps its width (the counts give way first), up to 60% of the line so the counts keep room: a longer
+   translation ends in an ellipsis there (its title has it whole). */
+#roster .company em { flex: none; max-width: 60%; font: 400 38px/1.1 var(--script); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 8px; }
+/* One line while it fits beside the heading; past that its two parts take two lines, which stay under the heading's
+   height (2 x 15px against 41.8px), so the head never grows and nothing runs past the roster's edge. A part wider than
+   the counts on its own (a longer translation) ends in an ellipsis inside them. */
+#roster .counts { min-width: 0; font: 500 10px/1.5 var(--body); text-align: right; letter-spacing: .2em; text-transform: uppercase; color: var(--mute); }
+#roster .counts > span { display: inline-block; max-width: 100%; vertical-align: top; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* the roster head: the find field over the order choice; it keeps its height, the rows scroll under it */
+#roster .rhead { flex: none; display: flex; flex-direction: column; gap: 8px; padding: 0 8px 12px 2px; }
+#roster .find { position: relative; display: block; }
+#roster .findbox {
+    display: block; width: 100%; height: 42px; padding: 0 44px 0 44px; border-radius: 999px; outline: none;
+    border: var(--hairline) solid var(--control-edge); color: var(--ink); caret-color: var(--rosegold);
+    background: linear-gradient(180deg, rgba(0, 0, 0, .45) 0, rgba(0, 0, 0, 0) 7px), rgba(22, 2, 13, .55);
+    font: 400 16px/1 var(--body); transition: border-color .2s;
+}
+#roster .findbox::placeholder { color: var(--faint); }
+#roster .findbox:focus { border-color: rgba(244, 198, 173, .9); }
+#roster .find .seek { position: absolute; left: 16px; top: 11px; width: 20px; height: 20px; }
+#roster .clear {
+    position: absolute; right: 6px; top: 6px; width: 30px; height: 30px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; transition: opacity .2s, background .2s;
+}
+#roster .clear:hover { background: rgba(255, 255, 255, .12); }
+#roster .clear:disabled { opacity: 0; pointer-events: none; }
+#roster .clear .glyph { transform: scale(.7); }
+#roster .order {
+    display: flex; gap: 4px; padding: 4px; border-radius: 999px; border: var(--hairline) solid var(--control-edge);
+    background: linear-gradient(180deg, rgba(0, 0, 0, .45) 0, rgba(0, 0, 0, 0) 6px), rgba(22, 2, 13, .5);
+}
+/* Three equal places: a word too long for its place ends in an ellipsis (its title has it whole), never pushing another out. */
+#roster .order .opt { flex: 1; min-width: 0; height: 32px; padding: 0 10px; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* a group's heading inside the rows list, with its count */
+#roster .group {
+    flex: none; display: flex; align-items: baseline; justify-content: space-between; padding: 4px 10px 0;
+    font: italic 600 19px/1.2 var(--display); color: var(--rosegold);
+}
+#roster .group .gcount { font: 500 11px/1 var(--body); letter-spacing: .2em; color: var(--mute); }
+#roster .rows .none { flex: none; padding: 8px 10px; font: italic 400 16px/1.5 var(--display); color: var(--mute); }
+
+#roster .rows { position: relative; flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 8px; overflow-y: auto; padding: 2px 8px 2px 2px; }
+.row {
+    position: relative; display: flex; align-items: center; gap: 12px; height: 70px; flex: none; width: 100%; padding: 0 16px 0 10px;
+    border-radius: 20px; border: var(--hairline) solid var(--row-edge);
+    background: linear-gradient(120deg, rgba(255, 255, 255, .085), rgba(255, 255, 255, .02));
+    transition: transform .25s var(--ease-out), background .25s, border-color .25s, box-shadow .25s;
+}
+#roster.enter .row { animation: rise .6s var(--ease-out) both; animation-delay: calc(var(--i) * 55ms + 120ms); }
+.row:hover { transform: translateX(5px); border-color: var(--control-edge); background: linear-gradient(120deg, rgba(255, 255, 255, .16), rgba(255, 255, 255, .04)); }
+.row.selected {
+    border-color: var(--row-edge-selected);
+    background: linear-gradient(180deg, rgba(255, 255, 255, .45) 0, rgba(255, 255, 255, 0) 2px),
+        linear-gradient(120deg, rgba(255, 92, 147, .42), rgba(255, 160, 130, .14) 70%, rgba(255, 255, 255, .06));
+    box-shadow: 0 14px 30px -12px rgba(255, 47, 122, .75);
+}
+.row .art { width: 50px; height: 50px; flex: none; transition: transform .35s var(--ease-spring); }
+.row:hover .art, .row.selected .art { transform: scale(1.14) rotate(-5deg); }
+.row .dot { position: absolute; left: 52px; top: 14px; width: 10px; height: 10px; border-radius: 50%; background: #6c5562; border: 2px solid #3a1029; }
+.row .dot.on { background: #7dffb6; box-shadow: 0 0 10px #4dffa0; animation: pulse 2.4s ease-in-out infinite; }
+.row .who { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 5px; }
+.row .role { display: block; font: 500 9.5px/1.1 var(--body); letter-spacing: .26em; text-transform: uppercase; color: var(--mute); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.row .away-tag { color: var(--blush); }
+.row .away-tag::after { content: '·'; margin: 0 .5em; color: var(--mute); }
+.row .name { font: 500 21px/1.1 var(--display); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.row .bar { display: block; height: 4px; border-radius: 9px; background: rgba(20, 0, 12, .45); overflow: hidden; }
+.row .bar .fill { display: block; height: 100%; border-radius: 9px; background: linear-gradient(90deg, var(--magenta), var(--rose), var(--blush)); }
+.row .rank { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex: none; }
+.row .tiername { font: 400 24px/1 var(--script); color: var(--rosegold); padding-right: 4px; }
+.row .pts { font: 500 12px/1 var(--body); color: var(--mute); }
+.row.away .art, .row.away .name { opacity: .72; }
+
+#roster .rail { display: flex; gap: 8px; padding-top: 14px; }
+#roster .rail .btn.primary { flex: 1; padding: 0 16px; }
+#roster .rail .btn.round { flex: none; }
+#roster .rail .btn.round .art { width: 30px; height: 30px; }
+/* the Settings control's mark while health is warn or error */
+#roster .rail .mark {
+    position: absolute; top: 8px; right: 8px; width: 11px; height: 11px; border-radius: 50%; pointer-events: none;
+    border: 2px solid var(--wine-700); background: var(--health-warn);
+}
+#roster .rail .mark[data-level="error"] { background: var(--health-error); }
+
+/* drawn glyphs until their icons arrive */
+.glyph { position: relative; display: block; width: 20px; height: 20px; }
+.glyph.close::before, .glyph.close::after {
+    content: ''; position: absolute; left: 9px; top: 1px; width: 2px; height: 18px; border-radius: 2px; background: var(--ink);
+}
+.glyph.close::before { transform: rotate(45deg); }
+.glyph.close::after { transform: rotate(-45deg); }
+/* a left chevron: two bars meeting at the point */
+.glyph.back::before, .glyph.back::after {
+    content: ''; position: absolute; left: 4px; width: 12px; height: 2px; border-radius: 2px; background: var(--ink); transform-origin: left center;
+}
+.glyph.back::before { top: 10px; transform: rotate(-45deg); }
+.glyph.back::after { top: 9px; transform: rotate(45deg); }
+
+/* ---------- dossier ---------- */
+#pane.dossier { display: grid; grid-template-rows: 280px minmax(0, 1fr) 212px; gap: 18px; }
+#pane.enter > * { animation: rise .7s var(--ease-out) both; }
+#pane.enter > :nth-child(2) { animation-delay: .08s; }
+#pane.enter > :nth-child(3) { animation-delay: .16s; }
+
+.hero { display: flex; align-items: center; padding: 0 46px 0 0; }
+.heartwrap { position: relative; width: 300px; height: 278px; flex: none; display: flex; align-items: center; justify-content: center; }
+.heartwrap .heart { position: relative; z-index: 2; width: 214px; height: 214px; animation: beat 2.6s ease-in-out infinite; }
+.glow { position: absolute; left: 50%; top: 50%; width: 400px; height: 400px; margin: -200px 0 0 -200px; border-radius: 50%; background: radial-gradient(circle, rgba(255, 92, 147, .6), rgba(255, 92, 147, 0) 62%); animation: pulse 2.6s ease-in-out infinite; }
+.halo { position: absolute; left: 50%; top: 50%; width: 210px; height: 210px; margin: -105px 0 0 -105px; border-radius: 50%; border: 1px solid rgba(255, 200, 220, .7); opacity: 0; animation: halo 3.9s ease-out infinite; }
+.halo.b { animation-delay: 1.3s; }
+.halo.c { animation-delay: 2.6s; }
+.spark { position: absolute; left: var(--x); top: var(--y); width: calc(18px * var(--s)); height: calc(18px * var(--s)); fill: #fff; z-index: 3; opacity: 0; animation: twinkle calc(var(--d) * .35) ease-in-out var(--delay) infinite; }
+
+.hero .id { flex: 1; min-width: 0; }
+.hero .eyeline { display: flex; align-items: center; gap: 8px; }
+.hero .eyeline .eyebrow { margin-right: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.chip { flex: none; display: inline-flex; align-items: center; gap: 7px; height: 26px; padding: 0 12px; border-radius: 99px; border: var(--hairline) solid rgba(255, 255, 255, .25); font: 500 10px/1 var(--body); letter-spacing: .22em; text-transform: uppercase; color: var(--mute); }
+.chip::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: #8b7480; }
+.chip.on { color: #b7ffd6; border-color: rgba(125, 255, 182, .5); }
+.chip.on::before { background: #7dffb6; box-shadow: 0 0 8px #4dffa0; }
+/* the bond's mood, beside Following on the same line and at the same height; the chips never shrink (.chip is flex: none) */
+.chip.mood.warm { color: var(--mood-warm); border-color: var(--mood-warm-edge); }
+.chip.mood.warm::before { background: var(--mood-warm); box-shadow: 0 0 8px var(--mood-warm); }
+.chip.mood.settled { color: var(--mood-settled); border-color: var(--mood-settled-edge); }
+.chip.mood.settled::before { background: var(--mood-settled-dot); }
+.chip.mood.strained { color: var(--mood-strained-text); border-color: var(--mood-strained-edge); }
+.chip.mood.strained::before { background: var(--mood-strained); }
+.hero .name {
+    font: italic 600 76px/1.04 var(--display); letter-spacing: -.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin: 6px 0 0; padding: 0 8px 4px 0;
+    background: linear-gradient(180deg, #fff 30%, var(--blush)); -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.hero .name.long { font-size: 60px; }
+.hero .name.longer { font-size: 46px; }
+.hero .tier { font: 400 54px/1.1 var(--script); display: inline-block; padding: 0 14px 4px 2px; }
+.meter { margin-top: 4px; }
+.meter-top { display: flex; align-items: baseline; gap: 10px; margin-bottom: 10px; }
+.meter-top .count { font: 600 30px/1 var(--display); }
+.meter-top .of { font: 400 15px/1 var(--body); color: var(--mute); }
+.meter-top .next { margin-left: auto; font: italic 400 17px/1 var(--display); color: var(--blush); white-space: nowrap; }
+.vial {
+    position: relative; height: 20px; border-radius: 999px; border: var(--hairline) solid rgba(255, 255, 255, .28); overflow: hidden;
+    background: linear-gradient(180deg, rgba(0, 0, 0, .5) 0, rgba(0, 0, 0, 0) 7px), rgba(22, 2, 13, .5);
+}
+.vial .fill {
+    position: absolute; left: 0; top: 0; bottom: 0; border-radius: 999px; overflow: hidden; transform-origin: left center;
+    background: linear-gradient(90deg, var(--magenta), var(--rose) 62%, var(--petal)); box-shadow: 0 0 20px rgba(255, 92, 147, .8);
+}
+.vial .sheen {
+    position: absolute; top: 0; bottom: 0; left: 0; width: 100%; transform: translateX(-100%);
+    background: linear-gradient(100deg, rgba(255, 255, 255, 0) 38%, rgba(255, 255, 255, .75) 50%, rgba(255, 255, 255, 0) 62%);
+    animation: sheen 2.8s ease-in-out 1s infinite;
+}
+#pane.enter .vial .fill { animation: grow 1.5s var(--ease-out) both; }
+/* Slow burn's gate under the vial: one quiet line, cut with an ellipsis rather than wrapped */
+.meter .gate { margin-top: 4px; font: italic 400 15px/1.2 var(--display); color: var(--mute); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.tool {
+    height: 34px; padding: 0 15px; border-radius: 99px; border: var(--hairline) solid var(--tool-edge); background: rgba(255, 255, 255, .06);
+    font: 500 10.5px/1 var(--body); letter-spacing: .16em; text-transform: uppercase; color: var(--mute);
+    transition: color .2s, border-color .2s, background .2s;
+}
+.tool:hover { color: #fff; border-color: rgba(255, 255, 255, .6); background: rgba(255, 255, 255, .16); }
+.tool.danger { color: #ffc2cf; border-color: var(--tool-danger-edge); }
+.tool.danger:hover { background: rgba(216, 27, 74, .45); border-color: rgba(255, 160, 175, .85); }
+
+/* explicit rows: a renderer may not size a grid row to its content, so the cards never push the page taller */
+.mid { display: grid; grid-template-columns: 1.32fr 1fr .86fr; grid-template-rows: minmax(0, 1fr); gap: 18px; min-height: 0; }
+.card { display: flex; flex-direction: column; min-height: 0; overflow: hidden; padding: 24px 26px 20px; }
+h3.eyebrow { position: relative; display: flex; align-items: center; gap: 12px; margin-bottom: 16px; flex: none; }
+h3.eyebrow::before { content: ''; width: 26px; height: 1px; background: linear-gradient(90deg, var(--rosegold), rgba(244, 198, 173, 0)); }
+
+.values { flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: minmax(0, 1fr); gap: 0 22px; }
+.values .col { display: flex; flex-direction: column; min-height: 0; min-width: 0; }
+/* overflow hidden ends a heading longer than its column in an ellipsis; the .06em reach to the left keeps the clip clear of
+   the capitals' ink (it starts .01em before the letter), and the text sits where it always has. */
+.values h4 { font: 400 28px/1.1 var(--script); color: var(--rosegold); margin: 0 0 6px -.06em; padding-left: .06em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.values h4.wound { color: #c9b6d6; }
+.list, .recent { list-style: none; flex: 1; min-height: 0; overflow-y: auto; }
+.list .item { display: flex; align-items: center; gap: 9px; min-height: 34px; padding: 3px 0; font: 400 15px/1.15 var(--body); }
+.list .art { width: 24px; height: 24px; flex: none; }
+.list .label { min-width: 0; }
+/* a row's worth (one event, for this follower) and, on a favorite or pet peeve, its small-caps tag under the label */
+.list .text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.list .kind { font: 600 8.5px/1 var(--body); letter-spacing: .28em; text-transform: uppercase; }
+.list .worth { flex: none; padding-right: 2px; font: 500 13px/1 var(--body); letter-spacing: .04em; color: var(--rosegold); }
+.values .wound + .list .worth { color: #c9b6d6; }
+/* a favorite reads as more precious than a like: the star, a gold wash, gold tag and worth */
+.list .favorite { border-radius: 12px; background: linear-gradient(90deg, rgba(244, 198, 173, .2), rgba(244, 198, 173, 0) 85%); }
+.list .favorite .kind { color: var(--rosegold); }
+.list .favorite .worth { font-weight: 600; color: #ffe3d3; }
+/* a pet peeve, a deeper wound than a dislike: the broken heart and the hot rose */
+.list .peeve { border-radius: 12px; background: linear-gradient(90deg, rgba(255, 47, 122, .2), rgba(255, 47, 122, 0) 85%); }
+.list .peeve .kind { color: var(--rose); }
+.values .wound + .list .peeve .worth { font-weight: 600; color: #ff8fb4; }
+.list .none, .recent .none { font: italic 400 14px/1.4 var(--display); color: var(--faint); padding-top: 4px; }
+
+.recent .change { display: flex; align-items: center; gap: 12px; min-height: 46px; padding: 5px 0; border-bottom: 1px solid rgba(255, 255, 255, .08); }
+.recent .change:last-child { border: 0; }
+.recent .delta {
+    flex: none; min-width: 50px; height: 24px; padding: 0 8px; display: inline-flex; align-items: center; justify-content: center; border-radius: 99px;
+    font: 600 13px/1 var(--body); background: linear-gradient(110deg, var(--magenta), var(--rose)); box-shadow: 0 6px 14px -6px rgba(255, 47, 122, .9);
+}
+.recent .delta.minus { background: linear-gradient(110deg, #3b3350, #6e6787); box-shadow: none; color: #e4def5; }
+.recent .text { min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.recent .label { font: 400 15px/1.15 var(--body); }
+.recent .when { font: 400 11.5px/1 var(--body); color: var(--faint); }
+
+/* the card's text scrolls under its heading; the plugin and file lines sit at the foot while there is room */
+.persona-card .body { flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; }
+.persona-card .origin { display: block; font: italic 600 19px/1.2 var(--display); color: var(--blush); }
+.persona-card .seal { display: block; margin-top: 8px; font: 400 13.5px/1.45 var(--body); color: var(--mute); word-wrap: break-word; overflow-wrap: break-word; }
+.persona-card .meta { margin-top: auto; padding-top: 12px; display: flex; flex-direction: column; gap: 8px; }
+.persona-card .line { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.persona-card .key { font: 500 9.5px/1 var(--body); letter-spacing: .24em; text-transform: uppercase; color: var(--faint); }
+.persona-card .value { font: 400 14px/1.2 var(--body); color: var(--rosegold); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.miles { padding: 22px 34px 0; }
+/* The Milestones top: one flex row, the heading first, then the next tier's unlock lines or the head with the bond tools.
+   The row is the heading's own line high (11px) and keeps the heading's 16px under it, so the strip keeps its height.
+   The 40px block beside the heading sits where it always did, 6px under the card's top edge (the card's top padding
+   less 6px above the row), reaching into that padding. The heading takes at most 40% of the row and gives way with an
+   ellipsis (its title has it whole); nothing in the row ever runs under anything else. */
+.miles .mtop { display: flex; flex-wrap: nowrap; align-items: flex-start; gap: 16px; height: 11px; margin-bottom: 16px; }
+.miles .mtop > .unlocks, .miles .mtop > .mhead { margin-top: -16px; }
+.miles .mtop > h3.eyebrow { flex: 0 1 auto; min-width: 0; max-width: 40%; margin-bottom: 0; }
+.miles .mtop > h3.eyebrow::before { flex: none; }
+.miles .mtop > h3.eyebrow > .htext { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* the next tier's unlock lines, across from the heading. Every line shows: up to two lines (one sits level with the
+   heading), and the block scrolls inside itself past that. 40px: two 18px lines and the 2px the italic glyphs reach past them. */
+.miles .unlocks {
+    flex: 1 1 0; min-width: 120px; height: 40px; min-height: 0; overflow-y: auto;
+    display: flex; flex-direction: column; text-align: right;
+    font: italic 400 15px/18px var(--display); color: var(--mute);
+}
+.miles .unlocks .lines { margin: auto 0; }
+/* With bond tools, the head takes the unlock lines' place: the lines first (they keep a little room), then the tools,
+   right-aligned. The head is one line high (34px tools in its 40px) whatever the labels: it never wraps, and a tool whose
+   label cannot fit ends in an ellipsis (its title carries the whole label). */
+.miles .mhead {
+    flex: 1 1 0; height: 40px; min-width: 0;
+    display: flex; flex-wrap: nowrap; align-items: center; justify-content: flex-end; gap: 16px;
+}
+.miles .tools { flex: 0 1 auto; min-width: 0; display: flex; flex-wrap: nowrap; justify-content: flex-end; gap: 8px; }
+.miles .tools .tool { flex: 0 1 auto; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.miles .unlocks .next { font-weight: 600; color: var(--rosegold); }
+.thread { position: absolute; left: calc(34px + (100% - 68px) / 12); right: calc(34px + (100% - 68px) / 12); top: 96px; height: 2px; border-radius: 2px; background: rgba(255, 255, 255, .14); }
+.thread .fill {
+    display: block; height: 100%; border-radius: 2px; transform-origin: left center;
+    background: linear-gradient(90deg, var(--rosegold-deep), var(--rose), #fff); box-shadow: 0 0 12px var(--rose);
+}
+#pane.enter .thread .fill { animation: grow 1.6s var(--ease-out) .2s both; }
+.steps { position: relative; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); margin-top: 6px; }
+.step { display: flex; flex-direction: column; align-items: center; gap: 2px; opacity: .36; transition: opacity .3s; }
+.step.reached { opacity: 1; }
+.step .medal { width: 76px; height: 76px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: var(--hairline) solid rgba(255, 255, 255, .22); background: radial-gradient(circle at 35% 25%, #8a4a6c, #3a0a26 70%); }
+.step .art { width: 56px; height: 56px; }
+/* A name keeps to its own step: one line, and an ellipsis only when it is longer than the step less its padding (none of
+   the six is). The padding (.36em each side) holds the script's swashes, which reach up to .35em past the last letter. */
+.step .tname { max-width: 100%; font: 400 29px/1.1 var(--script); margin-top: 4px; padding: 0 .36em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.step .at { font: 500 11px/1 var(--body); letter-spacing: .14em; color: var(--mute); }
+.step.here .medal {
+    width: 92px; height: 92px; margin: -8px 0; border-color: rgba(255, 220, 230, .9);
+    background: radial-gradient(circle at 35% 25%, #ffc4d8, #d4266c 70%);
+    box-shadow: 0 0 0 7px rgba(255, 92, 147, .16), 0 0 38px rgba(255, 92, 147, .85); animation: pulse 2.6s ease-in-out infinite;
+}
+.step.here .art { width: 70px; height: 70px; }
+.step.here .tname { color: var(--blush); }   /* as in the mock-up: solid blush over the foil */
+
+/* ---------- empty ---------- */
+#pane.blank { display: flex; align-items: center; justify-content: center; }
+.empty { position: relative; display: flex; flex-direction: column; align-items: center; gap: 22px; padding: 0 80px; text-align: center; animation: rise .7s var(--ease-out) both; }
+.emptyheart { position: relative; width: 300px; height: 300px; display: flex; align-items: center; justify-content: center; }
+.emptyheart .book { position: relative; z-index: 2; width: 260px; height: 260px; }
+.empty .line { max-width: 620px; font: italic 400 26px/1.4 var(--display); color: var(--ink); }
+
+/* ---------- settings ---------- */
+#pane.settings { display: flex; flex-direction: column; gap: 18px; }
+.sethead { flex: none; display: flex; align-items: center; justify-content: space-between; height: 112px; padding: 0 30px 0 40px; }
+.sethead .titles { position: relative; display: flex; flex-direction: column; gap: 10px; }
+.sethead h2 { font: italic 600 46px/1.1 var(--display); padding: 0 12px 4px 0; }
+.sethead .btn { position: relative; height: 48px; padding: 0 22px 0 16px; font-size: 12.5px; }
+
+.setlist { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; padding: 2px; }
+.setrow {
+    flex: none; display: flex; align-items: center; gap: 20px; width: 100%; height: 92px; padding: 0 30px 0 16px;
+    border-radius: 24px; box-shadow: 0 20px 40px -24px rgba(16, 0, 10, .82); transition: transform .25s var(--ease-out);
+}
+.setrow:hover { transform: translateX(5px); }
+.setrow > * { position: relative; }
+.setrow .jewel {
+    flex: none; width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    border: var(--hairline) solid rgba(255, 255, 255, .22); background: radial-gradient(circle at 35% 25%, #8a4a6c, #3a0a26 70%);
+}
+.setrow .jewel .art { width: 46px; height: 46px; transition: transform .35s var(--ease-spring); }
+.setrow:hover .jewel .art { transform: scale(1.12) rotate(-5deg); }
+.setrow .text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 7px; }
+.setrow .title { font: 500 22px/1.15 var(--display); }
+.setrow .detail { font: 400 14px/1.35 var(--body); color: var(--mute); }
+/* a choice row: the switch row's shape (92 tall round its 64 jewel), a row of options in place of the switch;
+   it grows only when its detail runs to more lines than fit. When the options and the title cannot share the line (a
+   longer translation), the options move under the title and may wrap among themselves: the row grows in height, inside
+   the Settings list that scrolls, and never runs past its own edge. */
+.setrow.choice { height: auto; min-height: 92px; padding-top: 13px; padding-bottom: 13px; flex-wrap: wrap; row-gap: 12px; }
+.setrow.choice .text { flex: 1 1 40%; }
+.choices {
+    flex: 0 1 auto; max-width: 100%; flex-wrap: wrap; justify-content: flex-end; margin-left: auto;
+    display: flex; gap: 4px; padding: 4px; border-radius: 22px; border: var(--hairline) solid var(--control-edge);
+    background: linear-gradient(180deg, rgba(0, 0, 0, .45) 0, rgba(0, 0, 0, 0) 6px), rgba(22, 2, 13, .5);
+}
+.opt {
+    height: 36px; padding: 0 16px; border-radius: 999px; white-space: nowrap;
+    font: 500 12px/1 var(--body); letter-spacing: .12em; text-transform: uppercase; color: var(--mute);
+    transition: color .2s, background .3s, box-shadow .3s;
+}
+.opt:hover { color: var(--ink); background: rgba(255, 255, 255, .08); }
+/* the checked option: lit like a switch that is on */
+.opt[aria-checked="true"] {
+    color: var(--wine-700);
+    background: linear-gradient(180deg, rgba(255, 255, 255, .5) 0, rgba(255, 255, 255, 0) 2px), linear-gradient(110deg, var(--rosegold-deep), var(--rosegold) 55%, #ffe3d3);
+    box-shadow: 0 0 18px rgba(244, 198, 173, .55);
+}
+/* a row that is off (Whisper corner while Whispers is off, the SkyrimNet conversation switch while the bridge is off):
+   still drawn, dimmed, and nothing in it answers the mouse */
+.setrow[aria-disabled="true"] { opacity: .45; }
+.setrow[aria-disabled="true"]:hover { transform: none; }
+.setrow[aria-disabled="true"]:hover .jewel .art { transform: none; }
+.setrow[role="switch"]:disabled { cursor: default; }
+.opt:disabled { cursor: default; }
+.opt[aria-checked="false"]:disabled:hover { color: var(--mute); background: none; }
+#pane.enter > .sethead { animation: rise .6s var(--ease-out) both; }
+#pane.enter .setrow { animation: rise .6s var(--ease-out) both; animation-delay: calc(var(--i) * 55ms + 80ms); }
+
+.devcard { flex: none; padding: 22px 30px 26px; border-radius: 24px; transform-origin: center top; }
+.devcard.unfold, #pane.enter .devcard { animation: unfold .55s var(--ease-out) both; }
+#pane.enter .devcard { animation-delay: .36s; }
+.devcard > * { position: relative; }
+.devcard h3.eyebrow { margin-bottom: 10px; }
+.devcard .note { font: italic 400 15px/1.45 var(--display); color: var(--mute); margin-bottom: 16px; }
+.devbtns { display: flex; flex-wrap: wrap; gap: 10px; }
+.devbtns .btn { height: 46px; padding: 0 20px; font-size: 12.5px; }
+
+/* health: a status list at the foot of the pane, never a control */
+.healthcard { flex: none; padding: 22px 30px 22px; border-radius: 24px; }
+#pane.enter .healthcard { animation: rise .6s var(--ease-out) .42s both; }
+.healthcard > * { position: relative; }
+.healthcard h3.eyebrow { margin-bottom: 12px; }
+.healthcard .hok { font: 500 22px/1.15 var(--display); }
+.healthcard .hmeta { margin-top: 7px; font: 400 14px/1.35 var(--body); color: var(--mute); }
+.hitems { list-style: none; }
+.hitem { display: flex; align-items: flex-start; gap: 16px; padding: 12px 0 0; margin-top: 12px; border-top: var(--hairline) solid rgba(255, 255, 255, .08); }
+.healthcard h3 + .hitems .hitem:first-child { padding-top: 0; margin-top: 0; border-top: 0; }
+.hmark { flex: none; width: 10px; height: 10px; margin-top: 7px; border-radius: 50%; }
+.hitem[data-level="error"] .hmark { background: var(--health-error); }
+.hitem[data-level="warn"] .hmark { background: var(--health-warn); }
+.hitem[data-level="note"] .hmark { border: 1px solid var(--health-note); }
+.htext { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+.htitle { font: 500 19px/1.25 var(--display); word-wrap: break-word; overflow-wrap: break-word; }
+.hitem[data-level="note"] .htitle { color: var(--mute); }
+.hword { display: inline-block; margin-right: 12px; font: 600 10.5px/1 var(--body); letter-spacing: .22em; text-transform: uppercase; vertical-align: 2px; }
+.hitem[data-level="error"] .hword { color: var(--health-error); }
+.hitem[data-level="warn"] .hword { color: var(--health-warn); }
+.hdetail { display: flex; flex-direction: column; gap: 3px; font: 400 14px/1.35 var(--body); color: var(--mute); }
+.hline { word-wrap: break-word; overflow-wrap: break-word; }
+
+/* ---------- the dossier's way into the journal: at the foot of Recent changes ---------- */
+.recent-card .journal-open { flex: none; align-self: flex-start; margin-top: 12px; }
+
+/* ---------- journal: a fixed head over one body that scrolls ---------- */
+#pane.journal { display: flex; flex-direction: column; gap: 18px; }
+.jhead { flex: none; display: flex; align-items: center; gap: 24px; height: 132px; padding: 0 30px 0 40px; }
+.jhead > * { position: relative; }
+.jhead .titles { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+.jhead .jname { font: italic 600 40px/1.1 var(--display); padding: 0 12px 2px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.jhead .btn { flex: none; height: 48px; padding: 0 22px 0 16px; font-size: 12.5px; }
+.jfacts { display: flex; align-items: baseline; gap: 14px; min-width: 0; }
+.jfacts .jtier { flex: 0 1 auto; min-width: 0; max-width: 60%; font: 400 30px/1.2 var(--script); padding: 0 10px 2px 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.jfacts .since { flex: 0 1 auto; min-width: 0; font: 400 13px/1.2 var(--body); letter-spacing: .06em; color: var(--mute); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.jbody { flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 18px; padding: 2px; }
+.jnote { margin: auto; padding: 0 40px; text-align: center; font: italic 400 24px/1.4 var(--display); color: var(--mute); }
+.jcard { flex: none; padding: 22px 30px 24px; border-radius: 24px; }
+.jcard > * { position: relative; }
+
+/* milestones: a short vertical timeline, a dot per entry on one hairline */
+.jmiles { position: relative; list-style: none; padding-left: 26px; }
+.jmiles::before { content: ''; position: absolute; left: 6px; top: 10px; bottom: 10px; width: 1px; background: var(--glass-edge); }
+.jmile { position: relative; padding: 4px 0; font: 400 16px/1.35 var(--body); overflow-wrap: break-word; word-wrap: break-word; }
+.jmile::before { content: ''; position: absolute; left: -24px; top: 10px; width: 9px; height: 9px; border-radius: 50%; background: var(--rosegold); }
+.jmile.began::before { background: var(--blush); }
+.jmile.fell { color: var(--mute); }
+.jmile.fell::before { background: var(--wound); }
+
+/* the last sixty days: a bar per day, the gain above the hairline and the loss below it, each sized by its inline height */
+.jbars { position: relative; display: flex; gap: 3px; height: 150px; }
+.jbars::before { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: var(--glass-edge); }
+.jday { flex: 1 1 0; min-width: 0; max-width: 26px; height: 100%; }
+.jday .jbar { position: relative; display: block; height: 100%; }
+/* A day's numbers on hover, drawn by the page (the host may draw no native tooltip). The day is not positioned, so
+   the tip sits on the chart: one centred line over the axis, inside the card whichever bar is under the pointer.
+   Out of the flow: nothing moves when it shows. */
+.jday:hover::after {
+    content: attr(data-tip); position: absolute; top: 100%; left: 50%; z-index: 1; margin-top: 1px; transform: translateX(-50%);
+    padding: 4px 12px; border-radius: 99px; border: 1px solid var(--glass-edge); background: var(--wine-700);
+    font: 500 11px/1.2 var(--body); letter-spacing: .06em; color: var(--ink); white-space: nowrap; pointer-events: none;
+}
+.jday .up, .jday .down { position: absolute; left: 0; right: 0; height: 50%; }
+.jday .up { top: 0; }
+.jday .down { bottom: 0; }
+.jday .gain { position: absolute; left: 0; right: 0; bottom: 0; border-radius: 3px 3px 0 0; background: linear-gradient(180deg, var(--rosegold), var(--rosegold-deep)); }
+.jday .loss { position: absolute; left: 0; right: 0; top: 0; border-radius: 0 0 3px 3px; background: var(--wound); }
+.jday .some { min-height: 2px; }
+.jday:hover .gain { background: var(--petal); }
+.jday:hover .loss { background: var(--blush); }
+.jaxis { display: flex; justify-content: space-between; margin-top: 8px; font: 500 10.5px/1 var(--body); letter-spacing: .16em; text-transform: uppercase; color: var(--faint); }
+.jtotals { margin-top: 12px; font: italic 400 18px/1.3 var(--display); color: var(--blush); }
+
+/* biggest moments and history: rows like Recent changes */
+.jcols { display: flex; gap: 28px; }
+.jcol { flex: 1 1 0; min-width: 0; }
+.jcol h4 { font: 400 26px/1.1 var(--script); color: var(--rosegold); margin-bottom: 6px; white-space: nowrap; }
+.jcol h4.wound { color: #c9b6d6; }
+.jlist { list-style: none; }
+.jlist .jentry { display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 5px 0; border-bottom: 1px solid rgba(255, 255, 255, .08); }
+.jlist .jentry:last-child { border: 0; }
+.jlist .delta {
+    flex: none; min-width: 50px; height: 24px; padding: 0 8px; display: inline-flex; align-items: center; justify-content: center; border-radius: 99px;
+    font: 600 13px/1 var(--body); background: linear-gradient(110deg, var(--magenta), var(--rose));
+}
+.jlist .delta.minus { background: linear-gradient(110deg, #3b3350, var(--wound)); color: #e4def5; }
+.jlist .text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.jlist .label { font: 400 15px/1.2 var(--body); overflow-wrap: break-word; word-wrap: break-word; }
+.jlist .when { font: 400 11.5px/1 var(--body); color: var(--faint); }
+.jlist .none { font: italic 400 14px/1.4 var(--display); color: var(--faint); padding-top: 4px; }
+
+@keyframes unfold { from { opacity: 0; transform: translateY(-14px) scaleY(.6); } }
+@keyframes grow { from { transform: scaleX(0); } }
+@keyframes sheen { from { transform: translateX(-100%); } to { transform: translateX(100%); } }
+@keyframes halo { 0% { transform: scale(.7); opacity: .9; } 100% { transform: scale(1.75); opacity: 0; } }
+@keyframes twinkle { 0%, 100% { transform: scale(0) rotate(0); opacity: 0; } 50% { transform: scale(1) rotate(90deg); opacity: 1; } }
+
+/* ---------- the smaller stages (Ledger size Large and Largest; fit.js) ----------
+   The roster keeps its 424px, so the dossier is 922 or 780 wide (1100 at Standard) and 744 or 664 tall. Its hero and
+   milestones give some height to the cards, the values card takes a larger share of the row, and what cannot fit at
+   its own size (the heart, the name, the value headings, the medals and tier names) is drawn at 8/9 (Large) or 4/5
+   (Largest): the size Standard draws it on the same screen, never smaller. The value headings and the tier names are a
+   little smaller than that, so the longest of them ("Deepens the bond", "Acquaintance") keeps about a tenth of its
+   column free, swashes included, for another rasteriser or a longer name; past that it ends in an ellipsis. Everything else is drawn bigger. */
+html[data-size="large"] #pane.dossier { grid-template-rows: 260px minmax(0, 1fr) 190px; gap: 16px; }
+html[data-size="large"] .hero { padding-right: 36px; }
+html[data-size="large"] .heartwrap { width: 254px; height: 254px; }
+html[data-size="large"] .heartwrap .heart { width: 192px; height: 192px; }
+html[data-size="large"] .hero .name { font-size: 68px; }
+html[data-size="large"] .hero .name.long { font-size: 54px; }
+html[data-size="large"] .hero .name.longer { font-size: 41px; }
+html[data-size="large"] .hero .tier { font-size: 48px; }
+html[data-size="large"] .mid { grid-template-columns: 1.6fr 1fr .9fr; gap: 16px; }
+html[data-size="large"] .card { padding: 22px 22px 18px; }
+html[data-size="large"] .values { gap: 0 18px; }
+html[data-size="large"] .values h4 { font-size: 24px; }
+html[data-size="large"] .miles { padding: 22px 28px 0; }
+html[data-size="large"] .thread { left: calc(28px + (100% - 56px) / 12); right: calc(28px + (100% - 56px) / 12); top: 92px; }
+html[data-size="large"] .step .medal { width: 68px; height: 68px; }
+html[data-size="large"] .step .art { width: 50px; height: 50px; }
+html[data-size="large"] .step.here .medal { width: 82px; height: 82px; margin: -7px 0; }
+html[data-size="large"] .step.here .art { width: 63px; height: 63px; }
+html[data-size="large"] .step .tname { font-size: 23px; }
+
+html[data-size="largest"] #pane.dossier { grid-template-rows: 244px minmax(0, 1fr) 176px; gap: 14px; }
+html[data-size="largest"] .hero { padding-right: 30px; }
+html[data-size="largest"] .heartwrap { width: 232px; height: 232px; }
+html[data-size="largest"] .heartwrap .heart { width: 172px; height: 172px; }
+html[data-size="largest"] .hero .name { font-size: 62px; }
+html[data-size="largest"] .hero .name.long { font-size: 50px; }
+html[data-size="largest"] .hero .name.longer { font-size: 40px; }
+html[data-size="largest"] .hero .tier { font-size: 44px; }
+html[data-size="largest"] .mid { grid-template-columns: 1.6fr 1fr .9fr; gap: 14px; }
+html[data-size="largest"] .card { padding: 20px 20px 16px; }
+html[data-size="largest"] h3.eyebrow { letter-spacing: .22em; margin-bottom: 12px; }
+html[data-size="largest"] .values { gap: 0 16px; }
+html[data-size="largest"] .values h4 { font-size: 20px; }
+html[data-size="largest"] .miles { padding: 24px 20px 0; }
+html[data-size="largest"] .miles .mtop { margin-bottom: 12px; }
+html[data-size="largest"] .miles .mtop > .unlocks, html[data-size="largest"] .miles .mtop > .mhead { margin-top: -18px; }
+html[data-size="largest"] .thread { left: calc(20px + (100% - 40px) / 12); right: calc(20px + (100% - 40px) / 12); top: 86px; }
+html[data-size="largest"] .step .medal { width: 62px; height: 62px; }
+html[data-size="largest"] .step .art { width: 46px; height: 46px; }
+html[data-size="largest"] .step.here .medal { width: 76px; height: 76px; margin: -7px 0; }
+html[data-size="largest"] .step.here .art { width: 58px; height: 58px; }
+html[data-size="largest"] .step .tname { font-size: 20px; }
+
+/* ---------- reduced motion (the setting; see base.css): the loops stop, the entrances only fade ---------- */
+html[data-motion="reduced"] #roster .brand .art { animation: none; }
+html[data-motion="reduced"] #roster.enter .row { animation: fade .2s ease-out; }
+html[data-motion="reduced"] .row .dot.on { animation: none; }
+html[data-motion="reduced"] #pane.enter > * { animation: fade .2s ease-out; }
+html[data-motion="reduced"] .heartwrap .heart { animation: none; }
+html[data-motion="reduced"] .glow { animation: none; }
+html[data-motion="reduced"] .halo { animation: none; }
+html[data-motion="reduced"] .spark { animation: none; }
+html[data-motion="reduced"] .vial .sheen { animation: none; }
+html[data-motion="reduced"] #pane.enter .vial .fill { animation: none; }
+html[data-motion="reduced"] #pane.enter .thread .fill { animation: none; }
+html[data-motion="reduced"] .step.here .medal { animation: none; }
+html[data-motion="reduced"] .empty { animation: fade .2s ease-out; }
+html[data-motion="reduced"] #pane.enter > .sethead { animation: fade .2s ease-out; }
+html[data-motion="reduced"] #pane.enter .setrow { animation: fade .2s ease-out; }
+html[data-motion="reduced"] .devcard.unfold,
+html[data-motion="reduced"] #pane.enter .devcard { animation: fade .2s ease-out; }
+html[data-motion="reduced"] #pane.enter .healthcard { animation: fade .2s ease-out; }

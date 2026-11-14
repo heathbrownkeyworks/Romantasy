@@ -1,0 +1,136 @@
+/* The enrollment takeover: a full-stage sheet on the solid wine base (.sheet in base.css).
+   Header across the top; the companion column on the left; the deed book on the right,
+   which scrolls inside the sheet; the running summary and the commit bar along the bottom. */
+
+#takeover { background: radial-gradient(circle at 50% 45%, rgba(70, 8, 44, .86), rgba(8, 1, 5, .95) 70%); }
+#takeover.open { animation: fade .3s backwards; }
+html[data-mode="popup"] #takeover { display: none; }
+
+/* as tall as the stage less its 28px margins (844 at 1600 x 900), so a taller stage gives the deed book the room */
+.enroll {
+    width: 1544px; max-width: calc(100% - 56px); height: calc(100% - 56px); padding: 30px 34px 24px;
+    display: grid; grid-template-columns: 400px minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr) auto; gap: 20px 28px;
+    animation: rise .55s var(--ease-out) backwards;
+}
+.enroll > * { position: relative; min-height: 0; }
+.enroll .eyebrow { color: var(--blush); }
+.enroll .count { margin-left: 10px; color: var(--mute); font-weight: 500; letter-spacing: .12em; }
+
+/* focus: the rose-gold ring in base.css */
+
+/* ---------- header ---------- */
+.enroll .head { grid-column: 1 / -1; display: flex; align-items: flex-end; justify-content: space-between; gap: 40px; }
+.enroll .head h2 { font: italic 600 46px/1.1 var(--display); margin: 8px 0 6px; padding-right: 6px; }
+.enroll .head .copy { font: 400 16px/1.45 var(--body); color: var(--mute); max-width: 780px; }
+.enroll .head .note { flex: none; width: 420px; font: italic 400 14px/1.45 var(--display); color: var(--faint); text-align: right; }
+
+/* ---------- the companion column ---------- */
+.enroll .side { display: flex; flex-direction: column; gap: 12px; }
+.enroll .cands { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 8px; overflow-y: auto; padding: 2px 8px 2px 2px; }
+.enroll.enter .cand { animation: rise .5s var(--ease-out) backwards; animation-delay: calc(var(--i) * 45ms + 100ms); }
+.enroll .cands .none, .enroll .deeds .none { font: italic 400 17px/1.5 var(--display); color: var(--mute); padding: 6px 4px; }
+
+/* edit: the bond being rewritten */
+.enroll .bond {
+    display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 26px 22px 24px; text-align: center;
+    border-radius: 24px; border: 1px solid rgba(255, 255, 255, .16); background: linear-gradient(160deg, rgba(255, 255, 255, .12), rgba(255, 255, 255, .02));
+}
+.enroll .bond .art { width: 120px; height: 120px; animation: beat 2.6s ease-in-out infinite; }
+.enroll .bond .role { font: 500 10px/1.2 var(--body); letter-spacing: .26em; text-transform: uppercase; color: var(--mute); max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.enroll .bond .name { font: 500 32px/1.15 var(--display); max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.enroll .bond .tiername { font: 400 34px/1.1 var(--script); color: var(--rosegold); padding: 0 6px; }
+.enroll .bond .pts { font: 500 13px/1 var(--body); color: var(--mute); }
+.enroll .bond .copy { font: 400 15px/1.45 var(--body); color: var(--mute); }
+
+/* ---------- the deed book ---------- */
+.enroll .book { display: flex; flex-direction: column; gap: 14px; }
+.enroll .tools { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; }
+.enroll .tools .sub { margin-top: 8px; font: 400 15px/1.4 var(--body); color: var(--mute); }
+.enroll .search { position: relative; flex: none; display: block; width: 360px; }
+.enroll .query {
+    display: block; width: 100%; height: 48px; padding: 0 22px 0 50px; border-radius: 999px; outline: none;
+    border: var(--hairline) solid var(--control-edge); color: var(--ink); caret-color: var(--rosegold);
+    background: linear-gradient(180deg, rgba(0, 0, 0, .45) 0, rgba(0, 0, 0, 0) 7px), rgba(22, 2, 13, .55);
+    font: 400 17px/1 var(--body); transition: border-color .2s;
+}
+.enroll .query::placeholder { color: var(--faint); }
+.enroll .query:focus { border-color: rgba(244, 198, 173, .9); }
+.enroll .search .seek { position: absolute; left: 18px; top: 13px; width: 22px; height: 22px; }
+
+.enroll .deeds { flex: 1; min-height: 0; overflow-y: auto; padding: 4px 12px 8px 4px; }
+.enroll .group + .group { margin-top: 18px; }
+.enroll .cat {
+    display: flex; align-items: center; padding: 0 6px 8px; margin-bottom: 8px; border-bottom: var(--hairline) solid rgba(255, 199, 217, .2);
+    font: italic 600 22px/1.2 var(--display); color: var(--rosegold);
+}
+.enroll .cat .art { width: 30px; height: 30px; flex: none; margin-right: 10px; }
+.enroll .cat .count { font: 500 12px/1 var(--body); }
+.enroll .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 12px; }
+
+.deed {
+    display: flex; align-items: center; gap: 12px; height: 54px; padding: 0 8px 0 18px; border-radius: 16px;
+    border: var(--hairline) solid var(--row-edge); background: linear-gradient(120deg, rgba(255, 255, 255, .075), rgba(255, 255, 255, .015));
+    transition: background .25s, border-color .25s;
+}
+/* a long label takes a second line (the row is tall enough for two); past two it ends in an ellipsis, the whole label in its title */
+.deed .label {
+    flex: 1; min-width: 0; max-height: 2.4em; overflow: hidden; font: 400 16px/1.2 var(--body);
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+}
+.deed.liked { border-color: rgba(255, 160, 190, .6); background: linear-gradient(120deg, rgba(255, 92, 147, .30), rgba(255, 160, 130, .08)); }
+.deed.disliked { border-color: rgba(190, 180, 225, .5); background: linear-gradient(120deg, rgba(143, 138, 166, .34), rgba(60, 44, 92, .14)); }
+.deed.favored { border-color: rgba(244, 198, 173, .9); background: linear-gradient(120deg, rgba(244, 198, 173, .32), rgba(255, 92, 147, .16) 60%, rgba(255, 160, 130, .06)); box-shadow: 0 0 20px -8px rgba(244, 198, 173, .8); }
+.deed.peeved { border-color: rgba(255, 90, 140, .8); background: linear-gradient(120deg, rgba(255, 47, 122, .34), rgba(90, 14, 56, .2)); box-shadow: 0 0 20px -8px rgba(255, 47, 122, .8); }
+
+/* the five-way stamp: favorite (star), like (rose heart), neutral (pearl), dislike (thorn), pet peeve (broken heart) */
+.deed .stamps { display: flex; gap: 3px; flex: none; }
+.stamp {
+    position: relative; display: flex; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: 50%;
+    border: 1px solid transparent; opacity: .5; transition: opacity .2s, transform .25s var(--ease-spring), border-color .2s, background .2s;
+}
+.stamp:hover { opacity: .9; transform: scale(1.08); }
+.stamp .art { width: 26px; height: 26px; }
+/* past the cap: faded and still */
+.stamp[disabled], .stamp[disabled]:hover { opacity: .16; transform: none; cursor: default; }
+.stamp.on { opacity: 1; }
+.stamp.like.on { border-color: rgba(255, 196, 214, .8); background: radial-gradient(circle, rgba(255, 92, 147, .55), rgba(255, 92, 147, .1) 70%); box-shadow: 0 0 16px rgba(255, 60, 140, .55); }
+.stamp.dislike.on { border-color: rgba(215, 203, 242, .7); background: radial-gradient(circle, rgba(143, 138, 166, .6), rgba(60, 44, 92, .2) 70%); box-shadow: 0 0 16px rgba(140, 110, 220, .5); }
+.stamp.neutral.on { border-color: rgba(244, 198, 173, .45); background: radial-gradient(circle, rgba(244, 198, 173, .35), rgba(244, 198, 173, .06) 70%); box-shadow: 0 0 12px rgba(244, 198, 173, .45); }
+.stamp.favorite.on { border-color: rgba(255, 227, 211, .9); background: radial-gradient(circle, rgba(244, 198, 173, .62), rgba(217, 147, 122, .12) 70%); box-shadow: 0 0 18px rgba(244, 198, 173, .65); }
+.stamp.peeve.on { border-color: rgba(255, 150, 185, .85); background: radial-gradient(circle, rgba(255, 47, 122, .62), rgba(120, 10, 52, .2) 70%); box-shadow: 0 0 18px rgba(255, 47, 122, .6); }
+.deed.stamped .stamp.on .art { animation: pop .35s var(--ease-spring) backwards; }
+
+/* ---------- the summary and commit bar ---------- */
+.enroll .ebar {
+    grid-column: 1 / -1; display: flex; align-items: center; gap: 32px; padding-top: 18px;
+    border-top: 1px solid rgba(255, 199, 217, .2);
+}
+.enroll .tally { flex: 1; min-width: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.enroll .tally .col { min-width: 0; }
+.enroll .tally .dislike .eyebrow { color: #d7cbf2; }
+/* two rows of chips; more scroll inside the column */
+.enroll .chips { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; max-height: 62px; min-height: 0; overflow-y: auto; }
+.enroll .chips .tag { height: 28px; padding: 0 12px; border-radius: 99px; font: 400 13px/26px var(--body); white-space: nowrap; border: 1px solid rgba(255, 160, 190, .55); background: rgba(255, 92, 147, .2); }
+.enroll .dislike .chips .tag { border-color: rgba(190, 180, 225, .5); background: rgba(143, 138, 166, .26); }
+/* a favorite or pet peeve chip: its mark, the label, then the small-caps tag */
+.enroll .chips .tag.fav, .enroll .chips .tag.peeve { display: inline-flex; align-items: center; gap: 6px; padding-left: 6px; }
+.enroll .chips .tag .art { width: 18px; height: 18px; flex: none; }
+.enroll .chips .tag .kind { font: 600 8.5px/1 var(--body); letter-spacing: .26em; text-transform: uppercase; }
+.enroll .chips .tag.fav { border-color: rgba(244, 198, 173, .85); background: rgba(244, 198, 173, .18); }
+.enroll .chips .tag.fav .kind { color: var(--rosegold); }
+.enroll .dislike .chips .tag.peeve { border-color: rgba(255, 90, 140, .75); background: rgba(255, 47, 122, .22); }
+.enroll .chips .tag.peeve .kind { color: #ff8fb4; }
+/* the cap line, beside the list it limits */
+.enroll .tally .cap { margin-left: 14px; font: italic 400 13px/1 var(--display); letter-spacing: 0; text-transform: none; color: var(--rosegold); }
+.enroll .tally .dislike .cap { color: #ff8fb4; }
+.enroll .chips .none { font: italic 400 14px/28px var(--display); color: var(--faint); }
+.enroll .act { flex: none; display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
+.enroll .hint { font: italic 400 14px/1.3 var(--display); color: var(--faint); }
+.enroll .pair { display: flex; gap: 12px; }
+.enroll .pair .btn { min-width: 180px; }
+.enroll .pair .btn.primary { min-width: 230px; }
+
+/* ---------- reduced motion (the setting; see base.css): the sheet and the candidates only fade in; the heart is still ---------- */
+html[data-motion="reduced"] .enroll { animation: fade .2s ease-out; }
+html[data-motion="reduced"] .enroll.enter .cand { animation: fade .2s ease-out; }
+html[data-motion="reduced"] .enroll .bond .art { animation: none; }

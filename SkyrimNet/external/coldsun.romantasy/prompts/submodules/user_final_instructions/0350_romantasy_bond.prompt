@@ -1,0 +1,7 @@
+{#- Romantasy: the speaking NPC's bond with the player, as background. Prints nothing without a bond. -#}
+{%- if render_mode == "full" or render_mode == "thoughts" -%}
+{%- set romantasyBond = romantasy_bond(npc.UUID) -%}
+{%- if romantasyBond and romantasyBond != "" -%}
+Your relationship with {{ player.name }} (background that shapes how you feel and speak; never quote it, and never mention tiers or numbers): {{ romantasyBond }}
+{% endif -%}
+{%- endif -%}

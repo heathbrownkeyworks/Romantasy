@@ -5,6 +5,7 @@
 
 #include <chrono>
 #include <fstream>
+#include <limits>
 #include <stdexcept>
 
 using namespace romantasy;
@@ -26,6 +27,19 @@ dislikes = ["Murders"]
         try { (void)ParseProfile(text, "test.toml"); }
         catch (const std::exception&) { return true; }
         return false;
+    }
+
+    // True when parsing throws and the message contains `fragment`.
+    bool RejectsWith(const std::string& text, std::string_view fragment, bool playerOwned = false)
+    {
+        try { (void)ParseProfile(text, "test.toml", playerOwned); }
+        catch (const std::exception& e) { return std::string_view(e.what()).find(fragment) != std::string_view::npos; }
+        return false;
+    }
+
+    std::string V2(const std::string& romance, const std::string& extra = "")
+    {
+        return "schema_version = 2\n[npc]\nplugin = \"ExampleFollower.esp\"\nform_id = \"0x000800\"\n[romance]\n" + romance + "\n" + extra;
     }
 
     std::string Replace(std::string text, std::string_view from, std::string_view to)
@@ -57,7 +71,7 @@ TEST(profile_resolves_labels_and_stable_ids)
 
 TEST(profile_rejects_invalid_identity_and_schema)
 {
-    CHECK(Rejects(Replace(valid, "schema_version = 1", "schema_version = 2")));
+    CHECK(Rejects(Replace(valid, "schema_version = 1", "schema_version = 4")));
     CHECK(Rejects(Replace(valid, "schema_version = 1", "schema_version = 1.0")));
     CHECK(Rejects(Replace(valid, "0x000800", "0xFE000800")));
     CHECK(Rejects(Replace(valid, "0x000800", "0x000000")));
@@ -258,4 +272,279 @@ TEST(player_atomic_replace_failure_keeps_previous_preferences)
     CloseHandle(handle);
     CHECK(rejected);
     CHECK(LoadProfiles(temp.path, true).profiles.front().preferences == saved.preferences);
+}
+
+TEST(profile_v2_reads_favorites_and_pet_peeves)
+{
+    const auto p = ParseProfile(V2("likes = [\"Quests Completed\"]\nfavorites = [\"Dungeons Cleared\"]\n"
+        "dislikes = [\"Items Stolen\"]\npet_peeves = [\"Murders\"]"), "test.toml");
+    CHECK(p.preferences.size() == 4);
+    CHECK(p.preferences.at("ROM_QuestsCompleted") == 1);
+    CHECK(p.preferences.at("ROM_DungeonsCleared") == 2);
+    CHECK(p.preferences.at("ROM_ItemsStolen") == -1);
+    CHECK(p.preferences.at("ROM_Murders") == -2);
+}
+
+TEST(profile_v1_rejects_v2_fields)
+{
+    CHECK(RejectsWith(Replace(valid, "dislikes =", "favorites = [\"Barters\"]\ndislikes ="), "unknown field 'favorites'"));
+    CHECK(RejectsWith(Replace(valid, "dislikes =", "pet_peeves = [\"Barters\"]\ndislikes ="), "unknown field 'pet_peeves'"));
+    CHECK(RejectsWith(valid + "[unlocks]\nFriend = [\"x\"]\n", "unknown field 'unlocks'"));
+    const auto p = ParseProfile(valid, "test.toml");
+    CHECK(p.preferences.size() == 3);
+    CHECK(p.preferences.at("ROM_DungeonsCleared") == 1);
+    CHECK(p.preferences.at("ROM_Murders") == -1);
+}
+
+TEST(profile_rejects_schema_other_than_1_2_or_3)
+{
+    CHECK(RejectsWith(Replace(valid, "schema_version = 1", "schema_version = 0"), "schema_version must be integer 1, 2 or 3"));
+    CHECK(RejectsWith(Replace(valid, "schema_version = 1", "schema_version = 4"), "schema_version must be integer 1, 2 or 3"));
+    CHECK(RejectsWith(Replace(valid, "schema_version = 1", "schema_version = \"2\""), "schema_version must be integer 1, 2 or 3"));
+    CHECK(!Rejects(Replace(valid, "schema_version = 1", "schema_version = 3")));
+}
+
+TEST(profile_v2_rejects_conflicts_and_caps)
+{
+    CHECK(RejectsWith(V2("likes = [\"Barters\"]\nfavorites = [\"Barters\"]"), "duplicate or conflicting preference"));
+    CHECK(RejectsWith(V2("favorites = [\"Barters\", \"Bribes\", \"Persuasions\", \"Intimidations\"]"), "favorites lists more than 3 statistics"));
+    CHECK(RejectsWith(V2("pet_peeves = [\"Barters\", \"Bribes\", \"Persuasions\", \"Intimidations\"]"), "pet_peeves lists more than 3 statistics"));
+    const auto p = ParseProfile(V2("favorites = [\"Barters\", \"Bribes\", \"Persuasions\"]\n"
+        "pet_peeves = [\"Intimidations\", \"Murders\", \"Items Stolen\"]"), "test.toml");
+    CHECK(p.preferences.size() == 6);
+}
+
+TEST(profile_v2_reads_unlocks)
+{
+    const auto p = ParseProfile(V2("likes = [\"Barters\"]",
+        "[unlocks]\nFriend = [\"She tells you about Bruma\"]\nLover = [\"A key to her house\", \"Her mother's ring\"]\n"), "test.toml");
+    CHECK(p.unlocks[2].size() == 1);
+    CHECK(p.unlocks[2][0] == "She tells you about Bruma");
+    CHECK(p.unlocks[4].size() == 2);
+    CHECK(p.unlocks[4][1] == "Her mother's ring");
+    CHECK(p.unlocks[0].empty() && p.unlocks[1].empty() && p.unlocks[3].empty() && p.unlocks[5].empty());
+}
+
+TEST(profile_v2_rejects_bad_unlocks)
+{
+    const auto with = [](const std::string& unlocks) { return V2("likes = [\"Barters\"]", "[unlocks]\n" + unlocks + "\n"); };
+    const std::string listMsg = "unlocks for Friend must be a list of 1 to 4 lines";
+    const std::string lineMsg = "an unlock line for Friend must be 1 to 60 characters with no control characters";
+    CHECK(RejectsWith(with("Stranger = [\"x\"]"), "[unlocks] cannot name Stranger"));
+    CHECK(RejectsWith(with("Bestie = [\"x\"]"), "unknown tier 'Bestie' in [unlocks]"));
+    CHECK(RejectsWith(with("Friend = []"), listMsg));
+    CHECK(RejectsWith(with("Friend = [\"a\", \"b\", \"c\", \"d\", \"e\"]"), listMsg));
+    CHECK(RejectsWith(with("Friend = [3]"), listMsg));
+    CHECK(RejectsWith(with("Friend = [\"\"]"), lineMsg));
+    CHECK(RejectsWith(with("Friend = [\"" + std::string(61, 'a') + "\"]"), lineMsg));
+    CHECK(RejectsWith(with("Friend = [\"a\\tb\"]"), lineMsg));
+    CHECK(RejectsWith(with("Friend = [\"a\\nb\"]"), lineMsg));
+    std::string accented;
+    for (int i = 0; i < 60; ++i) accented += "\xC3\xA9";
+    const auto p = ParseProfile(with("Friend = [\"" + accented + "\"]"), "test.toml");
+    CHECK(p.unlocks[2].size() == 1);
+    CHECK(p.unlocks[2].size() == 1 && p.unlocks[2][0] == accented);
+    CHECK(RejectsWith(with("Friend = [\"" + accented + "e\"]"), lineMsg));
+}
+
+TEST(player_profile_rejects_unlocks)
+{
+    CHECK(RejectsWith(V2("likes = [\"Barters\"]", "[unlocks]\nFriend = [\"x\"]\n"),
+        "[unlocks] is not allowed in a player profile", true));
+}
+
+namespace
+{
+    std::string V3(const std::string& moments, const std::string& extra = "")
+    {
+        return "schema_version = 3\n[npc]\nplugin = \"ExampleFollower.esp\"\nform_id = \"0x000800\"\n[romance]\nlikes = [\"Barters\"]\n" +
+               extra + "[moments]\n" + moments + "\n";
+    }
+}
+
+TEST(profile_moments_default_when_absent)
+{
+    const romantasy::ostim::Welcome defaults;
+    CHECK(ParseProfile(valid, "test.toml").moments == defaults);
+    CHECK(ParseProfile(V2("likes = [\"Barters\"]"), "test.toml").moments == defaults);
+    CHECK(ParseProfile(Replace(valid, "schema_version = 1", "schema_version = 3"), "test.toml").moments == defaults);
+    CHECK(ParseProfile(V3(""), "test.toml").moments == defaults);
+    CHECK(defaults.affection == 3 && defaults.closeness == 4 && defaults.intimacy == 5);
+    CHECK(defaults.feeling == romantasy::ostim::Feeling::Warm);
+}
+
+TEST(profile_v3_reads_moments)
+{
+    const auto p = ParseProfile(V3("affection = \"Acquaintance\"\ncloseness = \"Lover\"\nintimacy = \"Spouse\"\nfeeling = \"treasured\""), "test.toml");
+    CHECK(p.moments.affection == 2);
+    CHECK(p.moments.closeness == 5);
+    CHECK(p.moments.intimacy == 6);
+    CHECK(p.moments.feeling == romantasy::ostim::Feeling::Treasured);
+    CHECK(ParseProfile(V3("affection = \"Stranger\""), "test.toml").moments.affection == 1);
+    CHECK(ParseProfile(V3("feeling = \"reserved\""), "test.toml").moments.feeling == romantasy::ostim::Feeling::Reserved);
+    CHECK(ParseProfile(V3("feeling = \"warm\""), "test.toml").moments.feeling == romantasy::ostim::Feeling::Warm);
+    // A key left out keeps its default.
+    const auto partial = ParseProfile(V3("closeness = \"Friend\""), "test.toml").moments;
+    CHECK(partial.affection == 3 && partial.closeness == 3 && partial.intimacy == 5);
+}
+
+TEST(profile_moments_never_is_stored_as_zero)
+{
+    const auto p = ParseProfile(V3("affection = \"never\"\ncloseness = \"never\"\nintimacy = \"never\""), "test.toml");
+    CHECK(p.moments.affection == 0 && p.moments.closeness == 0 && p.moments.intimacy == 0);
+}
+
+TEST(profile_v3_reads_unlocks_and_moments_together)
+{
+    const auto p = ParseProfile(V3("intimacy = \"never\"", "[unlocks]\nFriend = [\"She tells you about Bruma\"]\n"), "test.toml");
+    CHECK(p.unlocks[2].size() == 1 && p.unlocks[2][0] == "She tells you about Bruma");
+    CHECK(p.moments.intimacy == 0);
+    CHECK(p.moments.affection == 3);
+    // Version 3 keeps the version 2 fields.
+    const auto strong = ParseProfile(Replace(V2("favorites = [\"Barters\"]\npet_peeves = [\"Murders\"]"), "schema_version = 2", "schema_version = 3"), "test.toml");
+    CHECK(strong.preferences.at("ROM_Barters") == 2 && strong.preferences.at("ROM_Murders") == -2);
+}
+
+TEST(profile_v3_rejects_bad_moments)
+{
+    CHECK(RejectsWith(V3("affection = \"Freind\""), "unknown tier 'Freind' in [moments]"));
+    CHECK(RejectsWith(V3("closeness = \"friend\""), "unknown tier 'friend' in [moments]"));
+    CHECK(RejectsWith(V3("intimacy = \"Never\""), "unknown tier 'Never' in [moments]"));
+    CHECK(RejectsWith(V3("intimacy = 3"), "unknown tier '3' in [moments]"));
+    const std::string feelingMsg = "feeling in [moments] must be warm, treasured or reserved";
+    CHECK(RejectsWith(V3("feeling = \"Warm\""), feelingMsg));
+    CHECK(RejectsWith(V3("feeling = \"cold\""), feelingMsg));
+    CHECK(RejectsWith(V3("feeling = 1"), feelingMsg));
+    CHECK(RejectsWith(V3("closenes = \"Friend\""), "unknown field 'closenes'"));
+    const auto notTable = "schema_version = 3\nmoments = 1\n[npc]\nplugin = \"ExampleFollower.esp\"\nform_id = \"0x000800\"\n[romance]\nlikes = [\"Barters\"]\n";
+    CHECK(RejectsWith(notTable, "[moments] must be a table"));
+}
+
+TEST(profile_v1_and_v2_reject_moments_as_unknown)
+{
+    CHECK(RejectsWith(valid + "[moments]\naffection = \"Friend\"\n", "unknown field 'moments'"));
+    CHECK(RejectsWith(V2("likes = [\"Barters\"]", "[moments]\naffection = \"Friend\"\n"), "unknown field 'moments'"));
+}
+
+TEST(player_profile_rejects_moments)
+{
+    CHECK(RejectsWith(V3("affection = \"Friend\""), "[moments] is not allowed in a player profile", true));
+    // The player refusal comes before any error inside the table.
+    CHECK(RejectsWith(V3("affection = \"Sweetheart\""), "[moments] is not allowed in a player profile", true));
+    CHECK(RejectsWith(V3("affection = \"Sweetheart\""), "Sweetheart"));
+    // A version 3 player file without the table is fine.
+    CHECK(ParseProfile(Replace(valid, "schema_version = 1", "schema_version = 3"), "test.toml", true).playerOwned);
+}
+
+TEST(player_profile_writes_v2_only_when_needed)
+{
+    const auto read = [](const std::string& path) {
+        std::ifstream in(path, std::ios::binary);
+        return std::string{std::istreambuf_iterator<char>(in), std::istreambuf_iterator<char>()};
+    };
+    TempDirectory temp;
+    auto profile = ParseProfile(valid, "", true);
+    const auto plain = SavePlayerProfile(temp.path, profile);
+    const auto plainText = read(plain.source);
+    CHECK(plainText.find("schema_version = 1") != std::string::npos);
+    CHECK(plainText.find("favorites") == std::string::npos);
+    CHECK(plainText.find("pet_peeves") == std::string::npos);
+
+    profile.preferences["ROM_Barters"] = 2;
+    profile.preferences["ROM_Murders"] = -2;
+    const auto strong = SavePlayerProfile(temp.path, profile);
+    const auto strongText = read(strong.source);
+    CHECK(strongText.find("schema_version = 2") != std::string::npos);
+    CHECK(strongText.find("favorites") != std::string::npos);
+    CHECK(strongText.find("pet_peeves") != std::string::npos);
+    CHECK(strong.preferences == profile.preferences);
+    const auto loaded = LoadProfiles(temp.path, true);
+    CHECK(loaded.errors.empty());
+    CHECK(loaded.profiles.size() == 1);
+    CHECK(loaded.profiles.front().preferences == profile.preferences);
+
+    auto bad = profile;
+    bad.preferences["ROM_Bribes"] = 3;
+    bool rejected = false;
+    try { (void)SavePlayerProfile(temp.path, bad); } catch (const std::exception&) { rejected = true; }
+    CHECK(rejected);
+    auto withUnlocks = profile;
+    withUnlocks.unlocks[2].push_back("x");
+    rejected = false;
+    try { (void)SavePlayerProfile(temp.path, withUnlocks); } catch (const std::exception&) { rejected = true; }
+    CHECK(rejected);
+}
+
+TEST(check_preference_weights_rules)
+{
+    using Map = std::unordered_map<std::string, std::int32_t>;
+    CHECK(!CheckPreferenceWeights(Map{}).has_value());
+    CHECK(!CheckPreferenceWeights(Map{{"a", 2}, {"b", 2}, {"c", 2}, {"d", 1}}).has_value());
+    CHECK(CheckPreferenceWeights(Map{{"a", 2}, {"b", 2}, {"c", 2}, {"d", 2}}).has_value());
+    CHECK(CheckPreferenceWeights(Map{{"a", -2}, {"b", -2}, {"c", -2}, {"d", -2}}).has_value());
+    CHECK(CheckPreferenceWeights(Map{{"a", 0}}).has_value());
+    CHECK(CheckPreferenceWeights(Map{{"a", 3}}).has_value());
+}
+
+TEST(enforce_strong_cap_leaves_a_legal_map_alone)
+{
+    using Map = std::unordered_map<std::string, std::int32_t>;
+    Map weights{{"a", 2}, {"b", 2}, {"c", 2}, {"d", -2}, {"e", -2}, {"f", -2}, {"g", 1}, {"h", -1}, {"i", 0}};
+    const auto before = weights;
+    CHECK(EnforceStrongCap(weights) == 0);
+    CHECK(weights == before);
+}
+
+TEST(enforce_strong_cap_keeps_the_three_lowest_keys)
+{
+    using Map = std::unordered_map<std::string, std::int32_t>;
+    Map weights{{"e", 2}, {"b", 2}, {"d", 2}, {"a", 2}, {"c", 2}};
+    CHECK(EnforceStrongCap(weights) == 2);
+    CHECK(weights.at("a") == 2);
+    CHECK(weights.at("b") == 2);
+    CHECK(weights.at("c") == 2);
+    CHECK(weights.at("d") == 1);
+    CHECK(weights.at("e") == 1);
+}
+
+TEST(enforce_strong_cap_caps_favorites_and_pet_peeves_separately)
+{
+    using Map = std::unordered_map<std::string, std::int32_t>;
+    Map weights{{"a", 2}, {"b", 2}, {"c", 2}, {"d", 2}, {"p", -2}, {"q", -2}, {"r", -2}, {"s", -2}, {"t", -2}, {"x", 1}, {"y", -1}};
+    CHECK(EnforceStrongCap(weights) == 3);
+    CHECK(weights.at("d") == 1);
+    CHECK(weights.at("p") == -2);
+    CHECK(weights.at("r") == -2);
+    CHECK(weights.at("s") == -1);
+    CHECK(weights.at("t") == -1);
+    CHECK(weights.at("x") == 1);
+    CHECK(weights.at("y") == -1);
+    CHECK(!CheckPreferenceWeights(weights).has_value());
+}
+
+TEST(preference_points_doubles_for_strong_weights)
+{
+    CHECK(PreferencePoints(3, 5, 1) == 15);
+    CHECK(PreferencePoints(3, 5, 2) == 30);
+    CHECK(PreferencePoints(3, 5, -1) == -15);
+    CHECK(PreferencePoints(3, 5, -2) == -30);
+    CHECK(PreferencePoints(3, 5, 0) == 0);
+    CHECK(PreferencePoints(-3, 5, 2) == -30);
+}
+
+TEST(preference_points_clamps_instead_of_overflowing)
+{
+    constexpr auto big = std::numeric_limits<std::int32_t>::max();
+    CHECK(PreferencePoints(big, big, 2) == big);
+    CHECK(PreferencePoints(big, big, -2) == std::numeric_limits<std::int32_t>::min());
+    CHECK(PreferencePoints(big, 1, 1) == big);
+}
+
+TEST(papyrus_direction_collapses_weights_to_a_sign)
+{
+    CHECK(PapyrusDirection(-2) == -1);
+    CHECK(PapyrusDirection(-1) == -1);
+    CHECK(PapyrusDirection(0) == 0);
+    CHECK(PapyrusDirection(1) == 1);
+    CHECK(PapyrusDirection(2) == 1);
 }
