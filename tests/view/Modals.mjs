@@ -20,7 +20,7 @@ has(reset, row.name);
 assert.match(reset, /data-action="modal\.confirm"/); assert.match(reset, /data-action="modal\.cancel"/);
 
 const remove = m.modalHtml({ kind: 'remove', identity: s.rowIdentity(row) }, row);
-for (const text of ['Player-created bond', 'Remove this bond?', 'This removes the bond from all saves using this configuration. Personalities supplied by follower mods remain protected.', 'Remove bond', 'Cancel']) has(remove, text);
+for (const text of ['Player-created bond', 'Remove this bond?', 'This removes the bond from the current save only. Other saves keep it. Personalities supplied by follower mods remain protected.', 'Remove bond', 'Cancel']) has(remove, text);
 has(remove, row.name);
 assert.doesNotMatch(remove, /Reset this bond/);
 

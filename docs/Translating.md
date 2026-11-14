@@ -1,9 +1,9 @@
 # Translating the ledger
 
-Almost every word the ledger page and the whisper card show sits in one file.
+Almost every word the ledger page and the tier popup show sits in one file.
 You can change a word, or translate the whole page, by editing that file. No tools
-are needed beyond a text editor. A few words are not in the file yet; see "What is
-not in the file" below.
+are needed beyond a text editor. A few words are not in the file yet, among them
+everything a whisper card says; see "What is not in the file" below.
 
 ## Where the file is
 
@@ -47,13 +47,16 @@ language their author wrote them in:
 
 - Names of followers.
 - Unlock lines. A follower's author writes them.
-- Notes that come from the health check.
-- The journal's entries.
-- The text of a whisper.
+- A `reason` a follower's script passes to `ModifyPoints`. It shows in Recent
+  changes and the journal as written.
 
 These words come from the plugin and stay in English for now. The file has no
 lines for them:
 
+- Notes that come from the health check.
+- The change labels in the journal, such as "A kind word" or "A tender moment". The
+  milestone words ("Reached {tier}" and the rest) are in the file.
+- The text of a whisper, such as "Feels warm toward you" or "Not yet".
 - The day words in Recent changes: "Today", "Yesterday" and "N days ago".
 - The deed category headings in New bond.
 - The messages in the notice at the foot of the ledger.

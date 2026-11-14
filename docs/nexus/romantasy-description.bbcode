@@ -1,22 +1,30 @@
 [center][color=#f59e0b][size=6][b]R O M A N T A S Y[/b][/size][/color]
-[color=#b8a285][size=3]Your adventures, remembered. Your bond, earned.[/size][/color]
-[color=#b8a285]A relationship framework for Skyrim SE/AE[/color]
-[color=#d99563][b]Version 4.0.0 • The Rosewater ledger, hosted by Magelight UI[/b][/color]
+[color=#b8a285][size=3]A Ledger of Hearts.[/size][/color]
+[color=#b8a285]A relationship framework for Skyrim SE/AE | Version 4.0.0[/color]
 
 [color=#382c1f]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/color][/center]
 
-[size=5][b][color=#f59e0b]What's New in 3.0[/color][/b][/size]
+[size=5][b][color=#f59e0b]What's New in 4.0[/color][/b][/size]
 
 [list]
-[*][color=#fbbf24]The Rosewater ledger[/color] - Romantasy's ledger and pop-ups are now a page hosted by Magelight UI. [b]Meridian UI, Prisma UI and Media Keys Fix are not needed.[/b] It keeps the familiar full-screen ledger, dossiers and settings.[/*]
-[*][color=#fbbf24]New Bond, rebuilt[/color] - give any eligible follower their own likes and dislikes from a full-screen page, with a searchable list of every deed. Their personality is saved as a small profile file, and you can edit, reset or remove the bond at any time.[/*]
-[*][color=#fbbf24]Your 2.x bonds come with you[/color] - player-created bonds from earlier versions migrate automatically, keeping their likes, dislikes and points.[/*]
-[*][color=#fbbf24]Full controller support[/color] - navigate everything with a gamepad, with on-screen button hints. Open the dashboard with the Romantasy power from your Favorites.[/*]
-[*][color=#fbbf24]Any language[/color] - names in Russian, Greek, Chinese, Japanese, Korean, Polish, Czech and other languages display correctly, and are capitalised in titles just like English names. [i](3.0.1)[/i][/*]
-[*][color=#fbbf24]Clear feedback[/color] - a short message confirms when a bond is added, edited, reset or removed.[/*]
-[*][color=#fbbf24]Simple profiles for follower authors[/color] - support a follower with one small text file. No romance factions, scripts, globals or Romantasy master are needed, and dialogue can read the bond directly.[/*]
-[*][color=#fbbf24]Nothing breaks[/color] - existing follower integrations, dialogue conditions and the Papyrus API keep working as before.[/*]
+[*][color=#fbbf24]The Rosewater ledger[/color] - the ledger and tier popups are now a page hosted by Magelight UI. [b]Magelight UI 1.6 or newer is now required.[/b]
+[*][color=#fbbf24]Roster tools[/color] - find a companion by name, order the roster by Closest, Name or Recent, and see bonds grouped under Following and Away
+[*][color=#fbbf24]A journal for every bond[/color] - the last 30 changes, a chart of the last sixty days, the biggest gains and losses, and milestones
+[*][color=#fbbf24]Mood[/color] - every bond is Strained, Settled or Warm, and it drifts back to Settled over time
+[*][color=#fbbf24]Favorites and pet peeves[/color] - up to three of each per personality; a favorite counts double, a pet peeve costs double
+[*][color=#fbbf24]Tier unlock lines[/color] - follower authors can name what each tier brings, and the tier popup lists it
+[*][color=#fbbf24]Whispers[/color] - short cards on the HUD that say what just moved a bond, without pausing anything
+[*][color=#fbbf24]Calm-moment popups[/color] - tier popups wait until you are out of combat and somewhere peaceful, never longer than a day
+[*][color=#fbbf24]Relationship pace[/color] - Slow burn, Standard or Fast
+[*][color=#fbbf24]Comfort settings[/color] - Ledger size, Stronger contrast and Reduce motion
+[*][color=#fbbf24]Safer saves[/color] - a bond survives its follower's mod going missing, and player-made bonds are now saved with the game
+[*][color=#fbbf24]Health[/color] - a section in Settings that tells you whether Romantasy is working and what is wrong if it is not
+[*][color=#fbbf24]Optional bridges[/color] - SkyrimNet and OStim Standalone, both switched off automatically when the mod is not installed
+[*][color=#fbbf24]Translatable[/color] - almost every word the ledger shows lives in one file
+[*][color=#fbbf24]For follower authors[/color] - an author test kit, a "why" log for every deed, new events and a smarter profile checker
 [/list]
+
+[color=#f43f5e][b]Important:[/b] do not load a save made with 4.0.0 in Romantasy 3.0.1 or older. Those versions skip the new save records, and the bond points in that save would be lost.[/color]
 
 
 [center][color=#382c1f]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/color][/center]
@@ -35,15 +43,15 @@ If you are a mod author and you build something on top of it, please tell me. I 
 [size=5][b][color=#f59e0b]Overview[/color][/b][/size]
 
 [b][color=#fbbf24]A standalone, save-safe relationship system that turns the way you play into a deepening bond with each of your followers.[/color][/b]
-Six tiers, one built-in dashboard, zero micromanagement.
+Six tiers, one ledger, zero micromanagement.
 
-Romantasy tracks your actions across [color=#fbbf24]58 categories of play[/color] (combat, exploration, crafting, crime, guild work, vampire and werewolf life, and more) and converts them into relationship points for every follower it manages. Each follower has individual likes and dislikes. Doing what she loves raises the bond. Doing what she hates wounds it.
+Romantasy tracks your deeds across [color=#fbbf24]58 categories of play[/color] (combat, exploration, crafting, crime, guild work, vampire and werewolf life, and more) and turns them into relationship points for every follower it manages. Each follower has her own likes and dislikes, and now her own favorites and pet peeves. Do what she loves and the bond deepens. Do what she hates and it wounds.
 
-The bond climbs through six tiers: [color=#fbbf24]Stranger[/color], [color=#fbbf24]Acquaintance[/color], [color=#fbbf24]Friend[/color], [color=#fbbf24]Confidant[/color], [color=#fbbf24]Lover[/color], and finally [color=#fbbf24]Spouse[/color]. Follower mods can hang dialogue, scenes, voiced reactions, quest beats, or marriage hooks off any of them.
+The bond climbs through six tiers: [color=#fbbf24]Stranger[/color], [color=#fbbf24]Acquaintance[/color], [color=#fbbf24]Friend[/color], [color=#fbbf24]Confidant[/color], [color=#fbbf24]Lover[/color] and [color=#fbbf24]Spouse[/color]. Follower mods can hang dialogue, scenes, voiced reactions, quest beats or marriage hooks off any of them.
 
-Romantasy slots underneath your existing follower mods without taking them over. It does not replace the vanilla follower system, Horde, NFF, AFT, EFF, custom follower controllers, or the vanilla marriage system. It is the scoreboard; the follower's author is still the writer.
+Romantasy slots underneath your existing follower mods without taking them over. It does not replace the vanilla follower system, Horde, NFF, AFT, EFF, custom follower controllers or the vanilla marriage system. It is the scoreboard; the follower's author is still the writer.
 
-[color=#b8a285][b]Release note:[/b] the plugin is ESL-flagged, the SKSE DLL is digitally signed, earned points save and restore with your save game, and personalities are kept in small profile files you can back up.[/color]
+[color=#b8a285][b]Note:[/b] the plugin is ESL-flagged, the SKSE DLL is digitally signed, and bonds, points, moods and journals are stored in each save's SKSE co-save.[/color]
 
 
 [center][color=#382c1f]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/color][/center]
@@ -52,54 +60,47 @@ Romantasy slots underneath your existing follower mods without taking them over.
 
 [size=4][b][color=#d99563]The Ledger[/color][/b][/size]
 [list]
-[*][color=#fbbf24]58 tracked activities[/color] - dungeons cleared, quests and questlines finished, locks picked, necks bitten, potions mixed, murders committed, and much more[/*]
-[*][color=#fbbf24]Weighted points[/color] - finishing a guild questline moves the bond far more than picking one pocket; every activity has its own weight[/*]
-[*][color=#fbbf24]Individual personalities[/color] - author-supplied and player-created followers can each like, dislike, or ignore every activity[/*]
-[*][color=#fbbf24]Shared adventure only[/color] - automatic activity points are awarded or removed only while that follower is actively following you; someone waiting at home does not react[/*]
-[*][color=#fbbf24]Independent bonds[/color] - spawned or duplicated followers that share the same base NPC share one personality but keep separate names and point totals[/*]
-[*][color=#fbbf24]Event-driven tracking[/color] - the plugin reacts to the game's own statistic events in native code; there are no Papyrus polling loops[/*]
-[*][color=#fbbf24]Save-safe persistence[/color] - earned points and recent changes are stored in each save's SKSE co-save, so every save keeps its own story[/*]
+[*][color=#fbbf24]Rosewater ledger[/color] - a full-screen page hosted by Magelight UI, with your company beside the selected bond's dossier
+[*][color=#fbbf24]Your Company[/color] - every bond with its points, tier, progress and Following or Away status
+[*][color=#fbbf24]Find, order, group[/color] - type in Find a companion to filter by name, choose an Order (Closest, Name or Recent), and read bonds grouped under Following and Away
+[*][color=#fbbf24]Dossier[/color] - mood, What they value, Recent changes (the last five), Personality and Milestones, including how far the bond is from the next tier and what that tier unlocks
+[*][color=#fbbf24]Journal[/color] - the full story of a bond: History, The last sixty days chart, Deepened most and Wounded most, and Milestones such as each tier reached or lost
+[*][color=#fbbf24]New bond[/color] - give any follower without author support a personality: stamp each deed Like, Dislike, Favorite, Pet peeve or Neutral, with a search box across seven categories of deeds
+[*][color=#fbbf24]Bond tools[/color] - Edit personality, Reset bond and Remove bond for bonds you made yourself; reset and remove ask first
+[*][color=#fbbf24]Protected author profiles[/color] - personalities supplied by follower authors are sealed and marked Author-defined personality; nothing can overwrite them
+[*][color=#fbbf24]Comfort settings[/color] - Ledger size (Standard, Large, Largest), Stronger contrast and Reduce motion; the tier popup follows them too
+[*][color=#fbbf24]Keyboard, mouse and gamepad[/color] - all three move through the ledger, with button hints for whichever you are holding; typing needs a keyboard
 [/list]
 
-[size=4][b][color=#d99563]The Dashboard[/color][/b][/size]
-
-The dashboard is a page hosted by Magelight UI, which must be installed.
-
+[size=4][b][color=#d99563]Bonds That Feel Alive[/color][/b][/size]
 [list]
-[*][color=#fbbf24]Your Company[/color] - see every bond with current points, tier, role, progress, and following or away status[/*]
-[*][color=#fbbf24]Follower dossiers[/color] - open any follower to see likes, dislikes, milestones, and the five most recent point changes[/*]
-[*][color=#fbbf24]New Bond[/color] - a full-screen page for adding a follower who is travelling with you and has no author support. Choose the companion, then stamp each deed Like, Neutral or Dislike. Deeds are grouped into seven categories, a search box finds any deed as you type, and a live preview shows the personality before you seal it.[/*]
-[*][color=#fbbf24]Protected author profiles[/color] - personalities supplied by follower authors are sealed and clearly identified; players and other integrations cannot overwrite them[/*]
-[*][color=#fbbf24]Editable player profiles[/color] - Edit personality, Reset bond, or Remove bond for any bond you created yourself; reset and remove ask for confirmation first[/*]
-[*][color=#fbbf24]Confirmation messages[/color] - a short notice tells you when a bond was added, edited, reset or removed, or why it could not be[/*]
-[*][color=#fbbf24]Away-follower control[/color] - choose whether companions who are not currently following remain visible in the ledger[/*]
-[*][color=#fbbf24]Milestone tracker[/color] - always know how far the current bond is from the next tier[/*]
-[*][color=#fbbf24]Resolution independent[/color] - the interface scales proportionally across resolutions and aspect ratios, including ultrawide[/*]
+[*][color=#fbbf24]Six tiers[/color] - from Stranger to Spouse, 500 points apart; bonds can fall as well as rise
+[*][color=#fbbf24]Mood[/color] - gains warm a bond, losses strain it, and each in-game day it drifts back toward Settled; mood never changes points or tiers
+[*][color=#fbbf24]Favorites and pet peeves[/color] - the deeds she cares about most count double, in either direction
+[*][color=#fbbf24]Tier unlock lines[/color] - an author can write a few lines per tier ("A key to her house"); the dossier shows what the next tier brings and the popup lists it under Unlocked
+[*][color=#fbbf24]Whispers[/color] - a small card in a corner of the HUD, such as "Dungeons Cleared · +2" or "Glad to have you back", for about four seconds; one at a time, never pausing the game, and they wait out menus and dialogue
+[*][color=#fbbf24]Tier popups[/color] - Romance Deepened in gold, Romance Wounded in rose, each with its own music; they do not pause the game and close themselves after 20 seconds
+[*][color=#fbbf24]A calm moment[/color] - by default a tier popup waits until you are out of combat and in an inn, a home, a town, or waking from sleep; it never waits longer than one in-game day, and several changes for one bond arrive as one
+[*][color=#fbbf24]Relationship pace[/color] - Fast doubles the points from deeds; Slow burn halves them and asks for days together before each higher tier (Friend 3, Confidant 7, Lover 14, Spouse 21); losses are never changed
+[*][color=#fbbf24]Reunions and time apart[/color] - Romantasy notices when a companion has been away for days and when she comes back
 [/list]
 
-[size=4][b][color=#d99563]Controller Support[/color][/b][/size]
+[size=4][b][color=#d99563]Safe Saves[/color][/b][/size]
 [list]
-[*][color=#fbbf24]Full navigation[/color] - the D-pad moves between every row, button, setting and deed stamp; A selects; B goes back or closes[/*]
-[*][color=#fbbf24]Scrolling[/color] - the left stick scrolls the company list, dossiers and preference lists[/*]
-[*][color=#fbbf24]Button hints[/color] - on-screen hints appear when you pick up the controller and hide when you return to keyboard and mouse[/*]
-[*][color=#fbbf24]Opening[/color] - turn on Open with Favorites Menu in Settings, then cast the Romantasy power from your Favorites[/*]
+[*][color=#fbbf24]Bonds survive a missing mod[/color] - if a follower's plugin is not loaded, her points and journal are kept and written back on every save, and return with her mod; a HUD line says how many bonds are being kept
+[*][color=#fbbf24]Player-made bonds live in the save[/color] - New bond saves the personality with the game, so Remove bond only affects the current save
+[*][color=#fbbf24]Load order changes are fine[/color] - bonds are keyed by plugin name and local ID, not by load order position
+[*][color=#fbbf24]Health[/color] - a section in Settings that names anything wrong (Magelight UI missing or too old, an outdated plugin, rejected personality files, a damaged save record, settings that could not be saved) and marks the Settings button when something needs a look
+[*][color=#fbbf24]Crash-safe files[/color] - settings and personality files are replaced whole, so a crash while saving cannot leave half a file
 [/list]
 
-[color=#b8a285]The LB + X opening shortcut from 2.x has been removed; use the Favorites power instead. Typing, such as searching deeds, needs a keyboard.[/color]
-
-[size=4][b][color=#d99563]Notifications[/color][/b][/size]
+[size=4][b][color=#d99563]Optional Integrations[/color][/b][/size]
 [list]
-[*][color=#fbbf24]Tier pop-ups[/color] - a short ceremonial pop-up appears when a bond crosses into a new tier, up or down, showing how many points the moment was worth[/*]
-[*][color=#fbbf24]Two moods, two scores[/color] - deepened bonds get a warm fanfare, wounded bonds get a somber piece; each plays with a gentle fade[/*]
-[*][color=#fbbf24]Combat aware[/color] - tier notifications are held until the fight ends, so the moment is never buried mid-battle[/*]
-[*][color=#fbbf24]Unobtrusive[/color] - pop-ups do not pause the game, close themselves after 20 seconds, and close instantly with Enter, A or B; gain and loss pop-ups can each be switched off in Settings[/*]
+[*][color=#fbbf24]SkyrimNet[/color] - with SkyrimNet's AI-driven dialogue installed, a bonded companion knows her tier, mood and days together, hears about tier changes and reunions, and a kind word (+5) or a harsh one (-5) in conversation can nudge the bond, at most one of each an hour and 15 a day each way
+[*][color=#fbbf24]OStim Standalone[/color] - quiet time alone with a bonded companion in a scene counts as a shared moment: a small gain, once a day, that never costs the bond; popups and whispers also wait until a scene is over
 [/list]
 
-[size=4][b][color=#d99563]Two Ways to Open[/color][/b][/size]
-[list]
-[*][color=#fbbf24]Hotkey mode[/color] - Left Ctrl + R toggles the dashboard (default)[/*]
-[*][color=#fbbf24]Favorites mode[/color] - enable one setting and Romantasy grants you a favorited lesser power that opens the dashboard when cast; ideal for controller players. This replaces the hotkey until you switch it off.[/*]
-[/list]
+[color=#b8a285]Both bridges switch themselves off when their mod is not installed, and each has its own rows in Settings that appear only when the mod is found.[/color]
 
 
 [center][color=#382c1f]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/color][/center]
@@ -107,17 +108,17 @@ The dashboard is a page hosted by Magelight UI, which must be installed.
 [size=5][b][color=#f59e0b]The Six Tiers[/color][/b][/size]
 
 [list]
-[*][color=#fbbf24]Stranger[/color] - 0 points[/*]
-[*][color=#fbbf24]Acquaintance[/color] - 500 points[/*]
-[*][color=#fbbf24]Friend[/color] - 1,000 points[/*]
-[*][color=#fbbf24]Confidant[/color] - 1,500 points[/*]
-[*][color=#fbbf24]Lover[/color] - 2,000 points[/*]
-[*][color=#fbbf24]Spouse[/color] - 2,500 points[/*]
+[*][color=#fbbf24]Stranger[/color] - 0 points
+[*][color=#fbbf24]Acquaintance[/color] - 500 points
+[*][color=#fbbf24]Friend[/color] - 1,000 points
+[*][color=#fbbf24]Confidant[/color] - 1,500 points
+[*][color=#fbbf24]Lover[/color] - 2,000 points
+[*][color=#fbbf24]Spouse[/color] - 2,500 points
 [/list]
 
-Bonds can fall as well as rise. A follower who watches you do the things she hates will drift back down through the tiers, and the dashboard will show you the damage.
+A follower who watches you do the things she hates will drift back down through the tiers, and the ledger will show you the damage.
 
-[color=#b8a285][b]Important:[/b] Spouse is a Romantasy relationship tier. It does not automatically perform Skyrim's vanilla marriage ceremony, and adding a bond does not give a follower new voiced dialogue.[/color]
+[color=#b8a285][b]Note:[/b] Spouse is a Romantasy relationship tier. It does not perform Skyrim's vanilla marriage, and adding a bond does not give a follower new voiced dialogue.[/color]
 
 
 [center][color=#382c1f]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/color][/center]
@@ -125,322 +126,264 @@ Bonds can fall as well as rise. A follower who watches you do the things she hat
 [size=5][b][color=#f59e0b]Requirements[/color][/b][/size]
 
 [list]
-[*]Skyrim Special Edition 1.5.97 or a supported Anniversary Edition runtime[/*]
-[*][url=https://skse.silverlock.org/]SKSE64[/url] matching your Skyrim runtime[/*]
-[*][url=https://www.nexusmods.com/skyrimspecialedition/mods/32444]Address Library for SKSE Plugins[/url] matching your Skyrim runtime[/*]
-[*]Magelight UI 1.6 or newer[/*]
+[*]Skyrim Special Edition 1.5.97 or a supported Anniversary Edition runtime
+[*][url=https://skse.silverlock.org/]SKSE64[/url] matching your Skyrim runtime
+[*][url=https://www.nexusmods.com/skyrimspecialedition/mods/32444]Address Library for SKSE Plugins[/url] matching your Skyrim runtime
+[*]Magelight UI 1.6 or newer - hosts the ledger, the tier popups and the whispers
 [/list]
 
-[color=#b8a285]That is all. Romantasy does not require Meridian UI, Prisma UI or Media Keys Fix, and needs no SkyUI or MCM. Skyrim VR is not supported by the dashboard.[/color]
+[size=4][b][color=#d99563]Optional[/color][/b][/size]
+[list]
+[*]SkyrimNet, a recent version - for the bond line, events and conversation nudges; Health says if yours is too old
+[*]OStim Standalone 7.3.3 or newer - for shared moments and quiet during scenes (7.4 or newer for a follower mod to start a moment)
+[/list]
+
+[color=#b8a285]Not needed: Meridian UI, Prisma UI, Media Keys Fix, SkyUI or an MCM. Skyrim VR is not supported by the ledger. Without Magelight UI the ledger cannot open, but points are still tracked.[/color]
 
 [size=5][b][color=#f59e0b]Installation[/color][/b][/size]
 
 [list=1]
-[*]Install SKSE64, Address Library and Magelight UI with your mod manager.[/*]
-[*]Install Romantasy with your mod manager (MO2, Vortex, etc.). Keep the bundled page files, scripts, sounds and licenses.[/*]
-[*]Activate [font=Courier New]CS_Romantasy.esp[/font] in your load order.[/*]
-[*]If a follower offers Romantasy support as a separate download, install it alongside the follower.[/*]
-[*]Launch the game and go adventuring.[/*]
+[*]Install SKSE64, Address Library and Magelight UI 1.6 or newer.
+[*]Install Romantasy with your mod manager (MO2, Vortex, etc.). Keep the bundled page files, scripts, sounds and licenses.
+[*]Activate [font=Courier New]CS_Romantasy.esp[/font] in your load order.
+[*]If a follower offers Romantasy support as a separate download, install it alongside the follower.
+[*]Launch the game, open the ledger with Left Ctrl + R and check that Health in Settings says everything is in order.
+[*]Go adventuring.
 [/list]
 
-There is no MCM, no INI to edit, and no quest for the player to start.
+There is no MCM, no INI to edit and no quest to start. Romantasy can be added mid-playthrough; a new bond begins at 0 unless the follower's author sets a starting tier.
 
-[size=5][b][color=#f59e0b]Upgrading from 2.x[/color][/b][/size]
+[size=5][b][color=#f59e0b]Upgrading[/color][/b][/size]
 
-[list]
-[*]Install 4.0.0 over your previous version. Your saves keep their points.[/*]
-[*]Romantasy no longer needs Meridian UI. Keep Meridian only if another mod you use requires it.[/*]
-[*]Bonds you created yourself in 2.x migrate automatically the first time each follower is loaded, keeping likes, dislikes and points.[/*]
-[*]If you opened Romantasy with LB + X, switch on Open with Favorites Menu in Settings and use the Romantasy power instead.[/*]
+[size=4][b][color=#d99563]From 3.x[/color][/b][/size]
+[list=1]
+[*]Install Magelight UI 1.6 or newer. The ledger and popups need it now.
+[*]Install 4.0.0 over your previous version. Points, personalities and settings carry over.
+[*]Load your save. Bonds you made yourself are written into the save from now on; the files in [font=Courier New]PlayerProfiles[/font] stay as copies, so keep that folder.
+[*]Make a new save. Protection for bonds whose follower mod is missing starts with the first save made with 4.0.0.
 [/list]
 
-[color=#b8a285][b]Existing saves:[/b] Romantasy can be added mid-playthrough. A new bond begins at 0 unless the follower author supplies a different starting tier. Romantasy cannot reconstruct adventures that happened before it was installed.[/color]
+[size=4][b][color=#d99563]From 2.x[/color][/b][/size]
+[list=1]
+[*]Install Magelight UI 1.6 or newer. Meridian UI is no longer needed; keep it only if another mod asks for it.
+[*]Install 4.0.0 over your previous version. Your saves keep their points.
+[*]Bonds you created yourself in 2.x migrate the first time each follower is loaded, keeping likes, dislikes and points.
+[*]If you opened Romantasy with LB + X, turn on Open with Favorites Menu in Settings and use the Romantasy power instead.
+[/list]
+
+[color=#f43f5e][b]Important:[/b] a save written by 4.0.0 must not be loaded in 3.0.1 or older. Those versions skip the new save records, so the bond points in that save would be lost. Keep an older save if you might go back.[/color]
 
 
 [center][color=#382c1f]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/color][/center]
 
 [size=5][b][color=#f59e0b]How to Use[/color][/b][/size]
 
+[size=4][b][color=#d99563]Opening the Ledger[/color][/b][/size]
+[list]
+[*][color=#fbbf24]Left Ctrl + R[/color] - opens or closes the ledger (the default)
+[*][color=#fbbf24]Romantasy power[/color] - turn on Open with Favorites Menu in Settings and Romantasy gives you a lesser power, already favorited; cast it to open the ledger. The hotkey is off while this is on.
+[/list]
+
+The ledger pauses the game while it is open. Tier popups and whispers do not.
+
 [size=4][b][color=#d99563]Controls[/color][/b][/size]
-
 [list]
-[*][color=#fbbf24]Left Ctrl + R[/color] - open or close the dashboard in hotkey mode[/*]
-[*][color=#fbbf24]Romantasy power[/color] - in Favorites mode, cast the granted lesser power to open the dashboard[/*]
-[*][color=#fbbf24]Esc or B[/color] - close a confirmation, leave the New Bond page, or close the dashboard[/*]
-[*][color=#fbbf24]Mouse, keyboard or controller[/color] - all three work everywhere in the dashboard[/*]
+[*][color=#fbbf24]Keyboard[/color] - arrow keys or Tab to move, Enter to select, Esc to go back or close
+[*][color=#fbbf24]Gamepad[/color] - D-pad to move, A to select, B to go back or close
+[*][color=#fbbf24]Mouse[/color] - click anything; hover a day in the journal chart to see its numbers
 [/list]
 
-The dashboard pauses the game while it is open. Tier pop-ups do not.
+[color=#b8a285]Esc or B steps back one layer at a time: popup, confirmation, New bond page, Settings or Journal, then the ledger itself. Typing, such as searching deeds or finding a companion, needs a keyboard.[/color]
 
-[size=4][b][color=#d99563]Author-Supported Followers[/color][/b][/size]
-
-Followers with author support appear automatically. Their personality card is marked [color=#fbbf24]Author-defined personality[/color] and is read-only. The follower author controls those likes and dislikes, along with any dialogue, reactions, scenes, or romance pacing connected to the bond.
-
-[size=4][b][color=#d99563]Creating a New Bond[/color][/b][/size]
-
-Bring a follower without author support along with you, open the dashboard and choose [color=#fbbf24]New bond[/color]. Pick the companion, stamp the deeds she likes and dislikes, and choose [color=#fbbf24]Begin bond[/color].
-
-[list]
-[*]The personality is saved to [font=Courier New]SKSE/Plugins/Romantasy/PlayerProfiles[/font] and applies immediately. Under MO2, new profile files normally appear in Overwrite.[/*]
-[*]Personalities are shared by every save that uses those files. Earned points stay separate in each save.[/*]
-[*][color=#fbbf24]Edit personality[/color] changes likes and dislikes at any time.[/*]
-[*][color=#fbbf24]Reset bond[/color] returns the selected follower to 0 points in the current save.[/*]
-[*][color=#fbbf24]Remove bond[/color] takes the follower out of the ledger for every save that uses your profiles. You can add her again later with New bond.[/*]
+[size=4][b][color=#d99563]Making a New Bond[/color][/b][/size]
+[list=1]
+[*]Recruit a follower who has no author support and bring her along.
+[*]Open the ledger and choose [color=#fbbf24]New bond[/color].
+[*]Pick the companion, then stamp the deeds that deepen or wound the bond. Every deed starts Neutral; three favorites and three pet peeves at most.
+[*]Choose [color=#fbbf24]Begin bond[/color]. The bond starts at 0 points.
 [/list]
 
-[color=#b8a285]Keep the PlayerProfiles folder when you update Romantasy. Followers created at runtime by other mods, without a stable plugin record, cannot be added.[/color]
+[color=#b8a285]Followers created at runtime by other mods, without a stable plugin record, cannot be added. A copy of each personality is written to [font=Courier New]SKSE/Plugins/Romantasy/PlayerProfiles[/font] (under MO2, usually in Overwrite).[/color]
+
+[size=4][b][color=#d99563]The Journal[/color][/b][/size]
+
+Select a bond and choose [color=#fbbf24]Journal[/color] at the foot of the Recent changes card. It shows the History of the last 30 changes, The last sixty days as a chart of points gained and lost, the five moments that Deepened most and Wounded most, and Milestones: when the journal began, each tier reached, each fall, and A first moment together. Days are counted from Day 1 of the save. The journal only records; it never changes a bond.
 
 [size=4][b][color=#d99563]Settings[/color][/b][/size]
 
+Open [color=#fbbf24]Settings[/color] from the roster. Every row is listed below with its default.
+
 [list]
-[*]Open with Favorites Menu (switch between hotkey and Favorites-power opening)[/*]
-[*]"Romance Deepened" pop-ups on or off[/*]
-[*]"Romance Wounded" pop-ups on or off[/*]
-[*]Show or hide away companions in the company list[/*]
-[*]Password-protected developer tools for controlled point and deed testing on actively following companions[/*]
+[*][color=#fbbf24]Open with Favorites Menu[/color] - cast the Romantasy power instead of using Left Ctrl + R (default: off)
+[*][color=#fbbf24]"Romance Deepened" popups[/color] - the gold popup when a bond rises a tier (default: on)
+[*][color=#fbbf24]"Romance Wounded" popups[/color] - the rose popup when a bond slips a tier (default: on)
+[*][color=#fbbf24]Show away companions[/color] - keep bonds in the roster when they are not following (default: on)
+[*][color=#fbbf24]Tier changes arrive[/color] - At a calm moment or At once (default: At a calm moment)
+[*][color=#fbbf24]Relationship pace[/color] - Slow burn, Standard or Fast (default: Standard)
+[*][color=#fbbf24]Whispers[/color] - small notes on the HUD when a companion reacts (default: on)
+[*][color=#fbbf24]Whisper corner[/color] - Top left, Top right, Bottom left or Bottom right (default: Top right)
+[*][color=#fbbf24]Tell SkyrimNet about bonds[/color] - shown only with SkyrimNet (default: on)
+[*][color=#fbbf24]Conversations can move the bond[/color] - shown only with SkyrimNet (default: on)
+[*][color=#fbbf24]Shared moments[/color] - shown only with OStim (default: on)
+[*][color=#fbbf24]Quiet during scenes[/color] - shown only with OStim (default: on)
+[*][color=#fbbf24]Ledger size[/color] - Standard, Large or Largest (default: Standard)
+[*][color=#fbbf24]Stronger contrast[/color] - brighter text, solid panels and thicker outlines (default: off)
+[*][color=#fbbf24]Reduce motion[/color] - stops the drifting backdrop and the larger animations (default: off)
+[*][color=#fbbf24]Detailed log[/color] - writes every point change, and why, to [font=Courier New]Romantasy.log[/font] (default: off)
+[*][color=#fbbf24]Developer tools[/color] - password-protected testing buttons (default: locked)
 [/list]
 
-[color=#b8a285]Settings are saved to [font=Courier New]Data/SKSE/Plugins/Romantasy/settings.json[/font] and apply across saves.[/color]
+The [color=#fbbf24]Health[/color] section sits at the foot of the list when all is well, and jumps to the top when something needs attention.
+
+[color=#b8a285]Settings are saved to [font=Courier New]Data/SKSE/Plugins/Romantasy/settings.json[/font] and apply to every save.[/color]
 
 
 [center][color=#382c1f]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/color][/center]
 
 [size=5][b][color=#f59e0b]How It Works[/color][/b][/size]
 
-[color=#fbbf24][b]Watching the adventure[/b][/color] - Romantasy listens to the same statistics screen the vanilla game already keeps. Clear a dungeon, finish a quest, pick a pocket, read a skill book: when the game records it, Romantasy asks each active follower whether she cares. If she likes it, she awards points. If she hates it, she takes some away. If she has no opinion, nothing happens.
+[color=#fbbf24][b]Watching the adventure[/b][/color] - Romantasy listens to the same statistics the game already keeps. Clear a dungeon, finish a quest, pick a pocket, read a skill book: when the game records it, Romantasy asks each follower who is with you whether she cares. A like adds the deed's points, a dislike takes them away, a favorite or pet peeve doubles either, and no opinion means nothing happens.
 
-[color=#fbbf24][b]Personalities and points[/b][/color] - a follower's personality lives in a small profile file, either supplied by her author or written by you through New bond. Her earned points live in your save. Change a personality and every save that uses it follows; play a different save and its points are its own.
+[color=#fbbf24][b]Only shared adventures count[/b][/color] - points from deeds go only to a managed follower who is actively following you. Someone waiting at home does not react. A follower who has just come into the loaded area may take a few seconds to start earning.
 
-[color=#fbbf24][b]Profile ownership[/b][/color] - personalities supplied by follower authors are authoritative and sealed. Player-created personalities belong to the player and can be edited or removed. Older integrations keep their own protection, so one system never silently overwrites another.
+[color=#fbbf24][b]Mood[/b][/color] - gains warm a bond and losses strain it. Each in-game day the mood drifts back toward Settled. Mood colours the dossier, dialogue can read it, and it never moves points or tiers.
 
-[color=#fbbf24][b]Dialogue bridge[/b][/color] - follower dialogue can check whether a follower is managed, her current tier, and her exact points with a standard Creation Kit condition. Older faction-based conditions keep working.
+[color=#fbbf24][b]Pacing[/b][/color] - Relationship pace scales the points from deeds: double on Fast, half on Slow burn. Slow burn also asks for days together before each higher tier, and the dossier shows the gate ahead. A gate never takes points away. Losses and a follower author's own scripted amounts are never scaled.
 
-[color=#fbbf24][b]Per-reference identity[/b][/color] - dynamic followers are tracked by their actor reference, not only their base NPC. Multiple followers created from the same base keep separate point totals, and player-assigned display names appear correctly in the dashboard.
+[color=#fbbf24][b]Shared moments[/b][/color] - with OStim installed, time alone with one bonded companion in a scene can count as a shared moment. It needs just the two of you, at least 20 seconds, nothing marked as force, and a bond that has reached the tier where she welcomes that kind of moment (Friend, Confidant or Lover by default). A moment adds 5 points once a day (10 for a companion who treasures them), never costs the bond and never strains the mood. The journal names it only by its kind, such as A tender moment. Switch it off any time with Shared moments.
 
-[color=#fbbf24][b]Persistence[/b][/color] - points and recent changes are stored in the SKSE co-save using standard serialization. Removing Romantasy forgets its own relationship ledger without taking over or rewriting the follower's original systems.
+[color=#fbbf24][b]Personalities and points[/b][/color] - a personality comes from a profile file supplied by the follower's author, or from you through New bond. Author personalities are sealed. Earned points, moods, journals and player-made bonds all live in your save, so every save keeps its own story.
+
+[color=#fbbf24][b]Saves[/b][/color] - bonds are keyed by the follower's plugin name and local ID. If that plugin is missing, the bond is kept and written back on every save until it returns. A damaged record in the co-save costs only the entries after the damage.
+
+[color=#fbbf24][b]Performance[/b][/color] - the tracker is native SKSE code that reacts to the game's statistic events. There are no Papyrus polling loops, and the ledger only draws while it is open.
 
 
 [center][color=#382c1f]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/color][/center]
 
 [size=5][b][color=#f59e0b]For Mod Authors[/color][/b][/size]
 
-Romantasy is a modding resource. You remain in full control of your follower's dialogue, scenes, personality, pacing, and marriage content. Romantasy supplies the centralized ledger, relationship tiers, exact point queries, notifications, dashboard, and event bridge.
+Romantasy is a modding resource. You keep full control of your follower's dialogue, scenes, personality, pacing and marriage content. Romantasy supplies the ledger, the tiers, the queries and the events. Your follower plugin does not need Romantasy as a master, and players without Romantasy keep your follower exactly as she is.
 
-[b][color=#fbbf24]New in 3.0: support a follower with a single profile file. Your follower plugin does not need Romantasy as a master, and needs no romance factions, scripts or globals.[/color][/b] Players without Romantasy keep your follower exactly as it is.
-
-The download includes guides for profiles, follower conversion, dialogue conditions and the Papyrus API, plus an example profile and a profile checker.
-
-[size=4][b][color=#d99563]Path 1: A Profile File (recommended)[/color][/b][/size]
-
-Ship one TOML file per follower in [font=Courier New]SKSE/Plugins/Romantasy/Profiles/[/font]:
-
-[code]schema_version = 1
-
-[npc]
-plugin = "ExampleFollower.esp"
-form_id = "0x000800"
-
-[romance]
-starting_level = "Stranger"
-likes = ["Quests Completed", "Dungeons Cleared"]
-dislikes = ["Murders"][/code]
-
+[size=4][b][color=#d99563]What You Can Do[/color][/b][/size]
 [list]
-[*][color=#fbbf24]plugin[/color] is the plugin that defines the follower's NPC record[/*]
-[*][color=#fbbf24]form_id[/color] is that NPC base record's plugin-local ID (for example 05000800 becomes 0x000800; an ESL's local ID is at most 0xFFF), not the placed reference[/*]
-[*][color=#fbbf24]starting_level[/color] is Stranger through Spouse and defaults to Stranger; a save's existing points always take precedence[/*]
-[*][color=#fbbf24]likes and dislikes[/color] accept the statistic labels or their [font=Courier New]ROM_*[/font] identifiers from the list below[/*]
-[*]Profiles load when the game starts; restart Skyrim after editing one by hand[/*]
-[*]Mistakes are reported in [font=Courier New]Romantasy.log[/font], and [font=Courier New]tools/romantasy-profile-check.exe[/font] checks a folder of profiles without starting the game[/*]
+[*][color=#fbbf24]Personality file[/color] - one small TOML file in [font=Courier New]SKSE/Plugins/Romantasy/Profiles/[/font] with likes, dislikes, up to three favorites and three pet peeves, a starting tier, unlock lines per tier, and a moments table for the tiers she welcomes each kind of moment and how she feels about them
+[*][color=#fbbf24]Dialogue conditions[/color] - [font=Courier New]GetGraphVariableInt[/font] run on Subject with [font=Courier New]Romantasy_Registered[/font], [font=Courier New]Romantasy_Level[/font], [font=Courier New]Romantasy_Points[/font] or [font=Courier New]Romantasy_Mood[/font]; no factions or scripts needed
+[*][color=#fbbf24]Papyrus script[/color] - [font=Courier New]Romantasy.psc[/font] (capability version 9) to award or remove points at a scripted beat, read points, tier and mood, and ask for or start a shared moment
+[*][color=#fbbf24]Events[/color] - [font=Courier New]Romantasy_OnLevelChanged[/font], [font=Courier New]Romantasy_OnLevelLost[/font], [font=Courier New]Romantasy_OnPreference[/font], [font=Courier New]Romantasy_OnTimeApart[/font], [font=Courier New]Romantasy_OnReunion[/font], [font=Courier New]Romantasy_OnSharedMoment[/font] and [font=Courier New]Romantasy_OnMomentRefused[/font] for voiced reactions
+[*][color=#fbbf24]Author test kit[/color] - set [font=Courier New]"authorMode": true[/font] by hand in [font=Courier New]settings.json[/font] to unlock debug functions that fire a deed, set points, days together or mood, and announce a waiting tier now; with Detailed log on, every deed writes a [font=Courier New]why:[/font] line saying what changed and why, or why nothing did
+[*][color=#fbbf24]Profile checker[/color] - [font=Courier New]tools/romantasy-profile-check.exe[/font] checks a file or folder of profiles without starting the game, with [font=Courier New]--strict[/font] and [font=Courier New]--json[/font]
+[*][color=#fbbf24]SkyrimNet and OStim hooks[/color] - the SkyrimNet bond line and events come for free; the OStim moment functions and events let your follower ask for a gentle moment of her own
+[*][color=#fbbf24]Older integrations[/color] - runtime registration, the [font=Courier New]ROM_*[/font] faction tags and faction-rank conditions from 2.x keep working
 [/list]
 
-A profile file owns that follower's personality. Players cannot edit it, and you should not also register the same follower through the older Papyrus registration call.
-
-[size=4][b][color=#d99563]Path 2: Dialogue Conditions[/color][/b][/size]
-
-Use the standard [b]GetGraphVariableInt[/b] condition, Run On [b]Subject[/b], with one of these reserved names:
-
+[size=4][b][color=#d99563]Documents in the Mod's docs Folder[/color][/b][/size]
 [list]
-[*][font=Courier New]Romantasy_Registered[/font] - 1 when Romantasy manages this follower, otherwise 0[/*]
-[*][font=Courier New]Romantasy_Level[/font] - the current tier, 1 (Stranger) through 6 (Spouse), or 0 when unmanaged[/*]
-[*][font=Courier New]Romantasy_Points[/font] - exact earned points, or -1 when unmanaged[/*]
+[*][font=Courier New]AuthorGuide.md[/font] - start here: the shortest path from a follower to a supported follower
+[*][font=Courier New]FileProfiles.md[/font] - personality files, unlock lines, moments, New bond and dialogue conditions
+[*][font=Courier New]papyrus-bridge.md[/font] - every Papyrus function and event
+[*][font=Courier New]romance-points-dialogue-conditions.md[/font] - dialogue conditions in detail
+[*][font=Courier New]AuthorTesting.md[/font] - author mode, the debug functions and reading the why log
+[*][font=Courier New]FollowerConversion.md[/font] - moving an existing faction-based follower to a profile file
+[*][font=Courier New]SkyrimNet.md[/font] - the SkyrimNet bridge, word for word
+[*][font=Courier New]OStim.md[/font] - what counts as a shared moment, for players and authors
+[*][font=Courier New]Translating.md[/font] - translating the ledger through [font=Courier New]strings.js[/font]
 [/list]
 
-Friend or higher, joined with AND:
-
-[code]GetGraphVariableInt  Romantasy_Registered  == 1
-GetGraphVariableInt  Romantasy_Level       >= 3[/code]
-
-Always include the Registered guard, especially with <, <= or != tests. Enter the names without quotation marks. When converting old [font=Courier New]ROM_RomanceLevel[/font] rank checks, add one to the value: the new levels count from 1, the old ranks from 0. Exact point thresholds are unchanged.
-
-[size=4][b][color=#d99563]Path 3: The Papyrus Bridge (authored beats)[/color][/b][/size]
-
-To award or remove points at a specific moment (a kiss, a betrayal, a quest beat), call Romantasy from a fragment. Redistribute [font=Courier New]Source\Scripts\Romantasy.psc[/font] with your optional integration source so it compiles against the native bridge. The 2.x functions are unchanged. The API is now capability version 8.
-
-[code]Scriptname Romantasy Hidden
-
-Int Function GetApiVersion() Native Global
-
-Bool Function ModifyPoints(Actor akFollower, Int aiPoints, String asReason = "", Bool abShowLevelUp = True) Native Global
-Bool Function ApplyPreference(Actor akFollower, String asStatName, Int aiDelta = 1, Bool abShowLevelUp = True) Native Global
-
-Bool Function ClearPreferences(Actor akFollower) Native Global
-Bool Function SetPreference(Actor akFollower, String asStatName, Int aiDirection) Native Global
-Int Function GetPreference(Actor akFollower, String asStatName) Native Global
-Bool Function SetPreferencesManual(Actor akFollower, Bool abManual = True) Native Global
-Bool Function IsPreferencesManual(Actor akFollower) Native Global
-
-Bool Function RegisterAuthorFollower(Actor akFollower, String[] asStatNames, Int[] aiDirections, Int aiStartingLevel = 1, GlobalVariable akRelationshipRankMirror = None) Native Global
-Bool Function RegisterAuthorFollowerPointsMirror(Actor akFollower, GlobalVariable akRelationshipPointsMirror) Native Global
-
-Int Function GetPoints(Actor akFollower) Native Global
-Int Function GetLevel(Actor akFollower) Native Global
-String Function GetLevelName(Actor akFollower) Native Global[/code]
-
-[list]
-[*][color=#fbbf24]ModifyPoints[/color] - apply an exact authored point change with a reason shown in the recent-changes list[/*]
-[*][color=#fbbf24]ApplyPreference[/color] - apply the follower's configured like or dislike for a statistic; returns False when she has no opinion[/*]
-[*][color=#fbbf24]GetPoints / GetLevel / GetLevelName[/color] - read the current relationship state at any time; GetLevel returns 1 through 6, or 0 when the actor is not managed[/*]
-[*][color=#fbbf24]ClearPreferences / SetPreference / GetPreference[/color] - manage player-created or externally controlled profiles; protected profiles reject writes[/*]
-[*][color=#fbbf24]SetPreferencesManual / IsPreferencesManual[/color] - coordinate ownership with an external profile editor[/*]
-[/list]
-
-ModifyPoints and ApplyPreference apply only to a managed follower who is actively following. Example TopicInfo fragment:
-
-[code]Romantasy.ModifyPoints(akSpeaker, 50, "Kissed under the aurora")[/code]
-
-Pass [font=Courier New]abShowLevelUp = False[/font] to apply a change without the tier pop-up or level-change event.
-
-[size=4][b][color=#d99563]Path 4: Voiced Reactions via ModEvents[/color][/b][/size]
-
-Romantasy broadcasts two SKSE ModEvents so your follower can speak when the bond moves:
-
-[list]
-[*][color=#fbbf24]Romantasy_OnLevelChanged[/color] - fired when a follower rises into a new tier; [font=Courier New]numArg[/font] is the new level (1 through 6) and [font=Courier New]sender[/font] is her base NPC[/*]
-[*][color=#fbbf24]Romantasy_OnPreference[/color] - fired when a tracked activity changes her points without crossing a tier; [font=Courier New]strArg[/font] is the statistic label, [font=Courier New]numArg[/font] is the point change, and [font=Courier New]sender[/font] is her base NPC[/*]
-[/list]
-
-The handler signature for both is [font=Courier New](String eventName, String strArg, Float numArg, Form sender)[/font]. Always filter by sender, re-register after loading a save, and consider a cooldown or random chance for frequent preference reactions.
-
-[code]Event OnRomPreference(String eventName, String statLabel, Float delta, Form sender)
-    If sender != MyFollowerBase
-        Return
-    EndIf
-
-    Actor me = GetActorReference()
-    If me
-        If delta > 0
-            me.Say(LikeTopic)
-        Else
-            me.Say(DislikeTopic)
-        EndIf
-    EndIf
-EndEvent[/code]
-
-[size=4][b][color=#d99563]Path 5: Older Integrations[/color][/b][/size]
-
-Everything built for 2.x keeps working, and saved points and tiers are untouched:
-
-[list]
-[*][color=#fbbf24]Optional runtime registration[/color] - a compatibility plugin that calls [font=Courier New]RegisterAuthorFollower[/font] (and, from API 6, [font=Courier New]RegisterAuthorFollowerPointsMirror[/font]) from [font=Courier New]OnInit[/font] and [font=Courier New]OnPlayerLoadGame[/font] still works, including the optional rank and points GlobalVariable mirrors[/*]
-[*][color=#fbbf24]Faction tags[/color] - followers that master Romantasy and carry [font=Courier New]ROM_RomanceLevel[/font] plus [font=Courier New]ROM_*[/font] preference factions remain supported[/*]
-[*][color=#fbbf24]Faction conditions[/color] - [font=Courier New]GetFactionRank ROM_RomanceLevel[/font] (ranks 0 through 5) and the exact-points proxy [font=Courier New]GetFactionRank ROM_RomancePoints[/font] (-1 when unmanaged) keep answering[/*]
-[/list]
-
-New releases should prefer a profile file and the GetGraphVariableInt conditions. The included conversion guide walks through moving an existing follower across.
+[color=#b8a285]An example profile ships in [font=Courier New]SKSE/Plugins/Romantasy/Profiles/ExampleFollower.toml.example[/font], inert until renamed.[/color]
 
 
 [center][color=#382c1f]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/color][/center]
 
 [size=5][b][color=#f59e0b]The Full Preference List[/color][/b][/size]
 
-Every preference below maps to one vanilla statistic, grouped as they appear on the New Bond page. The number is its point weight: each time the statistic increases by one, an active follower gains that many points if she likes it or loses that many if she hates it. Profiles accept either the label or the [font=Courier New]ROM_*[/font] identifier.
+Every deed below maps to one vanilla statistic, in the same seven groups as the New bond page. The number is its point weight: each time the statistic goes up by one, a following companion gains that many points if she likes it or loses that many if she dislikes it. A favorite or pet peeve doubles the amount. Profiles accept the label or the [font=Courier New]ROM_*[/font] identifier.
 
 [spoiler]
-[color=#fbbf24][b]Exploration and Growth[/b][/color]
+[size=4][b][color=#d99563]Exploration & Growth[/color][/b][/size]
 [list]
-[*][color=#fbbf24]Locations Discovered[/color] (ROM_LocationsDiscovered) - 2 points[/*]
-[*][color=#fbbf24]Dungeons Cleared[/color] (ROM_DungeonsCleared) - 2 points[/*]
-[*][color=#fbbf24]Days Passed[/color] (ROM_DaysPassed) - 2 points per in-game day spent together[/*]
-[*][color=#fbbf24]Standing Stones Found[/color] (ROM_StandingStonesFound) - 2 points[/*]
-[*][color=#fbbf24]Chests Looted[/color] (ROM_ChestsLooted) - 1 point[/*]
-[*][color=#fbbf24]Skill Increases[/color] (ROM_SkillIncreases) - 2 points[/*]
-[*][color=#fbbf24]Skill Books Read[/color] (ROM_SkillBooksRead) - 1 point[/*]
+[*][color=#fbbf24]Locations Discovered[/color] (ROM_LocationsDiscovered) - 2 points
+[*][color=#fbbf24]Dungeons Cleared[/color] (ROM_DungeonsCleared) - 2 points
+[*][color=#fbbf24]Days Passed[/color] (ROM_DaysPassed) - 2 points per in-game day spent together
+[*][color=#fbbf24]Standing Stones Found[/color] (ROM_StandingStonesFound) - 2 points
+[*][color=#fbbf24]Chests Looted[/color] (ROM_ChestsLooted) - 1 point
+[*][color=#fbbf24]Skill Increases[/color] (ROM_SkillIncreases) - 2 points
+[*][color=#fbbf24]Skill Books Read[/color] (ROM_SkillBooksRead) - 1 point
 [/list]
 
-[color=#fbbf24][b]Influence[/b][/color]
+[size=4][b][color=#d99563]Influence[/color][/b][/size]
 [list]
-[*][color=#fbbf24]Barters[/color] (ROM_Barters) - 1 point[/*]
-[*][color=#fbbf24]Persuasions[/color] (ROM_Persuasions) - 1 point[/*]
-[*][color=#fbbf24]Bribes[/color] (ROM_Bribes) - 1 point[/*]
-[*][color=#fbbf24]Intimidations[/color] (ROM_Intimidations) - 1 point[/*]
+[*][color=#fbbf24]Barters[/color] (ROM_Barters) - 1 point
+[*][color=#fbbf24]Persuasions[/color] (ROM_Persuasions) - 1 point
+[*][color=#fbbf24]Bribes[/color] (ROM_Bribes) - 1 point
+[*][color=#fbbf24]Intimidations[/color] (ROM_Intimidations) - 1 point
 [/list]
 
-[color=#fbbf24][b]Blood and Beast[/b][/color]
+[size=4][b][color=#d99563]Blood & Beast[/color][/b][/size]
 [list]
-[*][color=#fbbf24]Diseases Contracted[/color] (ROM_DiseasesContracted) - 1 point[/*]
-[*][color=#fbbf24]Days as a Vampire[/color] (ROM_DaysVampire) - 2 points[/*]
-[*][color=#fbbf24]Days as a Werewolf[/color] (ROM_DaysWerewolf) - 2 points[/*]
-[*][color=#fbbf24]Necks Bitten[/color] (ROM_NecksBitten) - 2 points[/*]
-[*][color=#fbbf24]Vampirism Cures[/color] (ROM_VampirismCures) - 2 points[/*]
-[*][color=#fbbf24]Werewolf Transformations[/color] (ROM_WerewolfTransformations) - 5 points[/*]
-[*][color=#fbbf24]Mauls[/color] (ROM_Mauls) - 2 points[/*]
+[*][color=#fbbf24]Diseases Contracted[/color] (ROM_DiseasesContracted) - 1 point
+[*][color=#fbbf24]Days as a Vampire[/color] (ROM_DaysVampire) - 2 points
+[*][color=#fbbf24]Days as a Werewolf[/color] (ROM_DaysWerewolf) - 2 points
+[*][color=#fbbf24]Necks Bitten[/color] (ROM_NecksBitten) - 2 points
+[*][color=#fbbf24]Vampirism Cures[/color] (ROM_VampirismCures) - 2 points
+[*][color=#fbbf24]Werewolf Transformations[/color] (ROM_WerewolfTransformations) - 5 points
+[*][color=#fbbf24]Mauls[/color] (ROM_Mauls) - 2 points
 [/list]
 
-[color=#fbbf24][b]Quests and Allegiances[/b][/color]
+[size=4][b][color=#d99563]Quests & Allegiances[/color][/b][/size]
 [list]
-[*][color=#fbbf24]Quests Completed[/color] (ROM_QuestsCompleted) - 3 points[/*]
-[*][color=#fbbf24]Misc Objectives Completed[/color] (ROM_MiscObjectivesCompleted) - 3 points[/*]
-[*][color=#fbbf24]Main Quests Completed[/color] (ROM_MainQuestsCompleted) - 5 points[/*]
-[*][color=#fbbf24]Side Quests Completed[/color] (ROM_SideQuestsCompleted) - 5 points[/*]
-[*][color=#fbbf24]The Companions Quests Completed[/color] (ROM_CompanionsCompleted) - 10 points[/*]
-[*][color=#fbbf24]College of Winterhold Quests Completed[/color] (ROM_CollegeCompleted) - 10 points[/*]
-[*][color=#fbbf24]Thieves' Guild Quests Completed[/color] (ROM_ThievesCompleted) - 10 points[/*]
-[*][color=#fbbf24]The Dark Brotherhood Quests Completed[/color] (ROM_DarkBrotherhoodCompleted) - 10 points[/*]
-[*][color=#fbbf24]Civil War Quests Completed[/color] (ROM_CivilWarCompleted) - 10 points[/*]
-[*][color=#fbbf24]Daedric Quests Completed[/color] (ROM_DaedricCompleted) - 10 points[/*]
-[*][color=#fbbf24]Dawnguard Quests Completed[/color] (ROM_DawnguardCompleted) - 10 points[/*]
-[*][color=#fbbf24]Dragonborn Quests Completed[/color] (ROM_DragonbornCompleted) - 10 points[/*]
-[*][color=#fbbf24]Questlines Completed[/color] (ROM_QuestlinesCompleted) - 20 points per full questline finished[/*]
+[*][color=#fbbf24]Quests Completed[/color] (ROM_QuestsCompleted) - 3 points
+[*][color=#fbbf24]Misc Objectives Completed[/color] (ROM_MiscObjectivesCompleted) - 3 points
+[*][color=#fbbf24]Main Quests Completed[/color] (ROM_MainQuestsCompleted) - 5 points
+[*][color=#fbbf24]Side Quests Completed[/color] (ROM_SideQuestsCompleted) - 5 points
+[*][color=#fbbf24]The Companions Quests Completed[/color] (ROM_CompanionsCompleted) - 10 points
+[*][color=#fbbf24]College of Winterhold Quests Completed[/color] (ROM_CollegeCompleted) - 10 points
+[*][color=#fbbf24]Thieves' Guild Quests Completed[/color] (ROM_ThievesCompleted) - 10 points
+[*][color=#fbbf24]The Dark Brotherhood Quests Completed[/color] (ROM_DarkBrotherhoodCompleted) - 10 points
+[*][color=#fbbf24]Civil War Quests Completed[/color] (ROM_CivilWarCompleted) - 10 points
+[*][color=#fbbf24]Daedric Quests Completed[/color] (ROM_DaedricCompleted) - 10 points
+[*][color=#fbbf24]Dawnguard Quests Completed[/color] (ROM_DawnguardCompleted) - 10 points
+[*][color=#fbbf24]Dragonborn Quests Completed[/color] (ROM_DragonbornCompleted) - 10 points
+[*][color=#fbbf24]Questlines Completed[/color] (ROM_QuestlinesCompleted) - 20 points per full questline finished
 [/list]
 
-[color=#fbbf24][b]Battle[/b][/color]
+[size=4][b][color=#d99563]Battle[/color][/b][/size]
 [list]
-[*][color=#fbbf24]People Killed[/color] (ROM_PeopleKilled) - 1 point[/*]
-[*][color=#fbbf24]Animals Killed[/color] (ROM_AnimalsKilled) - 1 point[/*]
-[*][color=#fbbf24]Creatures Killed[/color] (ROM_CreaturesKilled) - 1 point[/*]
-[*][color=#fbbf24]Undead Killed[/color] (ROM_UndeadKilled) - 1 point[/*]
-[*][color=#fbbf24]Daedra Killed[/color] (ROM_DaedraKilled) - 1 point[/*]
-[*][color=#fbbf24]Automatons Killed[/color] (ROM_AutomatonsKilled) - 1 point[/*]
-[*][color=#fbbf24]Critical Strikes[/color] (ROM_CriticalStrikes) - 1 point[/*]
-[*][color=#fbbf24]Sneak Attacks[/color] (ROM_SneakAttacks) - 1 point[/*]
-[*][color=#fbbf24]Backstabs[/color] (ROM_Backstabs) - 1 point[/*]
-[*][color=#fbbf24]Weapons Disarmed[/color] (ROM_WeaponsDisarmed) - 1 point[/*]
-[*][color=#fbbf24]Bunnies Slaughtered[/color] (ROM_BunniesSlaughtered) - 1 point (yes, really)[/*]
+[*][color=#fbbf24]People Killed[/color] (ROM_PeopleKilled) - 1 point
+[*][color=#fbbf24]Animals Killed[/color] (ROM_AnimalsKilled) - 1 point
+[*][color=#fbbf24]Creatures Killed[/color] (ROM_CreaturesKilled) - 1 point
+[*][color=#fbbf24]Undead Killed[/color] (ROM_UndeadKilled) - 1 point
+[*][color=#fbbf24]Daedra Killed[/color] (ROM_DaedraKilled) - 1 point
+[*][color=#fbbf24]Automatons Killed[/color] (ROM_AutomatonsKilled) - 1 point
+[*][color=#fbbf24]Critical Strikes[/color] (ROM_CriticalStrikes) - 1 point
+[*][color=#fbbf24]Sneak Attacks[/color] (ROM_SneakAttacks) - 1 point
+[*][color=#fbbf24]Backstabs[/color] (ROM_Backstabs) - 1 point
+[*][color=#fbbf24]Weapons Disarmed[/color] (ROM_WeaponsDisarmed) - 1 point
+[*][color=#fbbf24]Bunnies Slaughtered[/color] (ROM_BunniesSlaughtered) - 1 point (yes, really)
 [/list]
 
-[color=#fbbf24][b]Magic and Craft[/b][/color]
+[size=4][b][color=#d99563]Magic & Craft[/color][/b][/size]
 [list]
-[*][color=#fbbf24]Spells Learned[/color] (ROM_SpellsLearned) - 2 points[/*]
-[*][color=#fbbf24]Dragon Souls Collected[/color] (ROM_DragonSoulsCollected) - 2 points[/*]
-[*][color=#fbbf24]Shouts Learned[/color] (ROM_ShoutsLearned) - 2 points[/*]
-[*][color=#fbbf24]Souls Trapped[/color] (ROM_SoulsTrapped) - 1 point[/*]
-[*][color=#fbbf24]Magic Items Made[/color] (ROM_MagicItemsMade) - 1 point[/*]
-[*][color=#fbbf24]Weapons Made[/color] (ROM_WeaponsMade) - 1 point[/*]
-[*][color=#fbbf24]Armor Made[/color] (ROM_ArmorMade) - 1 point[/*]
-[*][color=#fbbf24]Potions Mixed[/color] (ROM_PotionsMixed) - 1 point[/*]
-[*][color=#fbbf24]Poisons Mixed[/color] (ROM_PoisonsMixed) - 1 point[/*]
+[*][color=#fbbf24]Spells Learned[/color] (ROM_SpellsLearned) - 2 points
+[*][color=#fbbf24]Dragon Souls Collected[/color] (ROM_DragonSoulsCollected) - 2 points
+[*][color=#fbbf24]Shouts Learned[/color] (ROM_ShoutsLearned) - 2 points
+[*][color=#fbbf24]Souls Trapped[/color] (ROM_SoulsTrapped) - 1 point
+[*][color=#fbbf24]Magic Items Made[/color] (ROM_MagicItemsMade) - 1 point
+[*][color=#fbbf24]Weapons Made[/color] (ROM_WeaponsMade) - 1 point
+[*][color=#fbbf24]Armor Made[/color] (ROM_ArmorMade) - 1 point
+[*][color=#fbbf24]Potions Mixed[/color] (ROM_PotionsMixed) - 1 point
+[*][color=#fbbf24]Poisons Mixed[/color] (ROM_PoisonsMixed) - 1 point
 [/list]
 
-[color=#fbbf24][b]Crime and Transgression[/b][/color]
+[size=4][b][color=#d99563]Crime & Transgression[/color][/b][/size]
 [list]
-[*][color=#fbbf24]Locks Picked[/color] (ROM_LocksPicked) - 1 point[/*]
-[*][color=#fbbf24]Pockets Picked[/color] (ROM_PocketsPicked) - 1 point[/*]
-[*][color=#fbbf24]Items Stolen[/color] (ROM_ItemsStolen) - 1 point[/*]
-[*][color=#fbbf24]Assaults[/color] (ROM_Assaults) - 2 points[/*]
-[*][color=#fbbf24]Murders[/color] (ROM_Murders) - 5 points[/*]
-[*][color=#fbbf24]Horses Stolen[/color] (ROM_HorsesStolen) - 2 points[/*]
-[*][color=#fbbf24]Trespasses[/color] (ROM_Trespasses) - 2 points[/*]
+[*][color=#fbbf24]Locks Picked[/color] (ROM_LocksPicked) - 1 point
+[*][color=#fbbf24]Pockets Picked[/color] (ROM_PocketsPicked) - 1 point
+[*][color=#fbbf24]Items Stolen[/color] (ROM_ItemsStolen) - 1 point
+[*][color=#fbbf24]Assaults[/color] (ROM_Assaults) - 2 points
+[*][color=#fbbf24]Murders[/color] (ROM_Murders) - 5 points
+[*][color=#fbbf24]Horses Stolen[/color] (ROM_HorsesStolen) - 2 points
+[*][color=#fbbf24]Trespasses[/color] (ROM_Trespasses) - 2 points
 [/list]
 [/spoiler]
 
@@ -451,53 +394,54 @@ Every preference below maps to one vanilla statistic, grouped as they appear on 
 
 [color=#34d399][b]Compatible:[/b][/color]
 [list]
-[*]The vanilla follower system, Horde, NFF, AFT, EFF, and custom follower frameworks[/*]
-[*]Followers supported through a profile file, runtime registration, or the older faction tags[/*]
-[*]Followers without author support, added by the player through New Bond[/*]
-[*]Custom-voiced followers and follower-specific dialogue, scenes, reactions, quests, and marriage systems[/*]
-[*]Other romance and marriage mods; Romantasy maintains its own ledger and does not alter vanilla marriage[/*]
-[*]Existing saves; Romantasy can be installed or removed mid-playthrough[/*]
-[*]Games and follower names in any language[/*]
+[*]The vanilla follower system, Horde, NFF, AFT, EFF and custom follower frameworks
+[*]Followers supported through a profile file, runtime registration or the older faction tags
+[*]Followers without author support, added by you through New bond
+[*]Custom-voiced followers and their own dialogue, scenes, reactions, quests and marriage systems
+[*]Other romance and marriage mods; Romantasy keeps its own ledger and does not touch vanilla marriage
+[*]SkyrimNet and OStim Standalone, both optional
+[*]Existing saves; Romantasy can be added mid-playthrough
+[*]Load order changes and followers whose mod is temporarily missing
 [/list]
 
-There are no known follower-framework incompatibilities. A follower who has no author profile and has not been added by the player is simply invisible to Romantasy.
-
-[color=#b8a285][b]Older follower integrations remain supported.[/b] Updating Romantasy does not invalidate their saved scores or relationship tiers.[/color]
+[color=#ef4444][b]Not compatible:[/b][/color]
+[list]
+[*]Saves made with 4.0.0 loaded in Romantasy 3.0.1 or older (bond points would be lost)
+[*]Skyrim VR (the ledger is not supported there)
+[*]Followers created at runtime by other mods without a stable plugin record (they cannot be given a bond)
+[/list]
 
 
 [center][color=#382c1f]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/color][/center]
 
 [size=5][b][color=#f59e0b]Troubleshooting[/color][/b][/size]
 
-[color=#fbbf24][b]My follower does not appear in the dashboard[/b][/color]
-If the follower has official Romantasy support, make sure that support is installed and enabled. Otherwise, recruit her normally, bring her with you, open Romantasy, and use New bond. Followers generated at runtime by other mods cannot be added because they have no stable plugin record.
+[color=#fbbf24][b]The ledger does not open[/b][/color]
+Make sure Magelight UI 1.6 or newer is installed; without it the game shows a one-line HUD message and points are still tracked. Check that SKSE64 and Address Library match your exact Skyrim runtime. If Open with Favorites Menu is on, Left Ctrl + R is off: cast the Romantasy power instead. Once the ledger opens, the Health section in Settings names anything else that is wrong.
 
-[color=#fbbf24][b]The dashboard does not open[/b][/color]
-Confirm that SKSE64 and Address Library match your exact Skyrim runtime and that Magelight UI 1.6 or newer is installed. If Open with Favorites Menu is on, Left Ctrl + R is switched off; cast the Romantasy power instead. Check [font=Courier New]Documents/My Games/Skyrim Special Edition/SKSE/Romantasy.log[/font] when reporting a problem.
-
-[color=#fbbf24][b]Names show as question marks[/b][/color]
-Update to 3.0.1, which draws letters from other alphabets with Windows' own fonts.
+[color=#fbbf24][b]A follower does not appear in the ledger[/b][/color]
+If she has official Romantasy support, make sure that support is installed and enabled. Otherwise bring her along, open the ledger and use New bond. If the roster is empty but you know you have bonds, they may all be away: turn on Show away companions. Followers generated at runtime by other mods cannot be added.
 
 [color=#fbbf24][b]My points did not change after I did something[/b][/color]
-The follower may not care about that activity, or she may not have been actively following you when the game recorded it. Tier notifications are also deliberately delayed during combat, although the underlying point change is recorded immediately.
+She may not care about that deed, or she may not have been actively following you when the game recorded it. Turn on Detailed log in Settings and look in [font=Courier New]Romantasy.log[/font]: every deed writes a [font=Courier New]why:[/font] line that says what changed, or why nothing did. On Slow burn, a days-together gate can also hold a gain at the top of the current tier.
 
-[color=#fbbf24][b]The total changed but Recent Changes looks empty[/b][/color]
-Recent Changes belongs to the follower whose dossier is currently selected. Select the same follower whose total changed. The panel keeps the five most recent point changes for that individual bond.
+[color=#fbbf24][b]The tier popup came late[/b][/color]
+That is the calm moment at work. By default a tier popup waits until you are out of combat and somewhere peaceful, for up to one in-game day; the points and the tier in the ledger change at once. Set Tier changes arrive to At once for the old timing. With OStim, popups also wait while a scene plays.
 
-[color=#fbbf24][b]A removed bond came back, or an edit did not stick[/b][/color]
-Keep the PlayerProfiles folder (under MO2, usually in Overwrite) when updating or reinstalling. Removing a bond leaves a small disabled profile file on purpose, so an older save cannot bring the bond back.
+[color=#fbbf24][b]I see no whispers[/b][/color]
+Check Whispers is on in Settings. Whispers wait while a menu, dialogue or loading screen is up and are dropped after 30 seconds. If Magelight cannot give Romantasy its second view, whispers fall back to the game's own notifications and the Health section says so.
 
-[color=#fbbf24][b]What happens to Romantasy dialogue when Romantasy is not installed?[/b][/color]
-Followers supported through a profile file need nothing from Romantasy in their own plugin. Dialogue guarded by the Registered condition simply does not play, and the follower works as she always did.
+[color=#fbbf24][b]A bond vanished when I removed a follower mod[/b][/color]
+From the first save made with 4.0.0, the bond is kept and returns with the mod. A bond that an older version already dropped cannot be recovered.
 
-[color=#fbbf24][b]Can a follower love and hate the same thing?[/b][/color]
-No. Each activity is like, dislike, or neutral for a given follower.
+[color=#fbbf24][b]Recent changes looks empty but the total changed[/b][/color]
+Recent changes belongs to the follower whose dossier is selected, and keeps her last five changes. Open her Journal for the longer story.
 
 [color=#fbbf24][b]Does this marry my follower in the vanilla system?[/b][/color]
-No. The Spouse tier is Romantasy's own bond level. A follower mod can use it as the trigger for a marriage scene, but Romantasy never performs or replaces vanilla marriage.
+No. Spouse is Romantasy's own bond level. A follower mod can use it as the trigger for a marriage scene, but Romantasy never performs or replaces vanilla marriage.
 
 [color=#fbbf24][b]Will this slow my game down?[/b][/color]
-Romantasy's tracker is native SKSE code that reacts to the game's statistic events. The dashboard only draws while it is open, and the Papyrus side is a thin native bridge without update loops.
+No polling. The tracker is native SKSE code that reacts to the game's statistic events, and the ledger only draws while it is open.
 
 
 [center][color=#382c1f]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/color]

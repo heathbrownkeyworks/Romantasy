@@ -181,7 +181,8 @@ starts it for 30 seconds with no player control, no undressing and no furniture.
 OStim has no fitting scene, or does not answer within 5 seconds, the result is code 6.
 If the scene turns into anything outside the kind, Romantasy stops it and sends code 6.
 A scene that is still running after 40 seconds is stopped. OStim's source applies the
-30 second length to the player's scene too; the stop is a fallback until that is seen in game.
+30 second length to the player's scene too. The stop is a fallback in case a scene does
+not end by itself.
 
 An `"intimacy"` moment is started with OStim's own defaults and the player keeps
 control. OStim chooses the scene.
@@ -216,7 +217,10 @@ Bool Function DebugSharedMoment(Actor akFollower, String asKind, Float afSeconds
 It judges a moment as the end of a scene would, with the same rules and the same
 award, whether or not OStim is installed. `afSeconds` is how long the scene ran,
 `abOthers` adds a third person and `abForce` marks it as force. It returns True when
-points moved. With Detailed log on, the why line says what happened or why nothing did.
+points moved. A moment it counts sends `Romantasy_OnSharedMoment`, so your reaction
+script can be tested too. With Detailed log on, the why line says what happened or why
+nothing did. It does not test `TryShareMoment`, which needs OStim 7.4 or newer and
+returns 1 without it.
 
 `DebugDescribe` shows the bond's moments: the count, the last day, the three welcome
 tiers and the feeling.
@@ -290,5 +294,7 @@ Event OnRomantasySharedMoment(String asEventName, String asStrArg, Float afNumAr
 EndEvent
 ```
 
-Call `RegisterEvents()` again after every load. As with any `Say()`, check that the
-topic's subtype and conditions can resolve a line.
+Call `RegisterEvents()` again after every load, for example from a player alias
+script's `OnPlayerLoadGame`. As with any `Say()`, check that the topic's subtype and
+conditions can resolve a line: use an Idle-subtype topic, because a custom-subtype
+topic with no dialogue branch is silent.

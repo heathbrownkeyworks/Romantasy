@@ -28,9 +28,10 @@ written only when it is on.
 
 ## The seven functions
 
-All seven are global functions on the script `Romantasy`. Each one needs an actor
-that has a bond with the player. For an actor with no bond, each returns False (or
-an empty string). A follower does not have to be following the player.
+All seven are global functions on the script `Romantasy`. Each one except
+`DebugAnnounceNow` needs an actor that has a bond with the player. For an actor with
+no bond, each returns False (or an empty string). A follower does not have to be
+following the player.
 
 In the console, click the follower to see their reference ID, then call a function
 with `cgf`. Put names with spaces in quotes. The console does not print what a
@@ -60,6 +61,7 @@ cgf "Romantasy.DebugDeed" <refid> "Quests Completed" 1
 ```
 
 A tier change it causes is announced or held for a calm moment, as for a real deed.
+A change that crosses no tier sends `Romantasy_OnPreference`, as a real deed does.
 
 ### DebugSetPoints
 
@@ -125,8 +127,10 @@ String Function DebugDescribe(Actor follower)
 
 Returns one line, and writes the same line to the log: points, tier, mood, days
 together, the next gate, where the personality came from (`author file`,
-`player`, `legacy` or `none`), and the likes, dislikes, favorites and pet peeves.
-A very long list is cut short. Returns an empty string when the actor has no bond.
+`player`, `legacy` or `none`), the likes, dislikes, favorites and pet peeves, and
+the bond's moments (the count, the last day, the three welcome tiers and the
+feeling). A very long list is cut short. Returns an empty string when the actor has
+no bond.
 
 ```text
 cgf "Romantasy.DebugDescribe" <refid>
@@ -135,7 +139,7 @@ cgf "Romantasy.DebugDescribe" <refid>
 Example line:
 
 ```text
-describe: Ambellina | 1012 Friend | mood Warm (30) | 4.2 days together | gate Confidant needs 7 days | personality author file | likes Quests Completed, Dungeons Cleared | dislikes Murders | favorites Quests Completed | pet peeves none
+describe: Mirelle | 1012 Friend | mood Warm (30) | 4.2 days together | gate Confidant needs 7 days | personality author file | likes Dungeons Cleared, Quests Completed | dislikes Items Stolen, Murders | favorites Quests Completed | pet peeves Murders | moments 0, last day never, welcome Friend/Confidant/Lover, warm
 ```
 
 The gate shows only under Slow burn.
@@ -163,18 +167,19 @@ See [OStim.md](OStim.md) for what counts and the `[moments]` table.
 ### From a script
 
 If the console does not reach a function in your setup, call it from a short
-script and read the result:
+script and read the result. The ID is the follower's placed reference in your
+plugin, not the NPC base record (a base record is not an `Actor`):
 
 ```papyrus
-Actor follower = Game.GetFormFromFile(0x00000800, "MyFollower.esp") as Actor
+Actor follower = Game.GetFormFromFile(0x00000801, "Mirelle.esp") as Actor
 If Romantasy.DebugDeed(follower, "Quests Completed", 1)
     Debug.Notification("Points moved")
 EndIf
 Debug.Trace(Romantasy.DebugDescribe(follower))
 ```
 
-`GetApiVersion()` returns 9 for a Romantasy that has these functions. Check it
-before you rely on them.
+`GetApiVersion()` returns 9 for a Romantasy that has all seven functions (8 or more
+for the first six, 9 for `DebugSharedMoment`). Check it before you rely on them.
 
 ## Read the why log
 
@@ -185,12 +190,12 @@ off, nothing is built or written.
 A gain:
 
 ```text
-why: Ambellina | Quests Completed x1 | rule 3 | favorite x2 | fast x2 | +12 | 988 -> 1000 Friend
+why: Mirelle | Quests Completed x1 | rule 3 | favorite x2 | fast x2 | +12 | 988 -> 1000 Friend
 ```
 
 | Part | Meaning |
 |---|---|
-| `Ambellina` | The follower. |
+| `Mirelle` | The follower. |
 | `Quests Completed x1` | The deed and how many happened. |
 | `rule 3` | Points the built-in rule gives for one. |
 | `favorite x2` | What the follower feels: `like`, `dislike`, `favorite x2` or `pet peeve x2`. |
@@ -201,13 +206,13 @@ why: Ambellina | Quests Completed x1 | rule 3 | favorite x2 | fast x2 | +12 | 98
 A loss carries no pace part, because pace never changes a loss:
 
 ```text
-why: Ambellina | Murders x1 | rule 5 | pet peeve x2 | -10 | 520 -> 510 Acquaintance
+why: Mirelle | Murders x1 | rule 5 | pet peeve x2 | -10 | 520 -> 510 Acquaintance
 ```
 
 When nothing changed, the line ends with the reason:
 
 ```text
-why: Ambellina | Quests Completed x1 | nothing: stopped by the Friend gate (1.5 of 3 days)
+why: Mirelle | Quests Completed x1 | nothing: stopped by the Friend gate (1.5 of 3 days)
 ```
 
 The reasons are:
@@ -224,30 +229,30 @@ The reasons are:
 A script award (`ModifyPoints` or `ApplyPreference`) writes a line with no deed:
 
 ```text
-why: Ambellina | script award | +25 | 975 -> 1000 Friend
-why: Ambellina | script award | nothing: stopped by the Friend gate (1.5 of 3 days)
+why: Mirelle | script award | +25 | 975 -> 1000 Friend
+why: Mirelle | script award | nothing: stopped by the Friend gate (1.5 of 3 days)
 ```
 
 A points change from a SkyrimNet conversation (a kind or a harsh word) writes the same
 lines as a script award. A change that was applied:
 
 ```text
-why: Ambellina | script award | +5 | 995 -> 1000 Friend
+why: Mirelle | script award | +5 | 995 -> 1000 Friend
 ```
 
 A kind word that a Slow burn gate holds back:
 
 ```text
-why: Ambellina | script award | nothing: stopped by the Friend gate (1.5 of 3 days)
+why: Mirelle | script award | nothing: stopped by the Friend gate (1.5 of 3 days)
 ```
 
 A shared moment writes a line with `shared moment` in place of the deed. The first
 two are the same shape as a script award; the third, a held gain, carries the gate:
 
 ```text
-why: Ambellina | shared moment | +5 | 995 -> 1000 Friend
-why: Ambellina | shared moment | nothing: too soon
-why: Ambellina | shared moment | nothing: stopped by the Friend gate (1.5 of 3 days)
+why: Mirelle | shared moment | +5 | 995 -> 1000 Friend
+why: Mirelle | shared moment | nothing: too soon
+why: Mirelle | shared moment | nothing: stopped by the Friend gate (1.5 of 3 days)
 ```
 
 The reasons after `nothing:` for a moment are `moments are off`, `not just the two of you`,
@@ -256,7 +261,8 @@ counted today`. A moment that counted but gave no points because the companion i
 or already had one today reads `nothing: reserved` or `nothing: already counted today`.
 A moment that counted at Slow burn's gate reads like the gate line above. The reason
 `not the moment asked for` appears only for a gentle scene that Romantasy started and had
-to stop.
+to stop. A scene judged for no bond writes `why: scene | shared moment | nothing: the scene was
+lost` (left by loading a save, or dropped by OStim) or `nothing: no switched-on bond in it`.
 
 A change that a limit stops (one of each per in-game hour, 15 a day each way) writes no
 why line. Only a debug line in the log says so.
@@ -279,8 +285,12 @@ Each finding is one line: `file(line): error: message` or
 `file(line): warning: message`. Errors are files Romantasy would refuse. Warnings
 are likely mistakes: no likes, dislikes, favorites or pet peeves at all, a key the
 format does not know (with the nearest known name), an unlock line too long for
-the popup (over 48 characters), and a `plugin` name with no `.esp`, `.esm` or
-`.esl` ending.
+the popup (over 48 characters), a `[moments]` table that welcomes a deeper kind
+before a lighter one, and a `plugin` name with no `.esp`, `.esm` or `.esl` ending.
+An unknown key and a plugin name with no ending also give an error, because
+Romantasy refuses those files; the warning adds the hint. After the findings, the
+checker prints one line for each valid profile and a count of valid profiles, errors
+and warnings. `--player` checks files as player profiles.
 
 | Exit code | Meaning |
 |---|---|

@@ -1,4 +1,4 @@
-# Romantasy 3.0 dialogue conditions
+# Romantasy dialogue conditions
 
 Use the Creation Kit's standard **GetGraphVariableInt** condition on **Subject**
 to query the speaker's Romantasy state. These reserved queries are provided by the
@@ -16,6 +16,10 @@ GetGraphVariableInt  Romantasy_Registered  == 1
 | `Romantasy_Registered` | 1 | 0 |
 | `Romantasy_Level` | 1 through 6 | 0 |
 | `Romantasy_Points` | Exact earned points | -1 |
+| `Romantasy_Mood` | 1 Strained, 2 Settled, 3 Warm (2 for a bond that has never followed) | 0 |
+
+The level and points change the moment the points do, even when the tier popup and
+the tier events are still waiting for a calm moment.
 
 Enter names exactly, without quotation marks in the CK parameter field. These are
 reserved condition queries, not animation variables to set with Papyrus. Run On
@@ -47,6 +51,13 @@ GetGraphVariableInt  Romantasy_Points      >= 1000
 GetGraphVariableInt  Romantasy_Points      < 1500
 ```
 
+Only while the follower feels warm toward the player:
+
+```text
+GetGraphVariableInt  Romantasy_Registered  == 1
+GetGraphVariableInt  Romantasy_Mood        == 3
+```
+
 The Registered guard matters especially with `<`, `<=`, or `!=`: an unmanaged
 actor's sentinel value can otherwise satisfy the comparison.
 
@@ -75,7 +86,9 @@ unconverted integrations; use the new queries for TOML-based followers.
 Save and reopen the INFO in CK to verify string parameters and grouping. Test
 below, at, and above thresholds; compare two actors with different balances;
 save/reload; and verify an unmanaged actor cannot enter guarded dialogue.
-The dashboard and `Romantasy.GetPoints(actor)` expose balances for inspection.
+The ledger and `Romantasy.GetPoints(actor)` expose balances for inspection. With
+author mode on, `Romantasy.DebugSetPoints` and `Romantasy.DebugSetMood` move a bond to
+any threshold; see [AuthorTesting.md](AuthorTesting.md).
 
 Condition reads do not enroll actors or mutate progress. Without the DLL, these
 are ordinary engine graph-variable conditions; verify guarded behavior with the

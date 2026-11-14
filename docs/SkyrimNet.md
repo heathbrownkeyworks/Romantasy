@@ -154,6 +154,19 @@ nothing, the actions are never offered, and no events are sent. The two Settings
 not appear; the Health section in Settings shows the too-old note above. It is a note, not
 a warning, so it never adds a problem line on screen.
 
+## For follower authors
+
+- Your mod needs nothing for the bridge. Do not call the `Romantasy_SkyrimNet` script
+  or any SkyrimNet script from your follower's scripts; Romantasy registers its own
+  functions. They are listed in [papyrus-bridge.md](papyrus-bridge.md#skyrimnet-script).
+- A kind or harsh word moves points much as a script award does, without the
+  following requirement and within the hourly and daily limits above. Your scripts see it through
+  the usual tier events and getters; it sends no `Romantasy_OnPreference`.
+- The events SkyrimNet receives are sent at the same moment as the follower's own
+  `Romantasy_OnLevelChanged`, `Romantasy_OnLevelLost`, `Romantasy_OnReunion` and
+  `Romantasy_OnTimeApart`. A voiced reaction and SkyrimNet's own reply can both
+  follow one change; keep that in mind when you write both.
+
 ## What to check in SkyrimNet's dashboard
 
 - The layer `coldsun.romantasy` is listed and enabled.

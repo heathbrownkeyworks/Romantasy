@@ -1,14 +1,15 @@
-# Converting followers to Romantasy 3.0
+# Converting followers to Romantasy
 
 Use this procedure to replace a follower's romance factions with a TOML profile
 and native dialogue conditions. Preserve the follower's identity, voice assets,
-scripts, quest behavior, and unrelated conditions.
+scripts, quest behavior, and unrelated conditions. A follower with no Romantasy
+factions to remove can skip to the [author guide](AuthorGuide.md).
 
 Read [FileProfiles.md](FileProfiles.md), use the
 [inert profile template](../examples/profiles/ExampleFollower.toml.example), and
 consult the [dialogue condition guide](romance-points-dialogue-conditions.md).
-[Mornhilde's profile](../examples/profiles/Mornhilde.toml) is a concrete example;
-its plugin and form ID are specific to her.
+[Mornhilde's profile](../examples/profiles/Mornhilde.toml) is a converted profile;
+its plugin and form ID are hers.
 
 ## 1. Audit and back up
 
@@ -47,6 +48,8 @@ dislikes = ["Murders"]
 Copy the follower's intended opinions; do not invent new ones. Use supported
 labels or stable `ROM_*` identifiers. Convert old ranks 0-5 to the corresponding
 named starting tier. Saved points, including zero, override that starting tier.
+You need `schema_version = 2` or `3` only when you add favorites, pet peeves, `[unlocks]`
+or `[moments]`; see [FileProfiles.md](FileProfiles.md).
 
 Validate the candidate directory:
 
@@ -69,7 +72,8 @@ GetGraphVariableInt  Romantasy_Registered  == 1
 GetGraphVariableInt  Romantasy_Level       >= 3
 ```
 
-That is Friend or higher, equivalent to legacy rank >= 2. Preserve each operator,
+That is Friend or higher, equivalent to legacy rank >= 2. `Romantasy_Points` and
+`Romantasy_Mood` work the same way. Preserve each operator,
 run-on target, AND/OR grouping, and all unrelated predicates. Add one to old
 level rank values only; exact point thresholds are unchanged. Replace point
 proxy tests with `Romantasy_Points` plus the Registered guard.
@@ -111,11 +115,13 @@ remove the DLL runtime requirement.
 - Save/reload, restart, and load a different save. Test another NPC with a
   different balance, and multiple instances if the follower supports them.
 - Test active/dismissed state, stat gains, voiced reactions, and scenes. Filter
-  ModEvents by the sender NPC base; keep fragment and voice behavior intact.
+  ModEvents by the sender NPC base; keep fragment and voice behavior intact. Tier
+  events can wait for a calm moment; see
+  [papyrus-bridge.md](papyrus-bridge.md#when-tier-events-arrive).
 - Test absent/malformed profiles and missing runtime in an isolated setup before
   claiming compatibility in those conditions.
+- The author test kit in [AuthorTesting.md](AuthorTesting.md) reaches each tier,
+  mood and gate without playing up to it.
 
-Mornhilde's Friend-tier trade response was confirmed during development.
-Automated validation and that limited test do not replace the full acceptance
-matrix for another follower. Keep original files and verification receipts until
-the converted follower has passed its own in-game checks.
+Automated validation does not replace these checks. Keep the original files and
+your backups until the converted follower has passed its own in-game checks.

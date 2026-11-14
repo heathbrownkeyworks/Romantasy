@@ -1,12 +1,12 @@
-# Romantasy 3.0 profiles and dialogue queries
+# Romantasy profiles and dialogue queries
 
-Romantasy 3.0 supports TOML NPC profiles and actor-specific dialogue queries.
+New to Romantasy? Start with the [author guide](AuthorGuide.md).
+
+Romantasy supports TOML NPC profiles and actor-specific dialogue queries.
 Supplied profiles and player-created bonds operate without romance factions.
 Legacy integration remains available for unconverted follower mods.
 
 For existing followers, follow [the conversion procedure](FollowerConversion.md).
-Mornhilde's Friend-tier trade response was confirmed in Skyrim during development;
-see the [release notes](../CHANGELOG.md) for verification boundaries.
 
 ## Author an NPC profile
 
@@ -44,9 +44,14 @@ statistic labels below or their stable `ROM_*` identifiers. Preferences use the
 existing point weights. A saved balance, including zero, takes precedence over
 the starting level. Editing this file does not reset earned points.
 
+`schema_version` must be the integer 1, 2 or 3. `[npc]` and `[romance]` are both
+required. `plugin` must be a file name ending in `.esp`, `.esm` or `.esl`, with no
+folder. `form_id` is at most 6 hexadecimal digits, with or without `0x`, and not 0.
+
 Profiles load once when game data loads. Restart Skyrim after editing them.
 Unknown keys, misspelled statistics, invalid levels, conflicting opinions, and
-duplicate NPC definitions are rejected with diagnostics in `Romantasy.log`.
+duplicate NPC definitions are rejected with diagnostics in `Romantasy.log`, and the
+ledger's Health section lists the rejected files.
 Duplicate files for the same plugin/local-ID pair are all rejected; filenames
 do not establish an override order. An invalid file does not discard other valid
 profiles. Missing plugins and IDs that do not resolve to eligible NPCs are skipped.
@@ -219,7 +224,8 @@ That startup probe does not prove that CK persisted a real INFO correctly.
 
 Without the DLL, the engine sees ordinary graph-variable queries. The intended
 Registered guard should prevent romance dialogue, but this behavior must be
-verified with the actual follower. No missing-DLL compatibility claim is made yet.
+verified with the actual follower. Guard every romance line with the conditions
+above, and do not rely on any behavior when Romantasy is not installed.
 
 ## Persistence and migration boundaries
 
@@ -269,51 +275,37 @@ not its subfolders). Each finding is one line, `file(line): error: message` or
   nothing else.
 - `--player` checks the files as player profiles.
 
-Warnings are likely mistakes in a file that still loads: no likes, dislikes,
-favorites or pet peeves at all, a key the format does not know (with the nearest
-known name suggested), an unlock line over 48 characters (it will wrap on the popup; 48 fit on one line),
-and a `plugin` name without an `.esp`, `.esm` or `.esl` ending. Exit codes: 0 clean
+Warnings are likely mistakes: no likes, dislikes, favorites or pet peeves at all
+(the file still loads), an unlock line over 48 characters (it loads, but will wrap on
+the popup; 48 fit on one line), a key the format does not know (with the nearest
+known name suggested), a `[moments]` table that welcomes a deeper kind before a
+lighter one, and a `plugin` name without an `.esp`, `.esm` or `.esl` ending. An
+unknown key and a plugin name with no ending are also errors: the warning only adds
+the hint. Exit codes: 0 clean
 (warnings alone give 0), 1 at least one error, 2 warnings only with `--strict`,
-3 the command line was wrong. See [AuthorTesting.md](AuthorTesting.md).
+3 the command line was wrong. Two files in one folder for the same NPC are both
+reported as errors, as Romantasy rejects both. See [AuthorTesting.md](AuthorTesting.md).
 
-Build from the repository root. Close Skyrim and editors before building. For an
-isolated candidate, set `XSE_TES5_MODS_PATH` to a staging folder in that shell:
+The error messages are the ones Romantasy writes to its log, for example:
 
-```powershell
-$env:XSE_TES5_MODS_PATH = 'C:\RomantasyBuild\auto-install'
-xmake -y
-xmake build romantasy-profile-check
-xmake build romantasy-profile-tests
-xmake run romantasy-profile-tests
-xmake build romantasy-ui-tests
-xmake run romantasy-ui-tests
-node tests/RuntimeCompatibilityContractTests.mjs
-```
-
-Deploy the complete mod payload, including fonts, the inert example, documentation,
-and validator. Preserve installed settings and PlayerProfiles. The private release
-workflow signs and hash-verifies the explicit payload.
-
-## Manual acceptance: incomplete
-
-Mornhilde has passed a limited loaded-save condition check and Friend-tier trade
-playback test. The full matrix below is still
-incomplete; untested cases remain **NOT RUN**.
-
-1. Audit/back up the selected test follower. Remove its romance/preference faction
-   dependencies in a candidate copy; preserve unrelated factions and behavior.
-2. Create her real TOML profile and replace dialogue conditions with the queries
-   above. Save and reopen in CK; confirm text, Subject, AND flags, and comparisons.
-3. Launch the candidate; confirm profile and bridge-probe success in the log.
-   Confirm ordinary graph-variable conditions still work.
-4. Test below, at, and above thresholds; point loss; a zero-point balance; two
-   separately configured NPCs; non-unique instances if supported by the follower.
-5. Save/reload and load a different save; verify points never cross actors or saves.
-   Verify a load-order change resolves the same NPC and retained save identity.
-6. Test absent profile, malformed profile, missing DLL, and missing dependency in
-   a disposable test profile. Confirm guarded dialogue stays unavailable.
-7. Verify dashboard, stat gains, active-follower checks, Papyrus point adjustments,
-   and bark events. Complete this proof before removing the legacy system.
+- `schema_version must be integer 1, 2 or 3`
+- `[npc] and [romance] tables are required`
+- `unknown field 'likess'`
+- `plugin must be an ESP/ESM/ESL filename without a path`
+- `form_id must be a non-zero plugin-local hexadecimal NPC base ID (at most 6 digits)`
+- `starting_level must name one of the six relationship tiers`
+- `unknown statistic 'Dungeon Cleared'`
+- `duplicate or conflicting preference for 'Murders'`
+- `favorites lists more than 3 statistics`, `pet_peeves lists more than 3 statistics`
+- `[unlocks] cannot name Stranger`, `unknown tier 'Freind' in [unlocks]`
+- `unlocks for Friend must be a list of 1 to 4 lines`
+- `an unlock line for Friend must be 1 to 60 characters with no control characters`
+- `unknown tier 'Freind' in [moments]`
+- `feeling in [moments] must be warm, treasured or reserved`
+- `[unlocks] is not allowed in a player profile`, `[moments] is not allowed in a player profile`
+- `conflicting profiles for <plugin>|<id>; all definitions rejected: <files>`. The
+  plugin name is in lower case and the ID is decimal, so `0x000800` in `Mirelle.esp`
+  shows as `mirelle.esp|2048`.
 
 ## Statistic identifiers
 
