@@ -493,8 +493,9 @@ TEST(Health_OStimNotes)
         const auto report = BuildReport(old);
         CHECK(report.status == "ok" && report.items.size() == 1);
         const auto* oldNote = Find(report, "ostim");
-        CHECK(oldNote && oldNote->level == Level::Note && oldNote->title == "OStim is too old for Romantasy's bridge.");
-        CHECK(oldNote && oldNote->detail == "It needs OStim 7.3.3 or newer. Everything else works without it.");
+        // The words never call it old: a current OStim can be the one that was not reached.
+        CHECK(oldNote && oldNote->level == Level::Note && oldNote->title == "OStim is installed, but Romantasy could not reach it.");
+        CHECK(oldNote && oldNote->detail == "If your OStim is older than 7.5.2, update it. Everything else works without it.");
         CHECK(!HudLine(report, old).has_value());
     }
 

@@ -23,7 +23,8 @@ public:
     void Start();
 
     [[nodiscard]] bool Found() const { return _found.load(); }
-    // OStim.dll is loaded but did not hand out the "Threads" interface (older than 7.3.3); the bridge stays off.
+    // OStim.dll is loaded but did not hand out the "Threads" interface (older than 7.3.3, or not reached); the bridge
+    // stays off.
     [[nodiscard]] bool TooOld() const { return _tooOld.load(); }
     // ThreadInterface::getVersion(); 0 when OStim was not found.
     [[nodiscard]] std::uint32_t InterfaceVersion() const { return _version.load(); }

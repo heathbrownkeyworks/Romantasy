@@ -764,13 +764,23 @@ assert.ok(romanceManager.includes('if (version != 1 && version != 2)'), 'the leg
     const ostimDir = join(root, 'src', 'ostim');
     const bridge = readFileSync(join(ostimDir, 'OStimBridge.cpp'), 'utf8');
     assert.ok(!bridge.includes('LoadLibrary'), 'OStimBridge.cpp must never load a library');
-    assert.ok(/Dispatch\([^;]*"OStim"\)/.test(bridge), 'OStimBridge.cpp must dispatch the interface message to "OStim"');
-    assert.ok(bridge.includes('GetModuleHandleW(L"OStim.dll")'), 'OStimBridge.cpp must tell "too old" from "absent" by the loaded module');
+    // SKSE's message can miss a loaded OStim (a named receiver is looked up by its place in the plugin list, which
+    // shifts when an earlier plugin failed to load), so OStim's own export is asked first, then the message by name,
+    // then the message to every listener.
+    const exportAt = bridge.indexOf('OStim::getInferfaceMap()');
+    const namedAt = bridge.search(/Dispatch\([^;]*"OStim"\)/);
+    const everyAt = bridge.search(/Dispatch\([^;]*nullptr\)/);
+    assert.ok(exportAt >= 0, 'OStimBridge.cpp must ask OStim\'s own export for the interface map');
+    assert.ok(namedAt > exportAt, 'OStimBridge.cpp must fall back to the interface message for "OStim" after the export');
+    assert.ok(everyAt > namedAt, 'OStimBridge.cpp must fall back to the interface message for every listener last');
+    assert.ok(bridge.includes('GetModuleHandleW(L"OStim.dll")'), 'OStimBridge.cpp must tell "not reached" from "absent" by the loaded module');
     for (const line of ['OStim not found; the bridge is off.', 'OStim found (interface {}); the bridge is on.',
-        ' Starting moments needs OStim 7.4 or newer.', "OStim is too old for Romantasy's bridge; it needs 7.3.3 or newer."]) {
+        ' Starting moments needs OStim 7.4 or newer.',
+        'OStim.dll is loaded but gave Romantasy no thread interface; the bridge is off. Update an OStim older than 7.5.2.']) {
         assert.ok(bridge.includes(line), `OStimBridge.cpp must log "${line}" verbatim`);
     }
-    for (const name of ['setStartingNodeSafe', 'isChildOf', 'requestInterfaceMap', 'getInferfaceMap']) {
+    assert.ok(!bridge.includes('too old'), 'OStimBridge.cpp must not call an OStim it could not reach too old');
+    for (const name of ['setStartingNodeSafe', 'isChildOf']) {
         assert.ok(!bridge.includes(name), `OStimBridge.cpp must not use ${name}`);
     }
     const listeners = [...bridge.matchAll(/void listen\(OStim::Thread\* thread\) override\r?\n    \{([\s\S]*?)\r?\n    \}/g)];

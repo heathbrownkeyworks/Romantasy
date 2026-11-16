@@ -82,13 +82,16 @@ Both are in Settings and appear only when OStim was found.
 The same keys are in `settings.json`: `ostimMoments` and `ostimHold`.
 
 Health in Settings shows one note: `OStim found: shared moments count toward a bond.`,
-`OStim found: shared moments are not counted.`, or, for an old OStim, `OStim is too old
-for Romantasy's bridge.`
+`OStim found: shared moments are not counted.`, or, when OStim is loaded and Romantasy
+got no answer from it, `OStim is installed, but Romantasy could not reach it.`
 
 ## What you need
 
 - OStim 7.3.3 or newer for Romantasy to hold popups and count moments.
 - OStim 7.4 or newer for a follower mod to start a moment.
+- OStim 7.5.2 or newer is the safest choice. Romantasy asks it directly. An older OStim
+  is asked through SKSE, and that can fail on Skyrim 1.5.97 or when another SKSE plugin
+  failed to load. If Health says Romantasy could not reach OStim, update OStim.
 
 ## The honest limit
 

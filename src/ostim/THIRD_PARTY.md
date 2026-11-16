@@ -8,7 +8,7 @@
 - Files copied: `InterfaceExchangeMessage.h`, `InterfaceMap.h`, `PluginInterface.h`; all of `Threading/` (`Thread.h`, `ThreadActor.h`, `ThreadActorEventListener.h`, `ThreadActorVisitor.h`, `ThreadBuilder.h`, `ThreadEventListener.h`, `ThreadInterface.h`); `Furniture/FurnitureType.h`; and every file of `Graph/` except `GraphInterface.h` (`Action.h`, `ActionActor.h`, `ActionTag.h`, `ActionTagVisitor.h`, `ActionType.h`, `ActionVisitor.h`, `Node.h`, `NodeActor.h`, `NodeActorTag.h`, `NodeActorTagVisitor.h`, `NodeActorVisitor.h`, `NodeTag.h`, `NodeTagVisitor.h`, `Role.h`). These are the files the bridge needs and the files they include.
 - `src/ostim/api/LICENSE` is a copy of the repository's `LICENSE` at the same tag.
 - License: GPL-3.0, the standard text, with no additional permissions and no notice in the headers themselves. Romantasy's own additional permissions (EXCEPTIONS.md) do not extend to these files.
-- Only `OStimBridge.cpp` includes them. OStim is found at run time: the bridge sends OStim's own SKSE message (`'OST'`, an `InterfaceExchangeMessage`, to the plugin `"OStim"`) and OStim fills in its interface map. Romantasy never loads OStim.dll and does not link against it.
+- Only `OStimBridge.cpp` includes them. OStim is found at run time, and only when OStim.dll is already loaded. The bridge first calls OStim's own helper in `InterfaceMap.h`, which looks up the `requestInterfaceMap` export (OStim 7.5.1c and newer). For an older OStim it sends OStim's own SKSE message (`'OST'`, an `InterfaceExchangeMessage`) to the plugin `"OStim"`, then to every listener, and OStim fills in its interface map. The export comes first because the SKSE message can miss a loaded OStim: SKSE looks a named receiver up by its place in the plugin list, which shifts when an earlier plugin failed to load, and the SKSE for 1.5.97 gives a listener for any sender only the plugins loaded before it. Romantasy never loads OStim.dll and does not link against it.
 
 ### What the bridge calls
 
@@ -40,6 +40,5 @@ The bridge calls two of OStim's Papyrus functions by name, through the Papyrus V
 ## What is not used, and why
 
 - The `Safe` builder methods (`setStartingNodeSafe`, `addStartingNodeSafe`): they arrived with interface 0x07050010, and the one that takes a scene ID dereferences null for an unknown ID.
-- `requestInterfaceMap` and the inline helper in `InterfaceMap.h` that looks it up: the export only exists from OStim 7.5.1c. The SKSE message works on every release with the interface.
 - The furniture overloads `FurnitureType::isChildOf` and `FurnitureInterface::getType`: their place in the virtual table may have moved at 7.5.1, so calling them on an older OStim could call the wrong function. `FurnitureType.h` is copied only because `Thread.h` and `Node.h` include it.
 - `GraphInterface.h`, the `Furniture`, `Settings` and `SexToys` interfaces: not needed.

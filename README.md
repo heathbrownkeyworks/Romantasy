@@ -1,4 +1,4 @@
-# Romantasy 4.0.0
+# Romantasy 4.0.1
 
 Romantasy tracks the adventures shared with active followers in Skyrim SE/AE,
 applies each companion's likes and dislikes, and maintains an independent bond
@@ -289,7 +289,7 @@ faction integrations and the registration functions still work for unconverted m
 - [Translating the ledger](docs/Translating.md)
 - [Release notes](CHANGELOG.md)
 
-The Papyrus API is **capability version 9**, independent of the mod's 4.0.0
+The Papyrus API is **capability version 9**, independent of the mod's 4.0.1
 release number. Its declarations are in `Source/Scripts/Romantasy.psc`.
 
 ## Building

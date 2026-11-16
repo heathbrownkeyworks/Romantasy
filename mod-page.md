@@ -1,4 +1,4 @@
-# Romantasy 4.0.0
+# Romantasy 4.0.1
 
 *A Ledger of Hearts.*
 
@@ -66,7 +66,7 @@ Skyrim VR.
 ## Upgrading
 
 **From 3.x:** install Magelight UI 1.6 or newer and replace the old Romantasy with
-4.0.0. Keep the PlayerProfiles folder and settings.json under
+4.0.1. Keep the PlayerProfiles folder and settings.json under
 SKSE/Plugins/Romantasy. Your saves keep their points and bonds. Keep a save from
 before the upgrade: **a save written by 4.0.0 must not be loaded in 3.0.1 or
 older**, or its bond points are lost. Tier popups now wait for a calm moment; set

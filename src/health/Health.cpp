@@ -163,7 +163,8 @@ namespace romantasy::health
             items.push_back({ "skyrimNet", Level::Note, "SkyrimNet is too old for Romantasy's bridge.",
                 "Update SkyrimNet to use the bridge. Everything else works without it." });
         }
-        // OStim is optional too: absent says nothing; found says whether shared moments count; too old is a note.
+        // OStim is optional too: absent says nothing; found says whether shared moments count; loaded but not reached
+        // is a note that never calls it old, because a current OStim can be the one that was not reached.
         if (facts.ostim == OStimState::Found) {
             items.push_back(facts.ostimMoments
                 ? Item{ "ostim", Level::Note, "OStim found: shared moments count toward a bond.",
@@ -171,8 +172,8 @@ namespace romantasy::health
                 : Item{ "ostim", Level::Note, "OStim found: shared moments are not counted.",
                       "Turn on Shared moments in Settings to count them." });
         } else if (facts.ostim == OStimState::TooOld) {
-            items.push_back({ "ostim", Level::Note, "OStim is too old for Romantasy's bridge.",
-                "It needs OStim 7.3.3 or newer. Everything else works without it." });
+            items.push_back({ "ostim", Level::Note, "OStim is installed, but Romantasy could not reach it.",
+                "If your OStim is older than 7.5.2, update it. Everything else works without it." });
         }
         if (facts.authorMode) {
             items.push_back({ "authorMode", Level::Note, "Author mode is on.",

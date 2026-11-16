@@ -228,24 +228,33 @@ void OStimBridge::Start()
     if (_started.exchange(true)) {
         return;
     }
-    // OStim fills the map from its own message handler, synchronously; it stays null when OStim is absent.
-    OStim::InterfaceExchangeMessage message;
-    if (const auto* messaging = SKSE::GetMessagingInterface()) {
-        messaging->Dispatch(OStim::InterfaceExchangeMessage::MESSAGE_TYPE, &message, sizeof(message), "OStim");
+    // Only a module already loaded: Romantasy is never the reason OStim loads.
+    if (!GetModuleHandleW(L"OStim.dll")) {
+        logger::info("OStim not found; the bridge is off.");
+        return;
     }
-    OStim::ThreadInterface* threads = nullptr;
-    if (message.interfaceMap) {
-        // OStim's interfaces use single inheritance from PluginInterface.
-        threads = static_cast<OStim::ThreadInterface*>(message.interfaceMap->queryInterface("Threads"));
-    }
-    if (!threads) {
-        // Only a module already loaded: Romantasy is never the reason OStim loads.
-        if (GetModuleHandleW(L"OStim.dll")) {
-            _tooOld = true;
-            logger::warn("OStim is too old for Romantasy's bridge; it needs 7.3.3 or newer.");
-        } else {
-            logger::info("OStim not found; the bridge is off.");
+    // OStim's own export first (7.5.1c and newer): it does not go through SKSE, whose message can miss a loaded OStim.
+    // SKSE looks a named receiver up by its place in the plugin list, which shifts when an earlier plugin failed to
+    // load; and the SKSE for 1.5.97 gives a listener for any sender only the plugins loaded before it.
+    OStim::InterfaceMap* map = OStim::getInferfaceMap();
+    if (!map) {
+        // An older OStim: it fills the map from its own message handler, synchronously. By name, then to every listener.
+        OStim::InterfaceExchangeMessage message;
+        if (const auto* messaging = SKSE::GetMessagingInterface()) {
+            messaging->Dispatch(OStim::InterfaceExchangeMessage::MESSAGE_TYPE, &message, sizeof(message), "OStim");
+            if (!message.interfaceMap) {
+                messaging->Dispatch(OStim::InterfaceExchangeMessage::MESSAGE_TYPE, &message, sizeof(message), nullptr);
+            }
         }
+        map = message.interfaceMap;
+    }
+    // OStim's interfaces use single inheritance from PluginInterface.
+    auto* threads = map ? static_cast<OStim::ThreadInterface*>(map->queryInterface("Threads")) : nullptr;
+    if (!threads) {
+        // Older than 7.3.3, or one that neither route reached.
+        _tooOld = true;
+        logger::warn(
+            "OStim.dll is loaded but gave Romantasy no thread interface; the bridge is off. Update an OStim older than 7.5.2.");
         return;
     }
     const std::uint32_t version = threads->getVersion();

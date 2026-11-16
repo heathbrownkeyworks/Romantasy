@@ -1,5 +1,13 @@
 # Changelog
 
+## 4.0.1 - 2026-11-16
+
+- Fix Health saying OStim is too old when a current OStim is installed. Romantasy now
+  asks OStim directly (OStim 7.5.1c and newer) and uses the SKSE message only for an
+  older OStim. The SKSE message could miss OStim on Skyrim 1.5.97, or when another SKSE
+  plugin failed to load. When OStim is loaded and gives no answer, Health now says
+  **OStim is installed, but Romantasy could not reach it.**
+
 ## 4.0.0 - 2026-11-14
 
 - Add roster tools to the ledger. Type in **Find a companion** to filter by name.
